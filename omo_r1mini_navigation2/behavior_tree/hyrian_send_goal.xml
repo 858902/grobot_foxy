@@ -1,0 +1,47 @@
+<root main_tree_to_execute = "MainTree">
+    <BehaviorTree ID="MainTree">
+        <Sequence>
+            <CheckBlackboardKeys keys="keyword1,keyword2" />
+            <Sequence>
+                <Condition ID="IsKeyword1EqualTo" value="navigation" />
+                <SubTree ID="MoveToProduct" />
+            </Sequence>
+        </Sequence>
+    </BehaviorTree>
+
+    <BehaviorTree ID="MoveToProduct">
+        <Fallback>
+            <Sequence>
+                <Condition ID="IsKeyword2EqualTo" value="product1" />
+                <SetBlackboard output_key="Goal" value="0.1;1.0;0.0;1.0" />
+                <SubTree ID="MoveRobot" target="Goal" />
+            </Sequence>
+            <Sequence>
+                <Condition ID="IsKeyword2EqualTo" value="product2" />
+                <SetBlackboard output_key="Goal" value="2.0;2.5;0.0;1.0" />
+                <SubTree ID="MoveRobot" target="Goal" />
+            </Sequence>
+            <Sequence>
+                <Condition ID="IsKeyword2EqualTo" value="product3" />
+                <SetBlackboard output_key="Goal" value="2.0;-1.5;0.0;1.0" />
+                <SubTree ID="MoveRobot" target="Goal" />
+            </Sequence>
+            <Sequence>
+                <Condition ID="IsKeyword2EqualTo" value="product4" />
+                <SetBlackboard output_key="Goal" value="4.0;0.1;0.0;1.0" />
+                <SubTree ID="MoveRobot" target="Goal" />
+            </Sequence>
+            <Sequence>
+                <Condition ID="IsKeyword2EqualTo" value="origin" />
+                <SetBlackboard output_key="Goal" value="0.0;0.0;0.0;1.0" />
+                <SubTree ID="MoveRobot" target="Goal" />
+            </Sequence>
+        </Fallback>
+    </BehaviorTree>
+
+    <BehaviorTree ID="MoveRobot">
+        <Sequence name="SetGoal">
+            <Nav2Client goal="{target}" />
+        </Sequence>
+    </BehaviorTree>
+</root>
