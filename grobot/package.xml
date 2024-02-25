@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>grobot</name>
+  <version>0.0.1</version>
+  <description>
+    ROS 2 packages for GROBOT R1D2
+  </description>
+  <license>Apache 2.0</license>
+  <url type="repository">https://github.com/omorobot/omo_r1-foxy</url>
+  <maintainer email="kyuhyong@gmail.com">Kyuhyong You</maintainer>
+  <author email="bishopearson@gmail.com">Bishop Pearson</author>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>grobot_bringup</exec_depend>
+  <exec_depend>grobot_cartographer</exec_depend>
+  <exec_depend>grobot_description</exec_depend>
+  <exec_depend>grobot_navigation2</exec_depend>
+  <!-- <exec_depend>grobot_node</exec_depend> -->
+  <exec_depend>grobot_teleop</exec_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

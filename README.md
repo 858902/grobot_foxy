@@ -60,7 +60,7 @@ pip install pyserial
 - To give authority for driver access to MCU and LiDAR
 
 ```bash
-cd {$workspace_path}/src/omo_r1mini/omo_r1mini_bringup
+cd {$workspace_path}/src/omo_r1mini/omo_r1_bringup
 sudo sh create_udev_rules.sh
 ```
 
@@ -68,27 +68,27 @@ sudo sh create_udev_rules.sh
 
 ```bash
 cd {$workspace_path}
-ros2 launch omo_r1mini_bringup omo_r1mini_bringup.launch.py
+ros2 launch omo_r1_bringup omo_r1_bringup.launch.py
 ```
 
 - To bringup robot (in **simulation environment**)
 ```bash
 cd {$workspace_path}
-ros2 launch omo_r1mini_gazebo omo_r1mini.launch.py
+ros2 launch omo_r1_gazebo omo_r1mini.launch.py
 ```
 - To teleoperate the robot using **KEYBOARD**
 
 ```bash
 cd {$workspace_path}
-ros2 run omo_r1mini_teleop teleop_keyboard
+ros2 run omo_r1_teleop teleop_keyboard
 ```
 
 - To conduct SLAM (Try after few seconds from MCU and LiDAR bringup)
 
 ```bash
 cd {$workspace_path}
-ros2 launch omo_r1mini_cartographer cartographer.launch.py
-ros2 launch omo_r1mini_cartographer cartographer_rviz.launch.py
+ros2 launch omo_r1_cartographer cartographer.launch.py
+ros2 launch omo_r1_cartographer cartographer_rviz.launch.py
 ```
 
 - Once mapping is done, you can create map.pgm and map.yaml file by executing
@@ -101,6 +101,6 @@ ros2 run nav2_map_server map_saver_cli -f map
 - To conduct path planning & following (Try after few seconds from MCU and LiDAR bringup)
 ```bash
 cd {$workspace_path}
-ros2 launch omo_r1mini_navigation2 navigation2.launch.py map:=$HOME/map.yaml
-ros2 launch omo_r1mini_navigation2 navigation2_rviz.launch.py
+ros2 launch omo_r1_navigation2 navigation2.launch.py map:=$HOME/map.yaml
+ros2 launch omo_r1_navigation2 navigation2_rviz.launch.py
 ```
