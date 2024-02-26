@@ -14,7 +14,7 @@ from launch.substitutions import LaunchConfiguration
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='True')
-    world_file_name = 'empty_worlds/grobot.model'
+    world_file_name = 'empty_worlds/grobot_mini.model'
     world = os.path.join(get_package_share_directory('grobot_gazebo'),
                          'worlds', world_file_name)
     launch_file_dir = os.path.join(get_package_share_directory('grobot_gazebo'), 'launch')

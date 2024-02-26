@@ -171,13 +171,20 @@ public:
             std::cout << "r_vec: " << std::endl << r_vec.transpose() << std::endl;
             std::cout << "desired_r_vec: " << std::endl << desired_r_vec.transpose() << std::endl;
 
+
+            //loop 도는데 걸리는 시간 측정
+            dt = (rclcpp::Clock{}.now() - last_update_time).seconds();
+            last_update_time = rclcpp::Clock{}.now();
+
+            //update desried_r 
+            direction = tau_external_.normalized();
+            magnitude = tau_external_.norm() * dt;
+            desired_r_vec += direction * magnitude;
+
             compute_impedance(K,
                               r_vec, desired_r_vec,
                               tau_impedance);
             
-            //loop 도는데 걸리는 시간 측정
-            dt = (rclcpp::Clock{}.now() - last_update_time).seconds();
-            last_update_time = rclcpp::Clock{}.now();
 
             desired_r_acc = M_adm.inverse() * (tau_impedance + tau_external_ - D_adm * desired_r_vel);
             desired_r_vel += desired_r_acc * dt;
@@ -226,6 +233,8 @@ private:
     Eigen::VectorXd x_tilde =Eigen::VectorXd::Zero(3);
     Eigen::VectorXd grad_V_imp =Eigen::VectorXd::Zero(3);
 
+    Eigen::VectorXd direction =Eigen::VectorXd::Zero(3);
+
     float JointPosition[6] = {0.0};
     float JointVelocity[6] = {0.0};
     float RobotPosition[6] = {0.0};
@@ -233,6 +242,7 @@ private:
     float tau_external[6] = {0.0}; 
     
     double V_imp;
+    double magnitude;
 
     //Subscriber
     rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr subscription_;
