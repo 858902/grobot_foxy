@@ -29,6 +29,10 @@ find_package(kdl_parser REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(Eigen3 REQUIRED)
 
+## EXPORTS
+include_directories(include)
+include_directories(${ament_INCLUDE_DIRS})
+
 ################################################################################
 # Build
 ################################################################################
@@ -39,7 +43,7 @@ ament_target_dependencies(admittance_interfaces rclcpp std_srvs orocos_kdl senso
 # Install
 ################################################################################
 install(
-  DIRECTORY launch map param rviz
+  DIRECTORY launch map param rviz include
   DESTINATION share/${PROJECT_NAME}
 )
 
@@ -47,6 +51,7 @@ install(TARGETS
   admittance_interfaces
   DESTINATION lib/${PROJECT_NAME}
 )
+
 
 ################################################################################
 # Macro for ament package
