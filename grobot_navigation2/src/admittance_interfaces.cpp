@@ -79,8 +79,6 @@ public:
 
     void param_callback(const std_msgs::msg::Float64MultiArray::SharedPtr Param_Data)
     {
-
-
         M_adm.diagonal() <<  Param_Data -> data[0], Param_Data -> data[1], Param_Data -> data[2];
         D_adm.diagonal() <<  Param_Data -> data[3],  Param_Data -> data[4], Param_Data -> data[5];
         K.diagonal() << Param_Data -> data[6], Param_Data -> data[7], Param_Data -> data[8];

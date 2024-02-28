@@ -18,6 +18,6 @@ from launch.substitutions import ThisLaunchFileDir
 def generate_launch_description():
     return LaunchDescription([
         IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/omo_r1_state_publisher.launch.py'])
+            PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/grobot_state_publisher.launch.py'])
         )
     ])

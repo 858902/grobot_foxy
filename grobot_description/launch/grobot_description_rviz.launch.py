@@ -17,7 +17,7 @@ from launch.substitutions import ThisLaunchFileDir
 
 def generate_launch_description():
     rviz_config_dir = os.path.join(
-        get_package_share_directory('omo_r1_description'),
+        get_package_share_directory('grobot_description'),
         'rviz',
         'model.rviz')
 

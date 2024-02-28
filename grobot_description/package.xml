@@ -1,18 +1,24 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>grobot_description</name>
-  <version>0.0.1</version>
-  <description>
-    3D models of the Grobot for simulation and visualization
-  </description>
-  <license>Apache 2.0</license>
-  <url type="repository">https://github.com/omorobot/omo_r1-foxy</url>
-  <maintainer email="jungwoohyeon@gmail.com">Woohyeon Jung</maintainer>
-  <author email="bishopearson@gmail.com">Bishop Pearson</author>
-  <buildtool_depend>ament_cmake</buildtool_depend>
-  <depend>urdf</depend>
+<name>grobot_description</name>
+  <version>0.0.0</version>
+<description>The grobot_description package</description>
+  <maintainer email="todo@todo.com">author</maintainer>
+  <license>TODO: License declaration</license>
+
+  <depend>xacro</depend>
+  <depend>rviz2</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>joint_state_publisher</depend>
+  <depend>joint_state_publisher_gui</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
   <export>
-    <build_type>ament_cmake</build_type>
+    <build_type>ament_python</build_type>
   </export>
 </package>

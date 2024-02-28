@@ -1,0 +1,85 @@
+<?xml version="1.0" ?>
+<robot name="R1V2" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+<xacro:include filename="$(find grobot_description)/urdf/materials.xacro" />
+<xacro:include filename="$(find grobot_description)/urdf/R1V2.trans" />
+<xacro:include filename="$(find grobot_description)/urdf/R1V2.gazebo" />
+
+<link name="base_link">
+  <inertial>
+    <origin xyz="0.05138243521214412 0.0078069568685534855 0.13585488386600772" rpy="0 0 0"/>
+    <mass value="42.91649907737053"/>
+    <inertia ixx="1.351409" iyy="1.746641" izz="2.789993" ixy="0.00206" iyz="-0.000637" ixz="-0.035187"/>
+  </inertial>
+  <visual>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find grobot_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find grobot_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="right_wheel_1">
+  <inertial>
+    <origin xyz="-6.635167877216963e-06 -0.03788510222333019 2.6177456940168486e-06" rpy="0 0 0"/>
+    <mass value="1.308460957006261"/>
+    <inertia ixx="0.004145" iyy="0.007602" izz="0.004144" ixy="0.0" iyz="0.0" ixz="-0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.19013 0.260644 -0.100803" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find grobot_description)/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.19013 0.260644 -0.100803" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find grobot_description)/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<link name="left_wheel_1">
+  <inertial>
+    <origin xyz="6.35960602515806e-06 0.03788468935132683 2.6476887081960943e-06" rpy="0 0 0"/>
+    <mass value="1.3084599960030907"/>
+    <inertia ixx="0.004145" iyy="0.007602" izz="0.004144" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+  </inertial>
+  <visual>
+    <origin xyz="-0.190619 -0.2724 -0.100803" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find grobot_description)/meshes/left_wheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+    <material name="silver"/>
+  </visual>
+  <collision>
+    <origin xyz="-0.190619 -0.2724 -0.100803" rpy="0 0 0"/>
+    <geometry>
+      <mesh filename="file://$(find grobot_description)/meshes/left_wheel_1.stl" scale="0.001 0.001 0.001"/>
+    </geometry>
+  </collision>
+</link>
+
+<joint name="right_wheel_joint" type="continuous">
+  <origin xyz="0.19013 -0.260644 0.100803" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="right_wheel_1"/>
+  <axis xyz="0.0 -1.0 0.0"/>
+</joint>
+
+<joint name="left_wheel_joint" type="continuous">
+  <origin xyz="0.190619 0.2724 0.100803" rpy="0 0 0"/>
+  <parent link="base_link"/>
+  <child link="left_wheel_1"/>
+  <axis xyz="0.0 1.0 -0.0"/>
+</joint>
+
+</robot>
