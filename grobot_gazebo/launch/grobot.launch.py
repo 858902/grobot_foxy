@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Author: Bishop Pearson
-
+#이거 지금은 실행 x 
 import os
 
 from ament_index_python.packages import get_package_share_directory
