@@ -16,14 +16,14 @@
   <gravity>true</gravity>
 </gazebo>
 
-<gazebo reference="right_wheel_1">
+<gazebo reference="wheel_right_link">
   <material>${wheel_color}</material>
   <mu1>0.1</mu1>
   <mu2>0.1</mu2>
   <self_collide>true</self_collide>
 </gazebo>
 
-<gazebo reference="left_wheel_1">
+<gazebo reference="wheel_left_link">
   <material>${wheel_color}</material>
   <mu1>0.1</mu1>
   <mu2>0.1</mu2>

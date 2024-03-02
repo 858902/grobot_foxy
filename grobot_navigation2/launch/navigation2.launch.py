@@ -28,13 +28,13 @@ from launch_ros.actions import Node
 
 
 def generate_launch_description():
-    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     map_dir = LaunchConfiguration(
         'map',
         default=os.path.join(
             get_package_share_directory('grobot_navigation2'),
             'map',
-            'turtlebot3_world.yaml'))
+            'warehouse_map.yaml'))
 
     param_file_name = 'grobot.yaml'
     param_dir = LaunchConfiguration(
@@ -60,7 +60,7 @@ def generate_launch_description():
 
         DeclareLaunchArgument(
             'use_sim_time',
-            default_value='false',
+            default_value='true',
             description='Use simulation (Gazebo) clock if true'),
 
         IncludeLaunchDescription(
