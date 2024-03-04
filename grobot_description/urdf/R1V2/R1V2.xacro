@@ -25,6 +25,7 @@
     <mass value="42.91649907737053"/>
     <inertia ixx="1.351409" iyy="1.746641" izz="2.789993" ixy="0.00206" iyz="-0.000637" ixz="-0.035187"/>
   </inertial>
+
   <visual>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
@@ -32,36 +33,17 @@
     </geometry>
     <material name="silver"/>
   </visual>
+
   <collision>
     <origin xyz="0 0 0" rpy="0 0 0"/>
     <geometry>
       <mesh filename="file://$(find grobot_description)/meshes/base_link.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
+
 </link>
 
 <!-- RIGHT WHEEL -->
-
-<link name="wheel_right_link">
-  <inertial>
-    <origin xyz="-6.635167877216963e-06 -0.03788510222333019 2.6177456940168486e-06" rpy="0 0 0"/>
-    <mass value="1.308460957006261"/>
-    <inertia ixx="0.004145" iyy="0.007602" izz="0.004144" ixy="0.0" iyz="0.0" ixz="-0.0"/>
-  </inertial>
-  <visual>
-    <origin xyz="-0.19013 0.260644 -0.100803" rpy="0 0 0"/>
-    <geometry>
-      <mesh filename="file://$(find grobot_description)/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
-    </geometry>
-    <material name="silver"/>
-  </visual>
-  <collision>
-    <origin xyz="-0.19013 0.260644 -0.100803" rpy="0 0 0"/>
-    <geometry>
-      <mesh filename="file://$(find grobot_description)/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
-    </geometry>
-  </collision>
-</link>
 
 <joint name="wheel_right_joint" type="continuous">
   <origin xyz="0.19013 -0.260644 0.100803" rpy="0 0 0"/>
@@ -70,28 +52,32 @@
   <axis xyz="0.0 1.0 0.0"/>
 </joint>
 
-<!-- LEFT WHEEL -->
-
-<link name="wheel_left_link">
+<link name="wheel_right_link">
   <inertial>
-    <origin xyz="6.35960602515806e-06 0.03788468935132683 2.6476887081960943e-06" rpy="0 0 0"/>
-    <mass value="1.3084599960030907"/>
-    <inertia ixx="0.004145" iyy="0.007602" izz="0.004144" ixy="0.0" iyz="-0.0" ixz="0.0"/>
+    <origin xyz="-6.635167877216963e-06 -0.03788510222333019 2.6177456940168486e-06" rpy="0 0 0"/>
+    <mass value="1.308460957006261"/>
+    <inertia ixx="0.004145" iyy="0.007602" izz="0.004144" ixy="0.0" iyz="0.0" ixz="-0.0"/>
   </inertial>
+
   <visual>
-    <origin xyz="-0.190619 -0.2724 -0.100803" rpy="0 0 0"/>
+    <origin xyz="-0.19013 0.260644 -0.100803" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find grobot_description)/meshes/left_wheel_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find grobot_description)/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
     <material name="silver"/>
   </visual>
+
   <collision>
-    <origin xyz="-0.190619 -0.2724 -0.100803" rpy="0 0 0"/>
+    <origin xyz="-0.19013 0.260644 -0.100803" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find grobot_description)/meshes/left_wheel_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find grobot_description)/meshes/right_wheel_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
   </collision>
+
 </link>
+
+
+<!-- LEFT WHEEL -->
 
 <joint name="wheel_left_joint" type="continuous">
   <origin xyz="0.190619 0.2724 0.100803" rpy="0 0 0"/>
@@ -100,27 +86,32 @@
   <axis xyz="0.0 1.0 -0.0"/>
 </joint>
 
-<!-- LIDAR  -->
-
-<link name="base_scan">
+<link name="wheel_left_link">
   <inertial>
-    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
-    <mass value="0.114"/>
-    <inertia ixx="0.001" iyy="0.000000" izz="0.000000" ixy="0.001" iyz="0.000000" ixz="0.001"/>
+    <origin xyz="6.35960602515806e-06 0.03788468935132683 2.6476887081960943e-06" rpy="0 0 0"/>
+    <mass value="1.3084599960030907"/>
+    <inertia ixx="0.004145" iyy="0.007602" izz="0.004144" ixy="0.0" iyz="-0.0" ixz="0.0"/>
   </inertial>
-  <!-- <visual name="lidar_sensor_visual">
-    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+
+  <visual>
+    <origin xyz="-0.190619 -0.2724 -0.100803" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find grobot_description)/meshes/lidar_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find grobot_description)/meshes/left_wheel_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
+    <material name="silver"/>
   </visual>
-  <collision name="lidar_sensor_collision">
-    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+
+  <collision>
+    <origin xyz="-0.190619 -0.2724 -0.100803" rpy="0 0 0"/>
     <geometry>
-      <mesh filename="file://$(find grobot_description)/meshes/lidar_1.stl" scale="0.001 0.001 0.001"/>
+      <mesh filename="file://$(find grobot_description)/meshes/left_wheel_1.stl" scale="0.001 0.001 0.001"/>
     </geometry>
-  </collision> -->
+  </collision>
+
 </link>
+
+
+<!-- LIDAR  -->
 
 <joint name="lidar_joint" type="fixed">
   <origin xyz="0.0 0.0 0.4" rpy="0 0 3.14159"/>
@@ -128,6 +119,30 @@
   <child link="base_scan"/>
   <axis xyz="0.0 0.0 1.0"/>
 </joint>
+
+<link name="base_scan">
+  <inertial>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <mass value="0.114"/>
+    <inertia ixx="0.001" iyy="0.000000" izz="0.000000" ixy="0.001" iyz="0.000000" ixz="0.001"/>
+  </inertial>
+
+  <collision>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <geometry>
+      <cylinder length="0.0315" radius="0.055"/>
+    </geometry>
+  </collision>
+
+  <visual>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <geometry>
+      <cylinder length="0.0315" radius="0.055"/>
+    </geometry>
+  </visual>
+  
+</link>
+
 
 <gazebo reference="base_scan">
         <sensor name="laser" type="ray">
@@ -163,6 +178,7 @@
 </gazebo>
 
 <!-- IMU -->
+
 <joint name="imu_joint" type="fixed">
   <origin xyz="0.0 0.0 0.2" rpy="0 0 0"/>
   <parent link="base_link"/>
@@ -241,6 +257,7 @@
 </gazebo>
 
 <!-- CONTROLLER -->
+
 <gazebo>
   <plugin name="velocity_controller" filename="libgazebo_ros_diff_drive.so">
     <update_rate>30</update_rate>
@@ -269,6 +286,7 @@
 </gazebo>
 
 <!-- JOINT STATE -->
+
 <gazebo>
   <plugin name="grobot_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
     <ros>
