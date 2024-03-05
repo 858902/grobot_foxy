@@ -39,6 +39,9 @@ include_directories(${ament_INCLUDE_DIRS})
 add_executable(admittance_interfaces src/admittance_interfaces.cpp)  
 ament_target_dependencies(admittance_interfaces rclcpp std_srvs orocos_kdl sensor_msgs Eigen3 tf2 kdl_parser gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs)
 
+add_executable(waypoint_follower src/waypoint_follower.cpp)  
+ament_target_dependencies(waypoint_follower rclcpp std_srvs  sensor_msgs  tf2  gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs)
+
 ################################################################################
 # Install
 ################################################################################
@@ -49,6 +52,7 @@ install(
 
 install(TARGETS
   admittance_interfaces
+  waypoint_follower
   DESTINATION lib/${PROJECT_NAME}
 )
 
