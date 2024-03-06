@@ -155,7 +155,7 @@ public:
     
     else if (future_goal_handle.wait_for(std::chrono::seconds(0)) == std::future_status::timeout) 
     {
-      RCLCPP_ERROR(this->get_logger(), "Goal 타임아웃 ");
+      RCLCPP_ERROR(this->get_logger(), "Goal 대기중 ");
     } 
     
     else 
