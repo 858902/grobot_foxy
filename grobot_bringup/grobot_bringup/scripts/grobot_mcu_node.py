@@ -19,7 +19,7 @@ from grobot_interfaces.srv import Onoff
 from grobot_interfaces.srv import Calg
 
 from .calc.quaternion_from_euler import *
-from .grobot_handler import PacketHandler
+from .grobot_packet_handler import PacketHandler
 
 class OdomPose(object):
   x = 0.0
@@ -336,11 +336,11 @@ class GrobotNode(Node):
 
 def main(args=None):
   rclpy.init(args=args)
-  GrobotNode = GrobotNode()
-  rclpy.spin(GrobotNode)
+  grobotNode = GrobotNode()
+  rclpy.spin(grobotNode)
 
-  GrobotNode.ph.close_port() # 이거 미니에는 없음
-  GrobotNode.destroy_node() 
+  grobotNode.ph.close_port() # 이거 미니에는 없음
+  grobotNode.destroy_node() 
   rclpy.shutdown()
 
 if __name__ == '__main__':

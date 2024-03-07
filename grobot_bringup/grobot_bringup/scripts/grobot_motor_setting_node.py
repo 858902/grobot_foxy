@@ -46,11 +46,11 @@ class GrobotMotorSettingNode(Node):
 
 def main(args=None):
   rclpy.init(args=args)
-  GrobotMotorSettingNode = GrobotMotorSettingNode()
+  grobotMotorSettingNode = GrobotMotorSettingNode()
   try:
-    rclpy.spin(GrobotMotorSettingNode)
+    rclpy.spin(grobotMotorSettingNode)
   finally:
-    GrobotMotorSettingNode.destroy_node()
+    grobotMotorSettingNode.destroy_node()
     rclpy.shutdown()
 
 if __name__ == '__main__':
