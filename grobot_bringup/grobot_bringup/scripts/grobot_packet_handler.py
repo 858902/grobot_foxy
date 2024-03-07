@@ -6,6 +6,7 @@ from time import sleep
 
 class PacketHandler:
    def __init__(self, _port_name, _baud_rate):
+      # _port_name = "/dev/ttyUSB0" # temp
       self.port_name = _port_name
       self.baud_rate = _baud_rate
       self._ser = serial.Serial(self.port_name, self.baud_rate)

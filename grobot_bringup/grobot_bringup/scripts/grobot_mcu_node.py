@@ -19,7 +19,7 @@ from grobot_interfaces.srv import Onoff
 from grobot_interfaces.srv import Calg
 
 from .calc.quaternion_from_euler import *
-from .grobot_handler import PacketHandler
+from .grobot_packet_handler import PacketHandler
 
 class OdomPose(object):
   x = 0.0
@@ -172,7 +172,7 @@ class GrobotNode(Node):
     if self.use_gyro:
         self.calc_yaw.wheel_ang += orient_vel * dt
         self.odom_pose.theta = self.calc_yaw.calc_filter(vel_z*math.pi/180., dt)
-        self.get_logger().info('omo_r1 state : whl pos %1.2f, %1.2f, gyro : %1.2f, whl odom : %1.2f, robot theta : %1.2f' 
+        self.get_logger().info('grobot state : whl pos %1.2f, %1.2f, gyro : %1.2f, whl odom : %1.2f, robot theta : %1.2f' 
                     %(odo_l, odo_r, vel_z,
                     self.calc_yaw.wheel_ang*180/math.pi, 
                     self.d_odom_pose['theta']*180/math.pi ))
@@ -336,11 +336,11 @@ class GrobotNode(Node):
 
 def main(args=None):
   rclpy.init(args=args)
-  GrobotNode = GrobotNode()
-  rclpy.spin(GrobotNode)
+  grobotNode = GrobotNode()
+  rclpy.spin(grobotNode)
 
-  GrobotNode.ph.close_port() # 이거 미니에는 없음
-  GrobotNode.destroy_node() 
+  grobotNode.ph.close_port() # 이거 미니에는 없음
+  grobotNode.destroy_node() 
   rclpy.shutdown()
 
 if __name__ == '__main__':

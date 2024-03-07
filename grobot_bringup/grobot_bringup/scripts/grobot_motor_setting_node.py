@@ -12,7 +12,7 @@ class GrobotMotorSettingNode(Node):
     super().__init__('grobot_motor_setting')
 
     # Get parameter values
-    _port_name = self.get_parameter_or('/port/name', Parameter('/port/name', Parameter.Type.STRING, '/dev/ttyMCU')).get_parameter_value().string_value
+    _port_name = self.get_parameter_or('/port/name', Parameter('/port/name', Parameter.Type.STRING, '/dev/ttyUSB0')).get_parameter_value().string_value ## MCU -> USB0
     _port_baudrate = self.get_parameter_or('/port/baudrate', Parameter('/port/baudrate', Parameter.Type.INTEGER, 115200)).get_parameter_value().integer_value
 
     self.motor_gear_ratio = self.get_parameter_or('/motor/gear_ratio', Parameter('/motor/gear_ratio', Parameter.Type.INTEGER, 213)).get_parameter_value().integer_value
@@ -45,13 +45,18 @@ class GrobotMotorSettingNode(Node):
       self.packet.write_data('RPM', {'left': 12, 'right':12})
 
 def main(args=None):
-  rclpy.init(args=args)
-  GrobotMotorSettingNode = GrobotMotorSettingNode()
-  try:
-    rclpy.spin(GrobotMotorSettingNode)
-  finally:
-    GrobotMotorSettingNode.destroy_node()
-    rclpy.shutdown()
-
+  # rclpy.init(args=args) // 여기부터
+  # GrobotMotorSettingNode = GrobotMotorSettingNode()
+  # try:
+  #   rclpy.spin(GrobotMotorSettingNode)
+  # finally:
+  #   GrobotMotorSettingNode.destroy_node()
+  #   rclpy.shutdown() // 여기까지 진짜
+  rclpy.init(args=args) # 여기도 추가
+  grobotMotorSettingNode = GrobotMotorSettingNode()
+  rclpy.spin(grobotMotorSettingNode)
+  
+  grobotMotorSettingNode.destroy_node()
+  rclpy.shutdown() # 여기가 추가
 if __name__ == '__main__':
   main()

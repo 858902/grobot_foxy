@@ -2,7 +2,7 @@
 # Set minimum required version of cmake, project name and compile options
 ################################################################################
 cmake_minimum_required(VERSION 3.5)
-project(omo_r1_bringup)
+project(grobot_bringup)
 
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -17,7 +17,7 @@ endif()
 ################################################################################
 find_package(ament_cmake REQUIRED)
 find_package(builtin_interfaces REQUIRED)
-find_package(omo_r1_interfaces REQUIRED)
+find_package(grobot_interfaces REQUIRED)
 #find_package(rosidl_default_generators REQUIRED)
 
 ################################################################################

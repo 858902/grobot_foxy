@@ -1,7 +1,8 @@
 grobot_mcu_node:
   ros__parameters:
     port:
-      name: "/dev/ttyMCU"
+      # name: "/dev/ttyMCU" # 원래 버전임
+      name: "/dev/ttyUSB0"
       baudrate: 115200
 
     wheel:
