@@ -106,7 +106,7 @@ private:
         double total_length = 0.0;
 
         for (size_t i = 1; i < msg->poses.size(); ++i)
-        {
+        {                   
             double dx = msg->poses[i].pose.position.x - msg->poses[i-1].pose.position.x;
             double dy = msg->poses[i].pose.position.y - msg->poses[i-1].pose.position.y;
             double dz = msg->poses[i].pose.position.z - msg->poses[i-1].pose.position.z;
@@ -138,10 +138,12 @@ int main(int argc, char ** argv)
     auto node = std::make_shared<PathLengthCalculator>();
 
     // node->setInitialPose(); // 초기 위치 설정
-    
-    node->addGoal(8.0, -1.0, 0.0, "A"); 
-    node->addGoal(3.0, 3.0, 0.0, "B"); 
-    node->addGoal(0.0, -5.0, 0.0, "C"); 
+
+    node->addGoal(8.0, -1.0, 0.0,  "A"); 
+    node->addGoal(3.0, 3.0, 0.0,   "B"); 
+    node->addGoal(0.0, -5.0, 0.0,  "C"); 
+
+    node->addGoal(8.0, -7.0, 0.0,  "O"); 
 
     node->calculateFinalDistance(); // 마지막 웨이포인트에서 첫 번째 웨이포인트로의 거리 계산
 

@@ -15,27 +15,33 @@
 #include <vector>
 #include <unordered_map>
 
+#include <mutex>
+#include <chrono>
+#include <condition_variable>
+#include <atomic>
+
+std::mutex mutex_;
 class WaypointFollowerNode : public rclcpp::Node
 {
 public:
   WaypointFollowerNode()
       : Node("waypoint_follower_node")
   {
-
+    
     // Subscriber
-    // subscription_goal = this->create_subscription<geometry_msgs::msg::PoseStamped>(
-    //   "goal", 10, std::bind(&WaypointFollowerNode::goal_callback, this, std::placeholders::_1));
     subscription_waypoint = this->create_subscription<std_msgs::msg::String>(
-        "waypoint_list", 10,std::bind(&WaypointFollowerNode::waypoint_list_callback, this, std::placeholders::_1));
+        "waypoint_list", 10,std::bind(&WaypointFollowerNode::waypoint_list_callback, this, std::placeholders::_1)); // 들려야하는 Waypoint list 
 
-    // Publisher_
-    initial_pose_pub_ = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("initialpose", 10);
+    subscription_signal_ = this->create_subscription<std_msgs::msg::String>(
+        "start_signal", 10, std::bind(&WaypointFollowerNode::signal_callback, this, std::placeholders::_1));  //다음 Waypoint로 이동할지 여부 판단 (의사판단 노드로 부터 String 형태로 sub) 
+
+    
+    // Publisher
+    initial_pose_pub_ = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("initialpose", 10); //시작지점 
 
     // Action_Client_
-    // action_client_ = rclcpp_action::create_client<nav2_msgs::action::NavigateToPose>(
-    //     this, "/navigate_to_pose");
     action_client_ = rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(
-    this, "/FollowWaypoints");
+    this, "/FollowWaypoints"); //waypoint folllower action 
 
     
     // Set Initial Position 
@@ -69,118 +75,137 @@ public:
     waypoints_["C"].pose.orientation.w = 1.0;
 
 
-    waypoints_["O"].header.frame_id = "map";
-    waypoints_["O"].pose.position.x = 0.0;
-    waypoints_["O"].pose.position.y = 0.0;
-    waypoints_["O"].pose.orientation.w = 1.0;
+    // waypoints_["1"].header.frame_id = "map";
+    // waypoints_["1"].pose.position.x = 2.0;
+    // waypoints_["1"].pose.position.y = 0.0;
+    // waypoints_["1"].pose.orientation.w = 1.0;
 
 
   }
   
-  // 단일 Goal 보내는 용도 
-  // void goal_callback(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
-  // {
-  //   // Define the goal
-  //   auto goal_msg = nav2_msgs::action::NavigateToPose::Goal();
-  //   goal_msg.pose = *msg;
+    void waypoint_list_callback(const std_msgs::msg::String::SharedPtr msg)
+    {
+        std::istringstream iss(msg->data);
+        std::string s;
+        while (iss >> s)
+        {
+            waypoint_keys_.push_back(s);
+        }
+    }
 
-  //   // Send the goal
-  //   auto send_goal_options = rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SendGoalOptions();
-  //   auto future_goal_handle = action_client_->async_send_goal(goal_msg, send_goal_options);
+    void send_goal_to_current_waypoint()
+    {
+        if (current_waypoint_index_ >= waypoint_keys_.size())
+        {
+            RCLCPP_INFO(this->get_logger(), "All waypoints have been processed");
+            return;
+        }
 
-  //   // Wait for the result
-  //   if (rclcpp::spin_until_future_complete(this->get_node_base_interface(), future_goal_handle) 
-  //       != rclcpp::FutureReturnCode::SUCCESS)
-  //   {
-  //     RCLCPP_ERROR(this->get_logger(), "Send goal call failed :(");
-  //     return;
-  //   }
+        if (!signal_received_)
+        {
+            return; 
+        }
 
-  //   rclcpp_action::ClientGoalHandle<nav2_msgs::action::NavigateToPose>::SharedPtr goal_handle = future_goal_handle.get();
-  //   if (!goal_handle) {
-  //     RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
-  //     return;
-  //   }
-  // } 
+        std::string key = waypoint_keys_[current_waypoint_index_];
+        auto it = waypoints_.find(key);
+        if (it == waypoints_.end())
+        {
+            RCLCPP_ERROR(this->get_logger(), "Waypoint not found: %s", key.c_str());
+            return;
+        }
 
-  void waypoint_list_callback(const std_msgs::msg::String::SharedPtr msg)
+        std::vector<geometry_msgs::msg::PoseStamped> waypoints_to_send = {it->second};
+        send_goal(waypoints_to_send);
+
+        signal_received_ = false; // 변수 초기화 
+        current_waypoint_index_++; // 다음 waypoint로 업데이트 
+    }
+
+    void send_goal(const std::vector<geometry_msgs::msg::PoseStamped>& waypoints) 
+    {
+      // Navigation goal 정의 
+      auto goal_msg = nav2_msgs::action::FollowWaypoints::Goal();
+      goal_msg.poses = waypoints;
+
+      if (waypoints.empty())
+      {
+          RCLCPP_ERROR(this->get_logger(), "Waypoints array is empty");
+          return;
+      }
+
+      if (!action_client_->wait_for_action_server(std::chrono::seconds(5))) 
+      {
+        RCLCPP_ERROR(this->get_logger(), "Action server not available after waiting");
+        return;
+      }
+
+      // Send the goal
+      auto send_goal_options = rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SendGoalOptions();
+      // rclcpp::Rate r(50);
+      
+      for (const auto& waypoint : waypoints)
+      {   
+
+          // 각 waypoint에 대하여 목표를 설정하고 전송
+          goal_msg.poses.clear();
+          goal_msg.poses.push_back(waypoint);
+          auto future_goal_handle = action_client_->async_send_goal(goal_msg, send_goal_options);
+
+          RCLCPP_INFO(this->get_logger(), "Waypoint: %f, %f, %f", waypoint.pose.position.x, waypoint.pose.position.y, waypoint.pose.position.z);
+
+          RCLCPP_INFO(this->get_logger(), "signal_received: %s", signal_received_ ? "true" : "false");
+
+          //Debug용 로그
+          if (future_goal_handle.wait_for(std::chrono::seconds(10)) == std::future_status::ready) 
+          {
+            RCLCPP_INFO(this->get_logger(), "Waypoint Goal 전송완료 ");
+          } 
+          
+          else if (future_goal_handle.wait_for(std::chrono::seconds(0)) == std::future_status::timeout) 
+          {
+            RCLCPP_INFO(this->get_logger(), "Waypoint Goal 대기중 ");
+          } 
+          
+          else 
+          {
+            RCLCPP_INFO(this->get_logger(), "Waypoint 응답없음");
+          }
+
+      }
+
+    }
+
+  void signal_callback(const std_msgs::msg::String::SharedPtr msg)
   {
-    // Waypoint list 분류 (나중에 바꿀 수도 있음)
-    std::vector<geometry_msgs::msg::PoseStamped> waypoints;
-    std::istringstream iss(msg->data);
-    for (std::string s; iss >> s;)
-    {
-      auto it = waypoints_.find(s);
-      if (it != waypoints_.end())
-      {
-        waypoints.push_back(it->second);
+      if(msg->data == "ok") 
+      { 
+          signal_received_ = true;
+          send_goal_to_current_waypoint();
       }
-
-      else
-      {
-        RCLCPP_ERROR(this->get_logger(), "Unknown waypoint: %s", s.c_str());
-        return;
-      }
-    }
-    
-  
-    // Navigation goal 정의 
-    auto goal_msg = nav2_msgs::action::FollowWaypoints::Goal();
-    goal_msg.poses = waypoints;
-
-    if (waypoints.empty())
-    {
-        RCLCPP_ERROR(this->get_logger(), "Waypoints array is empty");
-        return;
-    }
-
-    for (const auto& waypoint : waypoints)
-    {
-        RCLCPP_INFO(this->get_logger(), "Waypoint: %f, %f, %f", waypoint.pose.position.x, waypoint.pose.position.y, waypoint.pose.position.z);
-    }
-
-    if (!action_client_->wait_for_action_server(std::chrono::seconds(5))) 
-    {
-      RCLCPP_ERROR(this->get_logger(), "Action server not available after waiting");
-      return;
-    }
-    // Send the goal
-    auto send_goal_options = rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SendGoalOptions();
-    auto future_goal_handle = action_client_->async_send_goal(goal_msg, send_goal_options);
-
-    if (future_goal_handle.wait_for(std::chrono::seconds(10)) == std::future_status::ready) 
-    {
-      RCLCPP_INFO(this->get_logger(), "Goal 전송완료 ");
-    } 
-    
-    else if (future_goal_handle.wait_for(std::chrono::seconds(0)) == std::future_status::timeout) 
-    {
-      RCLCPP_ERROR(this->get_logger(), "Goal 대기중 ");
-    } 
-    
-    else 
-    {
-      RCLCPP_ERROR(this->get_logger(), "대기중");
-    }
   }
 
+  
 private:
   
   // Subscriber
-  // rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr subscription_goal;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_waypoint;
-
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_signal_;
 
   //Publisher
   rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initial_pose_pub_;
 
+
   // Action Client
-  // rclcpp_action::Client<nav2_msgs::action::NavigateToPose>::SharedPtr action_client_;
   rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SharedPtr action_client_;
 
 
-   // Waypoints
+  // Waypoints
   std::unordered_map<std::string, geometry_msgs::msg::PoseStamped> waypoints_;
+
+  bool signal_received_ = false;
+  size_t current_waypoint_index_ = 0; // 현재 웨이포인트 인덱스
+  std::vector<std::string> waypoint_keys_;
+
 
 };
 
