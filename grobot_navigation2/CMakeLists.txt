@@ -50,10 +50,10 @@ ament_target_dependencies(waypoint_follower rclcpp std_srvs  sensor_msgs  tf2  g
 add_executable(waypoint_planning src/waypoint_planning.cpp)  
 ament_target_dependencies(waypoint_planning rclcpp std_srvs  sensor_msgs  tf2  gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs)
 
-add_executable(waypoint_dijkstra src/waypoint_dijkstra.cpp)  
-ament_target_dependencies(waypoint_dijkstra rclcpp std_srvs  sensor_msgs  tf2 std_msgs yaml-cpp ament_index_cpp)
+add_executable(waypoint_dynamic_programming src/waypoint_dynamic_programming.cpp)  
+ament_target_dependencies(waypoint_dynamic_programming rclcpp std_srvs  sensor_msgs  tf2 std_msgs yaml-cpp ament_index_cpp)
 
-target_link_libraries(waypoint_dijkstra
+target_link_libraries(waypoint_dynamic_programming
   ${rclcpp_LIBRARIES}
   yaml-cpp
 )
@@ -69,7 +69,7 @@ install(TARGETS
   admittance_interfaces
   waypoint_follower
   waypoint_planning
-  waypoint_dijkstra
+  waypoint_dynamic_programming
   DESTINATION lib/${PROJECT_NAME}
 )
 
