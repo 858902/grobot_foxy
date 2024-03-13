@@ -29,9 +29,14 @@ find_package(kdl_parser REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(Eigen3 REQUIRED)
 
+find_package(yaml-cpp REQUIRED)
+find_package(ament_index_cpp REQUIRED)
+
 ## EXPORTS
 include_directories(include)
 include_directories(${ament_INCLUDE_DIRS})
+
+
 
 ################################################################################
 # Build
@@ -45,6 +50,13 @@ ament_target_dependencies(waypoint_follower rclcpp std_srvs  sensor_msgs  tf2  g
 add_executable(waypoint_planning src/waypoint_planning.cpp)  
 ament_target_dependencies(waypoint_planning rclcpp std_srvs  sensor_msgs  tf2  gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs)
 
+add_executable(waypoint_dijkstra src/waypoint_dijkstra.cpp)  
+ament_target_dependencies(waypoint_dijkstra rclcpp std_srvs  sensor_msgs  tf2 std_msgs yaml-cpp ament_index_cpp)
+
+target_link_libraries(waypoint_dijkstra
+  ${rclcpp_LIBRARIES}
+  yaml-cpp
+)
 ################################################################################
 # Install
 ################################################################################
@@ -57,6 +69,7 @@ install(TARGETS
   admittance_interfaces
   waypoint_follower
   waypoint_planning
+  waypoint_dijkstra
   DESTINATION lib/${PROJECT_NAME}
 )
 
