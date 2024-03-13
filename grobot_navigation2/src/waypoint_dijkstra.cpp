@@ -44,10 +44,10 @@ public:
         waypoint_vec.push_back(s);
     }
 
-    // for (const auto& waypoint : waypoint_vec) {
-    //     RCLCPP_INFO(this->get_logger(), "Waypoint: %s", waypoint.c_str());
-    // }
-    // initialize_distance_matrix();
+    for (const auto& waypoint : waypoint_vec) {
+        RCLCPP_INFO(this->get_logger(), "Waypoint: %s", waypoint.c_str());
+    }
+    initialize_distance_matrix();
     // double answer = tsp(0, 1); // 시작점 0에서 시작, 비트마스크 1로 시작점 방문 표시
 
     // RCLCPP_INFO(this->get_logger(), "Minimum travel cost: %f", answer);
@@ -86,47 +86,59 @@ private:
     }
 
 
-    // void initialize_distance_matrix() {
-    //     distanceMatrix.assign(N, vector<double>(N, inf));
-    //     dp.assign(1 << N, vector<double>(N, inf));
+    void initialize_distance_matrix() 
+    {
+        distanceMatrix.assign(N, vector<double>(N, inf));
+        dp.assign(1 << N, vector<double>(N, inf));
 
-    //     for (auto& p : distance_map) {
-    //         // 'distance_' 부분을 제거
-    //         std::string keyWithoutPrefix = p.first.substr(std::string("distance_").length());
+        // 자기 자신으로 가는 경로의 가중치를 0으로 설정
+        for (int i = 0; i < N; ++i) 
+        {
+            distanceMatrix[i][i] = 0;
+        }
+
+        for (auto& p : distance_map) 
+        {
+            // yaml파일에서 가져온 문자열에서 'distance_' 부분을 제거
+            std::string keyWithoutPrefix = p.first.substr(std::string("distance_").length());
             
-    //         // 첫 번째 숫자를 start로, 나머지 숫자를 end로 설정
-    //         size_t i = 0;
-    //         while(i < keyWithoutPrefix.size() && !isdigit(keyWithoutPrefix[i])) i++;
-    //         size_t startIdx = i;
-    //         while(i < keyWithoutPrefix.size() && isdigit(keyWithoutPrefix[i])) i++;
-    //         std::string temp = keyWithoutPrefix.substr(startIdx, i - startIdx);
+            std::string start, end;
 
-    //         if (!temp.empty()) 
-    //         {
-    //             start = temp[0]; 
-    //             if (temp.size() > 1) 
-    //             {
-    //                 end = temp.substr(1);
-    //             }
-    //         }
+            // 첫 번째 숫자를 start로, 나머지 숫자를 end로 설정
+            size_t i = 0;
+            while(i < keyWithoutPrefix.size() && !isdigit(keyWithoutPrefix[i])) i++;
+            size_t startIdx = i;
+            while(i < keyWithoutPrefix.size() && isdigit(keyWithoutPrefix[i])) i++;
+            std::string temp = keyWithoutPrefix.substr(startIdx, i - startIdx);
 
-    //         std::cerr << "Start: " << start << ", End: " << end << '\n';
+            if (!temp.empty()) 
+            {
+                start = temp[0]; 
+                if (temp.size() > 1) 
+                {
+                    end = temp.substr(1);
+                }
+            }
 
-    //         int start_idx = std::stoi(start);
-    //         int end_idx = std::stoi(end);
-    //         distanceMatrix[start_idx][end_idx] = p.second;
-    //         for (int i = 0; i < distanceMatrix.size(); ++i) {
-    //             for (int j = 0; j < distanceMatrix[i].size(); ++j) {
-    //                 if (distanceMatrix[i][j] == inf) {
-    //                     cout << "inf ";
-    //                 } else {
-    //                     cout << distanceMatrix[i][j] << " ";
-    //                 }
-    //             }
-    //             cout << "\n";
-    //         }
-    //     }
-    // }
+            std::cerr << "Start: " << start << ", End: " << end << '\n';
+
+            int start_idx = std::stoi(start);
+            int end_idx = std::stoi(end);
+            distanceMatrix[start_idx][end_idx] = p.second;
+        }
+        
+        // // 행렬 출력용
+        // for (int i = 0; i < distanceMatrix.size(); ++i) {
+        //     for (int j = 0; j < distanceMatrix[i].size(); ++j) {
+        //         if (distanceMatrix[i][j] == inf) {
+        //             cout << "inf ";
+        //         } else {
+        //             cout << distanceMatrix[i][j] << " ";
+        //         }
+        //     }
+        //     cout << "\n";
+        // }
+    }
 
 
     // Tsp 문제 해결 
