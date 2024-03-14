@@ -54,7 +54,7 @@
     <visual>
       <origin xyz="0.097 0.276 0.19" rpy="3.14 0 -1.57"/>
       <geometry>
-        <mesh filename="package://aedbot_description/meshes/bases/aedbot_body.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://aedbot_description/meshes/bases/grobot_body.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="dark"/>
     </visual>
@@ -62,7 +62,7 @@
     <collision>
       <origin xyz="0.097 0.276 0.19" rpy="3.14 0 -1.57"/>
       <geometry>
-        <mesh filename="package://aedbot_description/meshes/bases/aedbot_body.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://grobot_description/meshes/bases/grobot_body.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -86,7 +86,7 @@
     <visual>
       <origin xyz="-0.1105 -0.06 0.1104" rpy="-1.57 0 0"/>
       <geometry>
-        <mesh filename="package://aedbot_description/meshes/wheels/aedbot_wheel.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://grobot_description/meshes/wheels/grobot_wheel.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="dark"/>
     </visual>
@@ -94,7 +94,7 @@
     <collision>
       <origin xyz="-0.1105 -0.06 0.1104" rpy="-1.57 0 0"/>
       <geometry>
-        <mesh filename="package://aedbot_description/meshes/wheels/aedbot_wheel.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://grobot_description/meshes/wheels/grobot_wheel.stl" scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
 
@@ -118,7 +118,7 @@
     <visual>
       <origin xyz="-0.110 0.06 -0.1103" rpy="1.57 0 0"/>
       <geometry>
-        <mesh filename="package://aedbot_description/meshes/wheels/aedbot_wheel.stl" scale="0.001 0.001 0.001"/>
+        <mesh filename="package://grobot_description/meshes/wheels/aedbot_wheel.stl" scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="dark"/>
     </visual>

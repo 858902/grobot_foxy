@@ -13,7 +13,7 @@ else
 fi
 
 echo ""
-echo "YD LiDAR (USB Serial) : /dev/ttyUSBx to /dev/ttyLiDAR :"
+echo "YD LiDAR (USB Serial) : /dev/ttyUSBx to /dev/ttyLIDAR :"
 if [ -f "/etc/udev/rules.d/97-grobot-ydlidar.rules" ]; then
     echo "97-grobot-ydlidar.rules file already exist."
 else 

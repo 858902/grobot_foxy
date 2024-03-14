@@ -45,6 +45,9 @@ ament_target_dependencies(waypoint_follower rclcpp std_srvs  sensor_msgs  tf2  g
 add_executable(waypoint_planning src/waypoint_planning.cpp)  
 ament_target_dependencies(waypoint_planning rclcpp std_srvs  sensor_msgs  tf2  gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs)
 
+# add_executable(mid_waypoint src/mid_waypoint.cpp)  
+# ament_target_dependencies(mid_waypoint rclcpp std_srvs  sensor_msgs  tf2  gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs)
+
 ################################################################################
 # Install
 ################################################################################
@@ -57,6 +60,7 @@ install(TARGETS
   admittance_interfaces
   waypoint_follower
   waypoint_planning
+  # mid_waypoint
   DESTINATION lib/${PROJECT_NAME}
 )
 
