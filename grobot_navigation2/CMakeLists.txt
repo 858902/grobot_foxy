@@ -45,7 +45,7 @@ add_executable(admittance_interfaces src/admittance_interfaces.cpp)
 ament_target_dependencies(admittance_interfaces rclcpp std_srvs orocos_kdl sensor_msgs Eigen3 tf2 kdl_parser gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs)
 
 add_executable(waypoint_follower src/waypoint_follower.cpp)  
-ament_target_dependencies(waypoint_follower rclcpp std_srvs  sensor_msgs  tf2  gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs)
+ament_target_dependencies(waypoint_follower rclcpp std_srvs  sensor_msgs  tf2  gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs ament_index_cpp yaml-cpp)
 
 add_executable(waypoint_planning src/waypoint_planning.cpp)  
 ament_target_dependencies(waypoint_planning rclcpp std_srvs  sensor_msgs  tf2  gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs)
@@ -54,6 +54,11 @@ add_executable(waypoint_dynamic_programming src/waypoint_dynamic_programming.cpp
 ament_target_dependencies(waypoint_dynamic_programming rclcpp std_srvs  sensor_msgs  tf2 std_msgs yaml-cpp ament_index_cpp)
 
 target_link_libraries(waypoint_dynamic_programming
+  ${rclcpp_LIBRARIES}
+  yaml-cpp
+)
+
+target_link_libraries(waypoint_follower
   ${rclcpp_LIBRARIES}
   yaml-cpp
 )

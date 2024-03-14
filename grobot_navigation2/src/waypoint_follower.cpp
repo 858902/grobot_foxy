@@ -2,10 +2,12 @@
 #include "geometry_msgs/msg/twist.hpp"
 #include "geometry_msgs/msg/pose_with_covariance_stamped.hpp"
 #include "rclcpp_action/rclcpp_action.hpp"
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include "nav2_msgs/action/navigate_to_pose.hpp"
 #include "nav2_msgs/action/follow_waypoints.hpp"
 
+#include <yaml-cpp/yaml.h>
 #include "std_msgs/msg/bool.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "std_srvs/srv/set_bool.hpp"
@@ -21,6 +23,8 @@
 #include <atomic>
 
 std::mutex mutex_;
+using namespace std;
+
 class WaypointFollowerNode : public rclcpp::Node
 {
 public:
@@ -35,7 +39,6 @@ public:
     subscription_signal_ = this->create_subscription<std_msgs::msg::String>(
         "start_signal", 10, std::bind(&WaypointFollowerNode::signal_callback, this, std::placeholders::_1));  //다음 Waypoint로 이동할지 여부 판단 (의사판단 노드로 부터 String 형태로 sub) 
 
-    
     // Publisher
     initial_pose_pub_ = this->create_publisher<geometry_msgs::msg::PoseWithCovarianceStamped>("initialpose", 10); //시작지점 
 
@@ -74,15 +77,36 @@ public:
     waypoints_["C"].pose.position.y = -5.0;
     waypoints_["C"].pose.orientation.w = 1.0;
 
-
-    // waypoints_["1"].header.frame_id = "map";
-    // waypoints_["1"].pose.position.x = 2.0;
-    // waypoints_["1"].pose.position.y = 0.0;
-    // waypoints_["1"].pose.orientation.w = 1.0;
-
+    load_yaml_();
 
   }
-  
+    void load_yaml_() 
+    {
+        std::string package_name = "grobot_navigation2";
+
+        std::string package_path = ament_index_cpp::get_package_share_directory(package_name);
+        std::string path = package_path + "/param/waypoint_warehouse.yaml";
+        YAML::Node yaml_file = YAML::LoadFile(path);
+
+        for(YAML::const_iterator it=yaml_file.begin(); it!=yaml_file.end(); ++it)
+        {
+            std::string waypoint_name = it->first.as<std::string>();
+            double x = it->second[0].as<double>();
+            double y = it->second[1].as<double>();
+            double yaw = it->second[2].as<double>();
+
+            std::string id = waypoint_name.substr(waypoint_name.find("_") + 1);
+
+            waypoints_[id].header.frame_id = "map";
+            waypoints_[id].pose.position.x = x;
+            waypoints_[id].pose.position.y = y;
+            waypoints_[id].pose.orientation.w = 1.0;
+
+            RCLCPP_INFO(this->get_logger(), "Waypoint loaded: %s, Position: (%f, %f), Orientation: %f", id.c_str(), x, y, yaw);
+
+        }
+    }
+
     void waypoint_list_callback(const std_msgs::msg::String::SharedPtr msg)
     {
         std::istringstream iss(msg->data);
