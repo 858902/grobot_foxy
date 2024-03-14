@@ -75,22 +75,42 @@ public:
         }
     }
 
+    // void calculateFinalDistance()
+    // {
+    //     if (waypoints_.size() > 1) {
+    //         const auto& first_pose = waypoints_.front().pose;
+    //         const auto& last_pose = waypoints_.back().pose;
+
+    //         double dx = last_pose.position.x - first_pose.position.x;
+    //         double dy = last_pose.position.y - first_pose.position.y;
+    //         double dz = last_pose.position.z - first_pose.position.z;
+    //         double distance = std::sqrt(dx * dx + dy * dy + dz * dz);
+
+    //         RCLCPP_INFO(this->get_logger(), "Distance from %s to %s: %.2f meters",
+    //                     waypoints_.back().header.frame_id.c_str(), waypoints_.front().header.frame_id.c_str(), distance);
+    //     }
+    // }
+
     void calculateFinalDistance()
     {
         if (waypoints_.size() > 1) {
-            const auto& first_pose = waypoints_.front().pose;
-            const auto& last_pose = waypoints_.back().pose;
+            for (size_t i = 0; i < waypoints_.size() - 1; ++i) {
+                const auto& start_pose = waypoints_[i].pose;
+                for (size_t j = i + 1; j < waypoints_.size(); ++j) {
+                    const auto& end_pose = waypoints_[j].pose;
 
-            double dx = last_pose.position.x - first_pose.position.x;
-            double dy = last_pose.position.y - first_pose.position.y;
-            double dz = last_pose.position.z - first_pose.position.z;
-            double distance = std::sqrt(dx * dx + dy * dy + dz * dz);
+                    double dx = end_pose.position.x - start_pose.position.x;
+                    double dy = end_pose.position.y - start_pose.position.y;
+                    double dz = end_pose.position.z - start_pose.position.z;
+                    double distance = std::sqrt(dx * dx + dy * dy + dz * dz);
 
-            RCLCPP_INFO(this->get_logger(), "Distance from %s to %s: %.2f meters",
-                        waypoints_.back().header.frame_id.c_str(), waypoints_.front().header.frame_id.c_str(), distance);
+                    RCLCPP_INFO(this->get_logger(), "Distance from %s to %s: %.2f meters",
+                                waypoints_[i].header.frame_id.c_str(), waypoints_[j].header.frame_id.c_str(), distance);
+                }
+            }
         }
     }
-
+    
 private:
     void computePath(const geometry_msgs::msg::PoseStamped & goal_pose, const std::string & goal_name)
     {
@@ -106,7 +126,7 @@ private:
         double total_length = 0.0;
 
         for (size_t i = 1; i < msg->poses.size(); ++i)
-        {
+        {                   
             double dx = msg->poses[i].pose.position.x - msg->poses[i-1].pose.position.x;
             double dy = msg->poses[i].pose.position.y - msg->poses[i-1].pose.position.y;
             double dz = msg->poses[i].pose.position.z - msg->poses[i-1].pose.position.z;
@@ -138,10 +158,18 @@ int main(int argc, char ** argv)
     auto node = std::make_shared<PathLengthCalculator>();
 
     // node->setInitialPose(); // 초기 위치 설정
-    
-    node->addGoal(8.0, -1.0, 0.0, "A"); 
-    node->addGoal(3.0, 3.0, 0.0, "B"); 
-    node->addGoal(0.0, -5.0, 0.0, "C"); 
+    node->addGoal(0.0, 0.0, 0.0,  "0");
+    node->addGoal(8.0, 8.0, 0.0,  "1");
+    node->addGoal(8.0, 5.0, 0.0,  "2"); 
+    node->addGoal(8.0, 2.0, 0.0,  "3"); 
+    node->addGoal(8.0, -1.0, 0.0,  "4"); 
+    node->addGoal(-2.0, 8.0, 0.0,  "5"); 
+    node->addGoal(-2.0, 5.0, 0.0,  "6"); 
+    node->addGoal(-2.0, 2.0, 0.0,  "7"); 
+    node->addGoal(-2.0, -9.0, 0.0,  "8");
+    node->addGoal(4.0, -5.0, 0.0,  "9");
+    node->addGoal(8.0, -7.0, 0.0,  "10"); 
+
 
     node->calculateFinalDistance(); // 마지막 웨이포인트에서 첫 번째 웨이포인트로의 거리 계산
 
