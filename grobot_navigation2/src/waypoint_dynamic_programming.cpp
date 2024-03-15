@@ -37,6 +37,9 @@ public:
     subscription_waypoint_ = this->create_subscription<std_msgs::msg::String>(
         "waypoint_list_raw", 10,std::bind(&WaypointDynamicProgrammingNode::list_callback, this, std::placeholders::_1)); // 들려야하는 Waypoint list 
 
+    // Publisher
+    waypoint_list_pub_ = this->create_publisher<std_msgs::msg::String>("waypoint_list", 10);
+
     load_yaml();
 
 
@@ -70,7 +73,11 @@ private:
     // Subscriber
     rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_waypoint_;
 
+    //Publisher
+    rclcpp::Publisher<std_msgs::msg::String>::SharedPtr waypoint_list_pub_;
+
     std::vector<std::string> waypoint_vec; // 경유지를 저장할 벡터
+    std::vector<std::string> optimal_waypoint_vec; // 경유지를 저장할 벡터
     std::vector<int> waypoint_indices; //매핑용
 
     const int N = 11;
@@ -218,8 +225,25 @@ private:
         for(int i : result.path) 
         {
             cout << i << " ";
+            optimal_waypoint_vec.push_back(std::to_string(i));
         }
         cout << endl;
+        
+        std::string waypoints_str;
+        for(const auto& waypoint : optimal_waypoint_vec) 
+        {
+            waypoints_str += waypoint + " "; // 각 경유지 번호 뒤에 공백 추가
+        }
+
+        if (!waypoints_str.empty()) 
+        {
+            waypoints_str.pop_back();
+        }
+
+        std_msgs::msg::String msg;
+        msg.data = waypoints_str;
+
+        waypoint_list_pub_->publish(msg);
 
         return result.cost;
     }

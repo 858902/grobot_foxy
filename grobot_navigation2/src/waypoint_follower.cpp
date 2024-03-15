@@ -218,7 +218,6 @@ private:
   //Publisher
   rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initial_pose_pub_;
 
-
   // Action Client
   rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SharedPtr action_client_;
 

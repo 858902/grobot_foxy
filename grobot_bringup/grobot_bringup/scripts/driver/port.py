@@ -5,9 +5,9 @@
 import serial
 import io
 from time import sleep
-
+#tty 수정 
 class Port:
-  def __init__(self, port_name='/dev/ttyTHS1', baudrate=115200):
+  def __init__(self, port_name='/dev/ttyMotor', baudrate=115200):
     self.set_port_name(port_name)
     self.set_baudrate(baudrate)
 
