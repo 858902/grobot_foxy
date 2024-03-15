@@ -13,9 +13,9 @@ from launch.substitutions import LaunchConfiguration
 from launch.substitutions import ThisLaunchFileDir
 from launch_ros.actions import Node
 
-
+#ttyt 수정 
 def generate_launch_description():
-    usb_port = LaunchConfiguration('usb_port', default='/dev/ttyACM0')
+    usb_port = LaunchConfiguration('usb_port', default='/dev/ttyMotor')
 
     tb3_param_dir = LaunchConfiguration(
         'tb3_param_dir',
