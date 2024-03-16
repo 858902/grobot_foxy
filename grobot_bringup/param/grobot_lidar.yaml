@@ -4,6 +4,7 @@ LIDAR1 :
       port: /dev/ttyLiDAR # 원래
       # port: /dev/ttyUSB1
       frame_id: base_scan
+      topic: scan
       ignore_array: ""
       baudrate: 230400 # 128000 -> 230400
       lidar_type: 1
@@ -29,6 +30,7 @@ LIDAR2 :
     ros__parameters:
       port: /dev/ttyLiDAR2
       frame_id: base_scan2
+      topic: scan
       ignore_array: ""
       baudrate: 230400
       lidar_type: 1
