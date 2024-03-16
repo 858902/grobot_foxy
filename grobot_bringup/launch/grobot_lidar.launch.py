@@ -32,20 +32,31 @@ def generate_launch_description():
       get_package_share_directory('grobot_bringup'),
       'param',
       'grobot_lidar.yaml'))
+  
+  driver_node1 = LifecycleNode(package='ydlidar_ros2_driver',
+                              executable='ydlidar_ros2_driver_node',
+                              name='ydlidar_ros2_driver_node',
+                              output='screen',
+                              emulate_tty=True,
+                              parameters=[grobot_lidar_parameter],
+                              namespace='LIDAR1',
+                              )
+
+  driver_node2 = LifecycleNode(package='ydlidar_ros2_driver',
+                            executable='ydlidar_ros2_driver_node',
+                            name='ydlidar_ros2_driver_node',
+                            output='screen',
+                            emulate_tty=True,
+                            parameters=[grobot_lidar_parameter],
+                            namespace='LIDAR2',
+                            )
+
 
   return LaunchDescription([
     DeclareLaunchArgument(
       'grobot_lidar_parameter',
       default_value=grobot_lidar_parameter
     ),
-        
-    LifecycleNode(
-      package='ydlidar_ros2_driver',
-      executable='ydlidar_ros2_driver_node',
-      name='ydlidar_ros2_driver_node',
-      output='screen',
-      emulate_tty=True,
-      parameters=[grobot_lidar_parameter],
-      namespace='/',
-    )
+    driver_node1,
+    driver_node2    
   ])
