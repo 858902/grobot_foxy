@@ -1,9 +1,8 @@
 LIDAR1 : 
   ydlidar_ros2_driver_node:
     ros__parameters:
-      port: /dev/ttyLiDAR # 원래
-      # port: /dev/ttyUSB1
-      frame_id: base_scan
+      port: /dev/ttyLiDAR #RIGHT
+      frame_id: base_scan 
       topic: scan
       ignore_array: ""
       baudrate: 230400 # 128000 -> 230400
@@ -28,7 +27,7 @@ LIDAR1 :
 LIDAR2 : 
   ydlidar_ros2_driver_node:
     ros__parameters:
-      port: /dev/ttyLiDAR2
+      port: /dev/ttyLiDAR2 #LEFT
       frame_id: base_scan2
       topic: scan
       ignore_array: ""
