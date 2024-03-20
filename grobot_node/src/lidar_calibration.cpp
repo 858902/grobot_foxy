@@ -75,7 +75,7 @@ public:
     
   void publish_filtered_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg, double angle_min_deg, double angle_max_deg, rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr pub) 
   {
-    auto filtered_scan = *msg;
+    auto filtered_scan = *msg; // 복사 생성
     filtered_scan.ranges.clear();
     filtered_scan.ranges.resize(msg->ranges.size(), std::numeric_limits<float>::infinity());
 
