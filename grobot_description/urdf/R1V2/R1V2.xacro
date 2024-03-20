@@ -111,10 +111,10 @@
 </link>
 
 
-<!-- LIDAR  -->
+<!-- LIDAR RIGHT-->
 
 <joint name="lidar_joint" type="fixed">
-  <origin xyz="0.0 0.0 0.4" rpy="0 0 3.14159"/>
+  <origin xyz="0.27 -0.27 0.4" rpy="0 0 3.14159"/>
   <parent link="base_link"/>
   <child link="base_scan"/>
   <axis xyz="0.0 0.0 1.0"/>
@@ -143,6 +143,36 @@
   
 </link>
 
+<!-- LIDAR LEFT-->
+
+<joint name="lidar_joint2" type="fixed">
+  <origin xyz="0.27 0.27 0.45" rpy="0 0 3.14159"/>
+  <parent link="base_link"/>
+  <child link="base_scan2"/>
+  <axis xyz="0.0 0.0 1.0"/>
+</joint>
+
+<link name="base_scan2">
+  <inertial>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <mass value="0.114"/>
+    <inertia ixx="0.001" iyy="0.000000" izz="0.000000" ixy="0.001" iyz="0.000000" ixz="0.001"/>
+  </inertial>
+
+  <collision>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <geometry>
+      <cylinder length="0.0315" radius="0.055"/>
+    </geometry>
+  </collision>
+
+  <visual>
+    <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+    <geometry>
+      <cylinder length="0.0315" radius="0.055"/>
+    </geometry>
+  </visual>
+</link>
 
 <gazebo reference="base_scan">
         <sensor name="laser" type="ray">
@@ -153,8 +183,8 @@
                 <scan>
                     <horizontal>
                         <samples>360</samples>
-                        <min_angle>-3.14</min_angle>
-                        <max_angle>3.14</max_angle>
+                        <min_angle>0.0</min_angle>
+                        <max_angle>4.71</max_angle>
                     </horizontal>
                 </scan>
                 <range>
@@ -173,6 +203,39 @@
                 </ros>
                 <output_type>sensor_msgs/LaserScan</output_type>
                 <frame_name>base_scan</frame_name>
+            </plugin>
+        </sensor>
+</gazebo>
+
+<gazebo reference="base_scan2">
+        <sensor name="laser2" type="ray">
+            <pose> 0 0 0 0 0 0 </pose>
+            <visualize>true</visualize>
+            <update_rate>10</update_rate>
+            <ray>
+                <scan>
+                    <horizontal>
+                        <samples>360</samples>
+                        <min_angle>1.57</min_angle>
+                        <max_angle>6.28</max_angle>
+                    </horizontal>
+                </scan>
+                <range>
+                    <min>0.1</min>
+                    <max>16</max>
+                </range>
+                <noise>
+                  <type>gaussian</type>
+                  <mean>0.0</mean>
+                  <stddev>0.01</stddev>
+                </noise>
+            </ray>
+            <plugin name="scan2" filename="libgazebo_ros_ray_sensor.so">
+                <ros>
+                    <argument>~/out:=scan</argument>
+                </ros>
+                <output_type>sensor_msgs/LaserScan</output_type>
+                <frame_name>base_scan2</frame_name>
             </plugin>
         </sensor>
 </gazebo>
