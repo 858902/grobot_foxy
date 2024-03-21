@@ -65,6 +65,8 @@ public:
         m.getRPY(roll, pitch, yaw);
         RobotPosition[2] = yaw;
 
+        // std::cout << "yaw: " <<RobotPosition[2] << std::endl;
+
         // Get \dot{r} from the Odometry message
         RobotVelocity[0] = msg->twist.twist.linear.x;
         RobotVelocity[1] = msg->twist.twist.angular.z;
@@ -115,7 +117,7 @@ public:
             
 
             KDL::JntArray r(3);
-            for (int i = 0; i < joint_size; i++) {
+            for (int i = 0; i < 3; i++) {
                 r(i) = RobotPosition[i];
             }
             r_vec = r.data;

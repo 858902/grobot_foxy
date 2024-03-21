@@ -126,7 +126,14 @@ class GrobotNode(Node):
     self.odom_pose.pre_timestamp = self.get_clock().now()
     self.odom_vel = OdomVel()
     self.joint = Joint()
-  
+
+    ############################### son 추가
+    self.vel_z = 0.0
+    self.roll_imu =0.0
+    self.pitch_imu =0.0
+    self.yaw_imu =0.0
+    ############################### son 추가
+
     # Services
     self.srvHeadlight = self.create_service(Onoff, 'set_headlight', self.cbSrv_headlight)
     self.srvSetColor = self.create_service(Color, 'set_rgbled', self.cbSrv_setColor)
@@ -135,6 +142,7 @@ class GrobotNode(Node):
 
     # Set subscriber
     self.subCmdVelMsg = self.create_subscription(Twist, 'cmd_vel', self.cbCmdVelMsg, 10)
+    self.subscription_imu = self.create_subscription(Imu, 'imu/data', self.cbIMU, 10)
     
     # Set publisher
     self.pub_JointStates = self.create_publisher(JointState, 'joint_states', 10)
@@ -263,14 +271,14 @@ class GrobotNode(Node):
     odo_r = self.ph._wodom[1]
     trans_vel = self.ph._vel[0]
     orient_vel = self.ph._vel[1]
-    vel_z = self.ph._gyro[2]
-    roll_imu = self.ph._imu[0]
-    pitch_imu = self.ph._imu[1]
-    yaw_imu = self.ph._imu[2]
+    # vel_z = self.ph._gyro[2]
+    # roll_imu = self.ph._imu[0]
+    # pitch_imu = self.ph._imu[1]
+    # yaw_imu = self.ph._imu[2]
 
-    self.update_odometry(odo_l, odo_r, trans_vel, orient_vel, vel_z)
+    self.update_odometry(odo_l, odo_r, trans_vel, orient_vel, self.vel_z)
     self.updateJointStates(odo_l, odo_r, trans_vel, orient_vel)
-    self.updatePoseStates(roll_imu, pitch_imu, yaw_imu)
+    self.updatePoseStates(self.roll_imu, self.pitch_imu, self.yaw_imu)
 
   def cbCmdVelMsg(self, cmd_vel_msg):
     lin_vel_x = cmd_vel_msg.linear.x
@@ -334,6 +342,15 @@ class GrobotNode(Node):
     self.ph.write_port(command)
     return CalgResponse()
 
+  ############################### son 추가
+  def cbIMU(self, msg):
+    self.roll_imu = msg.orientation.x
+    self.pitch_imu = msg.orientation.y
+    self.yaw_imu = msg.orientation.z
+    self.vel_z = msg.angular_velocity.z 
+    # self.updatePoseStates(roll_imu, pitch_imu, yaw_imu)
+  ############################### son 추가
+  
 def main(args=None):
   rclpy.init(args=args)
   grobotNode = GrobotNode()

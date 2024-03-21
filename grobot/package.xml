@@ -15,7 +15,7 @@
   <exec_depend>grobot_cartographer</exec_depend>
   <exec_depend>grobot_description</exec_depend>
   <exec_depend>grobot_navigation2</exec_depend>
-  <!-- <exec_depend>grobot_node</exec_depend> -->
+  <exec_depend>grobot_node</exec_depend>
   <exec_depend>grobot_teleop</exec_depend>
   <export>
     <build_type>ament_cmake</build_type>
