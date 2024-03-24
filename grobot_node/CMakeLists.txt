@@ -37,7 +37,6 @@ find_package(laser_geometry REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 find_package(yaml-cpp REQUIRED)
-find_package(PCL REQUIRED)
 
 find_package(ament_index_cpp REQUIRED)
 
@@ -51,7 +50,7 @@ include_directories(${ament_INCLUDE_DIRS})
 # Build
 ################################################################################
 add_executable(lidar_calibration src/lidar_calibration.cpp)  
-ament_target_dependencies(lidar_calibration rclcpp std_srvs  sensor_msgs  tf2 tf2_ros tf2_sensor_msgs gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs ament_index_cpp yaml-cpp PCL)
+ament_target_dependencies(lidar_calibration rclcpp std_srvs  sensor_msgs  tf2 tf2_ros tf2_sensor_msgs gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs ament_index_cpp yaml-cpp)
 
 
 ################################################################################
