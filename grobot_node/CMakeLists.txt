@@ -14,7 +14,6 @@ find_package(nav2_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(std_srvs REQUIRED) 
-find_package(tf2_geometry_msgs REQUIRED)
 
 find_package(rclcpp_lifecycle REQUIRED)
 find_package(robot_state_publisher REQUIRED)
@@ -26,10 +25,20 @@ find_package(ament_index_cpp REQUIRED)
 find_package(gazebo_msgs REQUIRED)
 find_package(orocos_kdl REQUIRED)
 find_package(kdl_parser REQUIRED)
+
 find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(tf2_sensor_msgs REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
+
+find_package(laser_geometry REQUIRED)
+
+
 find_package(Eigen3 REQUIRED)
 
 find_package(yaml-cpp REQUIRED)
+find_package(PCL REQUIRED)
+
 find_package(ament_index_cpp REQUIRED)
 
 ## EXPORTS
@@ -42,7 +51,7 @@ include_directories(${ament_INCLUDE_DIRS})
 # Build
 ################################################################################
 add_executable(lidar_calibration src/lidar_calibration.cpp)  
-ament_target_dependencies(lidar_calibration rclcpp std_srvs  sensor_msgs  tf2  gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs ament_index_cpp yaml-cpp)
+ament_target_dependencies(lidar_calibration rclcpp std_srvs  sensor_msgs  tf2 tf2_ros tf2_sensor_msgs gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs ament_index_cpp yaml-cpp PCL)
 
 
 ################################################################################
