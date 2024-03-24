@@ -57,7 +57,7 @@ ament_target_dependencies(lidar_calibration rclcpp std_srvs  sensor_msgs  tf2 tf
 # Install
 ################################################################################
 install(
-  DIRECTORY launch include
+  DIRECTORY include
   DESTINATION share/${PROJECT_NAME}
 )
 
