@@ -11,20 +11,21 @@ public:
   LidarCalibrationNode()
       : Node("lidar_calibration_node")
   {
-    
+    auto default_qos = rclcpp::SensorDataQoS(); 
+
     // Subscriber
     subscription_lidar_right =  this->create_subscription<sensor_msgs::msg::LaserScan>(
-        "LIDAR1/scan", 10, std::bind(&LidarCalibrationNode::scan_callback_right, this, std::placeholders::_1));
+        "LIDAR1/scan", default_qos, std::bind(&LidarCalibrationNode::scan_callback_right, this, std::placeholders::_1));
 
     subscription_lidar_left =  this->create_subscription<sensor_msgs::msg::LaserScan>(
-        "LIDAR2/scan", 10, std::bind(&LidarCalibrationNode::scan_callback_left, this, std::placeholders::_1));
+        "LIDAR2/scan", default_qos, std::bind(&LidarCalibrationNode::scan_callback_left, this, std::placeholders::_1));
     
     //Publisher
-    scan_pub = this->create_publisher<sensor_msgs::msg::LaserScan>("scan", 10);
-    scan_pub1 = this->create_publisher<sensor_msgs::msg::LaserScan>("scan1", 10);
-    scan_pub2 = this->create_publisher<sensor_msgs::msg::LaserScan>("scan2", 10);
-    scan_pub3 = this->create_publisher<sensor_msgs::msg::LaserScan>("scan3", 10);
-    scan_pub4 = this->create_publisher<sensor_msgs::msg::LaserScan>("scan4", 10);
+    scan_pub = this->create_publisher<sensor_msgs::msg::LaserScan>("scan", rclcpp::SystemDefaultsQoS());
+    // scan_pub1 = this->create_publisher<sensor_msgs::msg::LaserScan>("scan1", 10);
+    // scan_pub2 = this->create_publisher<sensor_msgs::msg::LaserScan>("scan2", 10);
+    // scan_pub3 = this->create_publisher<sensor_msgs::msg::LaserScan>("scan3", 10);
+    // scan_pub4 = this->create_publisher<sensor_msgs::msg::LaserScan>("scan4", 10);
 
 
     tf2_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
@@ -35,10 +36,10 @@ public:
 
   void scan_callback_right(const sensor_msgs::msg::LaserScan::SharedPtr msg)
   {
-
     laser1_ = msg;
     if(laser2_)
-    {
+    { 
+    //   RCLCPP_INFO(this->get_logger(), "22222222222");
       update_pointcloud();
     }
   }
@@ -252,10 +253,10 @@ private:
 
     //Publisher
     rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub;
-    rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub1;
-    rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub2;
-    rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub3;
-    rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub4;
+    // rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub1;
+    // rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub2;
+    // rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub3;
+    // rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr scan_pub4;
 
     std::unique_ptr<tf2_ros::Buffer> tf2_;
     std::unique_ptr<tf2_ros::TransformListener> tf2_listener_;
@@ -286,8 +287,22 @@ private:
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<LidarCalibrationNode>());
+
+  auto node = std::make_shared<LidarCalibrationNode>();
+  rclcpp::executors::MultiThreadedExecutor executor;
+  executor.add_node(node);
+  executor.spin(); // 멀티스레드 실행기를 사용하여 spin합니다.
+
   rclcpp::shutdown();
   return 0;
 }
+
+
+// int main(int argc, char **argv)
+// {
+//   rclcpp::init(argc, argv);
+//   rclcpp::spin(std::make_shared<LidarCalibrationNode>());
+//   rclcpp::shutdown();
+//   return 0;
+// }
 
