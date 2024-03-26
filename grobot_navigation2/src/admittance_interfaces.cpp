@@ -12,20 +12,21 @@ public:
     {   
         //Subscribers
         subscription_ = this->create_subscription<sensor_msgs::msg::JointState>(
-            "/joint_states", 100, std::bind(&AdmittanceInterface::joint_states_callback, this, std::placeholders::_1));
+            "/joint_states", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::joint_states_callback, this, std::placeholders::_1));
 
         subscription_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-            "/odom", 10, std::bind(&AdmittanceInterface::callback_odom, this, std::placeholders::_1));
+            "/odom", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::callback_odom, this, std::placeholders::_1));
 
         subscription_external_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
-            "/command_external", 10, std::bind(&AdmittanceInterface::callback_external, this, std::placeholders::_1));
+            "/command_external", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::callback_external, this, std::placeholders::_1));
         
         subscription_param_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
-            "/param_sub", 100, std::bind(&AdmittanceInterface::param_callback, this, std::placeholders::_1));
+            "/param_sub", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::param_callback, this, std::placeholders::_1));
 
         // Publisher 
-        cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
-
+        cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", rclcpp::SystemDefaultsQoS());
+        disturbance_ref_pub = this->create_publisher<std_msgs::msg::Float64MultiArray>("disturbance_ref",  rclcpp::SystemDefaultsQoS());
+        
         //가상의 Mass(M_,M_ori_), Damping(D_), Stiffness(K_)
         double M_ = 1;
         double M_ori_ = 0.1;
@@ -77,6 +78,11 @@ public:
         tau_external[0] = msg -> data[0];
         tau_external[1] = msg -> data[1];
         tau_external[2] = msg -> data[2];
+        
+        //pub reference disturbance (plot 분석용)
+        std_msgs::msg::Float64MultiArray msg_;
+        msg_.data = {tau_external[0], tau_external[1], tau_external[2]};
+        disturbance_ref_pub->publish(msg_);
     }
 
     void param_callback(const std_msgs::msg::Float64MultiArray::SharedPtr Param_Data)
@@ -219,6 +225,7 @@ private:
     
     //Pubsliher
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub;
+    rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr disturbance_ref_pub;
     
     
 

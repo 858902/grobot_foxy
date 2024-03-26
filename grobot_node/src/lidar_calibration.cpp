@@ -51,10 +51,11 @@ public:
     laser2_ = msg;
 
   }
-    
+  
+  //라이다범위 나누는거 확인용 (사용x)
   void publish_filtered_scan(const sensor_msgs::msg::LaserScan::SharedPtr msg, double angle_min_deg, double angle_max_deg, rclcpp::Publisher<sensor_msgs::msg::LaserScan>::SharedPtr pub) 
   {
-    auto filtered_scan = *msg; // 복사 생성
+    auto filtered_scan = *msg; 
     filtered_scan.ranges.clear();
     filtered_scan.ranges.resize(msg->ranges.size(), std::numeric_limits<float>::infinity());
 
@@ -98,15 +99,20 @@ public:
             
         float laser_angle = i;
 
+        //LIDAR1 & LIDAR2프레임 기준으로 pointcloud의 x,y값 구하기
         float temp_x = laser1_->ranges[count] * std::cos(laser_angle) ;
         float temp_y = laser1_->ranges[count] * std::sin(laser_angle) ;
+
+        // Merged LIDAR 프레임 기준으로 pointcloud들을 x,y값으로 구하기 
         point[0] = temp_x * std::cos(sensor1_yaw) - temp_y * std::sin(sensor1_yaw); 
         point[0] += trans1_.transform.translation.x + laser1XOff_;
         point[1] = temp_x * std::sin(sensor1_yaw) + temp_y * std::cos(sensor1_yaw);
         point[1] += trans1_.transform.translation.y + laser1YOff_;
         count++;
+
         // std::cout << "Point " << count << ": (" << point[0] << ", " << point[1] << ")" << std::endl;
-    
+        
+        // 이때 x,y값이 로봇의 내부라면 무시 
         if (point[0] < robotFrontEnd_ && point[0] > -robotRearEnd_ && point[1] < robotLeftEnd_ && point[1] > -robotRightEnd_)
         {    
             cout << "ROBOT_AREA" << endl;
@@ -178,7 +184,8 @@ public:
       ),
       scan_data.end()
       );   
-
+    
+      //scan_data 값 정렬
       std::sort(scan_data.begin(), scan_data.end(), [](std::array<float,2> a, std::array<float,2> b) {return a[0] < b[0];});	
     //   for (const auto& point : scan_data) {
     //       std::cout << "(" << point[0] << ", " << point[1] << ")\n";
@@ -204,7 +211,8 @@ public:
           {
               i++;
           }
-
+        
+          //interpolate 
           if (fabs(scan_data[i][1] - scan_data[i-1][1]) < 0.2f && (fabs(scan_data[i][0] - angle) < laser1_->angle_increment || fabs(scan_data[i-1][0] - angle) < laser1_->angle_increment))
           {
               float range = interpolate(scan_data[i-1][0], scan_data[i][0], scan_data[i-1][1], scan_data[i][1], angle);
@@ -287,11 +295,11 @@ private:
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
-
+  RCLCPP_INFO(rclcpp::get_logger("Node ON"), "@@@@@@@@@@@ LIDAR Calibration node START @@@@@@@@@@@");
   auto node = std::make_shared<LidarCalibrationNode>();
   rclcpp::executors::MultiThreadedExecutor executor;
   executor.add_node(node);
-  executor.spin(); // 멀티스레드 실행기를 사용하여 spin합니다.
+  executor.spin(); // 멀티스레드 실행기를 사용하여 spin
 
   rclcpp::shutdown();
   return 0;

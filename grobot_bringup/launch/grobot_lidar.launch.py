@@ -51,12 +51,18 @@ def generate_launch_description():
                             namespace='LIDAR2',
                             )
 
-
+  calibration_node = Node(package='grobot_node',
+                          executable='lidar_calibration',
+                          name='lidar_calibration',
+                          output='screen',
+                          )
+  
   return LaunchDescription([
     DeclareLaunchArgument(
       'grobot_lidar_parameter',
       default_value=grobot_lidar_parameter
     ),
     driver_node1,
-    driver_node2    
+    driver_node2,
+    calibration_node    
   ])
