@@ -292,25 +292,25 @@ private:
 
 };
 
-int main(int argc, char **argv)
-{
-  rclcpp::init(argc, argv);
-  RCLCPP_INFO(rclcpp::get_logger("Node ON"), "@@@@@@@@@@@ LIDAR Calibration node START @@@@@@@@@@@");
-  auto node = std::make_shared<LidarCalibrationNode>();
-  rclcpp::executors::MultiThreadedExecutor executor;
-  executor.add_node(node);
-  executor.spin(); // 멀티스레드 실행기를 사용하여 spin
-
-  rclcpp::shutdown();
-  return 0;
-}
-
-
 // int main(int argc, char **argv)
 // {
 //   rclcpp::init(argc, argv);
-//   rclcpp::spin(std::make_shared<LidarCalibrationNode>());
+//   RCLCPP_INFO(rclcpp::get_logger("Node ON"), "@@@@@@@@@@@ LIDAR Calibration node START @@@@@@@@@@@");
+//   auto node = std::make_shared<LidarCalibrationNode>();
+//   rclcpp::executors::MultiThreadedExecutor executor;
+//   executor.add_node(node);
+//   executor.spin(); // 멀티스레드 실행기를 사용하여 spin
+
 //   rclcpp::shutdown();
 //   return 0;
 // }
+
+
+int main(int argc, char **argv)
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<LidarCalibrationNode>());
+  rclcpp::shutdown();
+  return 0;
+}
 

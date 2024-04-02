@@ -44,14 +44,14 @@ find_package(ament_index_cpp REQUIRED)
 include_directories(include)
 include_directories(${ament_INCLUDE_DIRS})
 
-
-
 ################################################################################
 # Build
 ################################################################################
 add_executable(lidar_calibration src/lidar_calibration.cpp)  
 ament_target_dependencies(lidar_calibration rclcpp std_srvs  sensor_msgs  tf2 tf2_ros tf2_sensor_msgs gazebo_msgs tf2_geometry_msgs std_msgs geometry_msgs nav2_msgs ament_index_cpp yaml-cpp)
 
+add_executable(velocity_manager src/velocity_manager.cpp)  
+ament_target_dependencies(velocity_manager rclcpp std_srvs  sensor_msgs  gazebo_msgs std_msgs geometry_msgs nav2_msgs ament_index_cpp)
 
 ################################################################################
 # Install
@@ -63,6 +63,7 @@ install(
 
 install(TARGETS
   lidar_calibration
+  velocity_manager
   DESTINATION lib/${PROJECT_NAME}
 )
 

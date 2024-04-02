@@ -79,6 +79,12 @@ def generate_launch_description():
         output='screen'
     )
 
+    calibration_node = Node(package='grobot_node',
+                          executable='lidar_calibration',
+                          name='lidar_calibration',
+                          output='screen',
+                          )
+
     return LaunchDescription([
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
@@ -96,4 +102,5 @@ def generate_launch_description():
         robot_state_publisher_node,
         joint_state_publisher_node,
         urdf_spawn_node,
+        calibration_node
     ])

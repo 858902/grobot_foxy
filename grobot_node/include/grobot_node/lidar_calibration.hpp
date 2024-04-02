@@ -38,5 +38,4 @@
 #include <atomic>
 
 using namespace std;
-
 #endif 
