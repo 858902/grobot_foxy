@@ -79,10 +79,7 @@ public:
         tau_external[1] = msg -> data[1];
         tau_external[2] = msg -> data[2];
         
-        //pub reference disturbance (plot 분석용)
-        std_msgs::msg::Float64MultiArray msg_;
-        msg_.data = {tau_external[0], tau_external[1], tau_external[2]};
-        disturbance_ref_pub->publish(msg_);
+
     }
 
     void param_callback(const std_msgs::msg::Float64MultiArray::SharedPtr Param_Data)
@@ -168,7 +165,12 @@ public:
             cmd_vel_msg.angular.z = desired_r_vel[2];
 
             cmd_vel_pub->publish(cmd_vel_msg);
-            
+
+            //pub reference disturbance (plot 분석용)
+            std_msgs::msg::Float64MultiArray msg_;
+            msg_.data = {tau_external[0], tau_external[1], tau_external[2]};
+            disturbance_ref_pub->publish(msg_);
+
             loop_rate.sleep();
         }
     }
