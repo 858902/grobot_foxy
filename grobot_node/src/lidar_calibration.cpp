@@ -285,32 +285,32 @@ private:
     double angle_min_deg_left = -180.0;
     double angle_max_deg_left = 0.0;  
 
-    float robotFrontEnd_ = 0.1;
-    float robotRearEnd_ = 0.1;
-    float robotRightEnd_ = 0.1;
-    float robotLeftEnd_ = 0.1;
+    float robotFrontEnd_ = 0.33;
+    float robotRearEnd_ = 0.29;
+    float robotRightEnd_ = 0.25;
+    float robotLeftEnd_ = 0.25;
 
 };
-
-int main(int argc, char **argv)
-{
-  rclcpp::init(argc, argv);
-  RCLCPP_INFO(rclcpp::get_logger("Node ON"), "@@@@@@@@@@@ LIDAR Calibration node START @@@@@@@@@@@");
-  auto node = std::make_shared<LidarCalibrationNode>();
-  rclcpp::executors::MultiThreadedExecutor executor;
-  executor.add_node(node);
-  executor.spin(); // 멀티스레드 실행기를 사용하여 spin
-
-  rclcpp::shutdown();
-  return 0;
-}
-
 
 // int main(int argc, char **argv)
 // {
 //   rclcpp::init(argc, argv);
-//   rclcpp::spin(std::make_shared<LidarCalibrationNode>());
+//   RCLCPP_INFO(rclcpp::get_logger("Node ON"), "@@@@@@@@@@@ LIDAR Calibration node START @@@@@@@@@@@");
+//   auto node = std::make_shared<LidarCalibrationNode>();
+//   rclcpp::executors::MultiThreadedExecutor executor;
+//   executor.add_node(node);
+//   executor.spin(); // 멀티스레드 실행기를 사용하여 spin
+
 //   rclcpp::shutdown();
 //   return 0;
 // }
+
+
+int main(int argc, char **argv)
+{
+  rclcpp::init(argc, argv);
+  rclcpp::spin(std::make_shared<LidarCalibrationNode>());
+  rclcpp::shutdown();
+  return 0;
+}
 
