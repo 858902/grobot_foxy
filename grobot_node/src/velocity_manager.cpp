@@ -37,28 +37,32 @@ public:
         admittance_velocity_ = *msg;
 
 
-        if (!isZero(admittance_velocity_))
-        {   
-            navigation_velocity_.linear.x *= 0.0;
-            navigation_velocity_.linear.y *= 0.0;
-            navigation_velocity_.angular.z *= 0.0;
+        // if (!isZero(admittance_velocity_))
+        // {   
+        //     navigation_velocity_.linear.x *= 0.0;
+        //     navigation_velocity_.linear.y *= 0.0;
+        //     navigation_velocity_.angular.z *= 0.0;
 
-            RCLCPP_INFO(this->get_logger(), "Admittance Mode On");
+        //     RCLCPP_INFO(this->get_logger(), "Admittance Mode On");
 
 
-        }
+        // }
 
         publish_combined_velocity();
         
     }
 
     void publish_combined_velocity()
-    {   
-        RCLCPP_INFO(this->get_logger(), "publish_combined_velocity called");
+    {
+        RCLCPP_INFO(this->get_logger(), "Publishing combined velocity");
         auto combined_velocity = geometry_msgs::msg::Twist();
-        combined_velocity.linear.x = navigation_velocity_.linear.x + admittance_velocity_.linear.x;
-        combined_velocity.linear.y = navigation_velocity_.linear.y + admittance_velocity_.linear.y;
-        combined_velocity.angular.z = navigation_velocity_.angular.z + admittance_velocity_.angular.z;
+
+        // admittance_velocity_ 가 0이 아니면 weight를 1로 설정
+        double weight = !isZero(admittance_velocity_) ? 1.0 : 0.0;
+
+        combined_velocity.linear.x = (1 - weight) * navigation_velocity_.linear.x + weight * admittance_velocity_.linear.x;
+        combined_velocity.linear.y = (1 - weight) * navigation_velocity_.linear.y + weight * admittance_velocity_.linear.y;
+        combined_velocity.angular.z = (1 - weight) * navigation_velocity_.angular.z + weight * admittance_velocity_.angular.z;
 
         cmd_vel_pub_->publish(combined_velocity);
     }
