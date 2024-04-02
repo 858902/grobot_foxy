@@ -147,7 +147,12 @@ public:
             cmd_vel_msg.angular.z = desired_r_vel[2];
 
             cmd_vel_pub->publish(cmd_vel_msg);
-            RCLCPP_INFO(this->get_logger(), "속도 메시지 발행");
+
+            //pub reference disturbance (plot 분석용)
+            std_msgs::msg::Float64MultiArray msg_;
+            msg_.data = {tau_external[0], tau_external[1], tau_external[2]};
+            disturbance_ref_pub->publish(msg_);
+
             loop_rate.sleep();
         }
     }
