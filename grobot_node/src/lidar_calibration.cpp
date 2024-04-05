@@ -115,7 +115,7 @@ public:
         // 이때 x,y값이 로봇의 내부라면 무시 
         if (point[0] < robotFrontEnd_ && point[0] > -robotRearEnd_ && point[1] < robotLeftEnd_ && point[1] > -robotRightEnd_)
         {    
-            cout << "ROBOT_AREA" << endl;
+            // cout << "ROBOT_AREA" << endl;
             continue;
         }
         
@@ -154,7 +154,7 @@ public:
 
         if (point[0] < robotFrontEnd_ && point[0] > -robotRearEnd_ && point[1] < robotLeftEnd_ && point[1] > -robotRightEnd_)
         {   
-            cout << "ROBOT_AREA" << endl;
+            // cout << "ROBOT_AREA" << endl;
             continue;
         }
 
