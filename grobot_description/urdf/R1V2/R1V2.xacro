@@ -114,7 +114,7 @@
 <!-- LIDAR RIGHT-->
 
 <joint name="lidar_joint" type="fixed">
-  <origin xyz="0.37 -0.265 0.26" rpy="0 0 3.14159"/>
+  <origin xyz="0.37 -0.265 0.26" rpy="0 0 2.35619"/>
   <parent link="base_link"/>
   <child link="base_scan"/>
   <axis xyz="0.0 0.0 1.0"/>
@@ -146,7 +146,7 @@
 <!-- LIDAR LEFT-->
 
 <joint name="lidar_joint2" type="fixed">
-  <origin xyz="0.37 0.265 0.34" rpy="0 0 3.14159"/>
+  <origin xyz="0.37 0.265 0.34" rpy="0 0 3.92699"/>
   <parent link="base_link"/>
   <child link="base_scan2"/>
   <axis xyz="0.0 0.0 1.0"/>
