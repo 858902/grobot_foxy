@@ -285,10 +285,10 @@ private:
     double angle_min_deg_left = -180.0;
     double angle_max_deg_left = 0.0;  
 
-    float robotFrontEnd_ = 0.33;
+    float robotFrontEnd_ = 0.37;
     float robotRearEnd_ = 0.29;
-    float robotRightEnd_ = 0.25;
-    float robotLeftEnd_ = 0.25;
+    float robotRightEnd_ = 0.265;
+    float robotLeftEnd_ = 0.265;
 
 };
 
