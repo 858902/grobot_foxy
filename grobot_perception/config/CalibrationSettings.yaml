@@ -1,0 +1,14 @@
+roto_translation:
+  translation:
+    # x: 1.78       # il LiDAR è 1.78 metri più avanti della camera quindi un cono che è a 1 metro da LiDAR è a 2.78 metri dalla camera(quindi sommo)
+    # y: 0.0        # il LiDAR è allineato alla camera, quindi non devo traslare nè a destra nè a sinistra
+    # z: -0.775     # il LiDAR è 0.975 metri sotto la camera, quindi un punto che si trova a 0,975 metri sopra il LiDAR è a 0 metri dalla camera(sottraggo)
+
+    x: 0.22
+    y: 0.0
+    z: -0.18
+  # rotation:
+
+bbox_estimate:
+  x_factor: 1.0
+  y_factor: 1.2

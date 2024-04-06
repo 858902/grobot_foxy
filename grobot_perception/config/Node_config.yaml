@@ -1,0 +1,11 @@
+# input_camera_topic: "/zed2/zed_node/left_raw/image_raw_color"
+# input_bounding_boxes_topic: "/zed2/zed2/topic_bbox_zed2d"
+
+input_camera_topic: "/camera/depth/image_raw"
+input_bounding_boxes_topic: "/object_detection/bounding_boxes"
+
+# input_lidar_topic: "/lidar_cones"
+input_lidar_topic: "/scan"
+output_topic: "/fusion_cones"
+
+visual_debug: true
