@@ -68,5 +68,25 @@
         "variant": "cpp",
         "bit": "cpp",
         "core": "cpp"
-    }
+    },
+    "python.autoComplete.extraPaths": [
+        "/home/nuc1/grobot_ws/build/grobot_teleop",
+        "/home/nuc1/grobot_ws/install/grobot_teleop/lib/python3.8/site-packages",
+        "/home/nuc1/grobot_ws/build/grobot_bringup",
+        "/home/nuc1/grobot_ws/install/grobot_bringup/lib/python3.8/site-packages",
+        "/home/nuc1/grobot_ws/install/grobot_interfaces/lib/python3.8/site-packages",
+        "/home/nuc1/grobot_ws/build/grobot_description",
+        "/home/nuc1/grobot_ws/install/grobot_description/lib/python3.8/site-packages",
+        "/opt/ros/foxy/lib/python3.8/site-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/nuc1/grobot_ws/build/grobot_teleop",
+        "/home/nuc1/grobot_ws/install/grobot_teleop/lib/python3.8/site-packages",
+        "/home/nuc1/grobot_ws/build/grobot_bringup",
+        "/home/nuc1/grobot_ws/install/grobot_bringup/lib/python3.8/site-packages",
+        "/home/nuc1/grobot_ws/install/grobot_interfaces/lib/python3.8/site-packages",
+        "/home/nuc1/grobot_ws/build/grobot_description",
+        "/home/nuc1/grobot_ws/install/grobot_description/lib/python3.8/site-packages",
+        "/opt/ros/foxy/lib/python3.8/site-packages"
+    ]
 }

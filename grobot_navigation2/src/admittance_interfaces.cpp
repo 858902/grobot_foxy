@@ -24,7 +24,7 @@ public:
             "/param_sub", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::param_callback, this, std::placeholders::_1));
 
         // Publisher 
-        cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", rclcpp::SystemDefaultsQoS());
+        cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel_admittance", rclcpp::SystemDefaultsQoS());
         disturbance_ref_pub = this->create_publisher<std_msgs::msg::Float64MultiArray>("disturbance_ref",  rclcpp::SystemDefaultsQoS());
         
         //가상의 Mass(M_,M_ori_), Damping(D_), Stiffness(K_)
@@ -36,6 +36,7 @@ public:
         M_adm.diagonal() << M_, M_, M_;
         D_adm.diagonal() << D_,D_,D_;
         K.diagonal() << K_,K_,K_; 
+
     }
 
     void joint_states_callback(const sensor_msgs::msg::JointState::SharedPtr JointState_Data)
@@ -55,7 +56,7 @@ public:
         // Get r from the Odometry message
         RobotPosition[0] = msg->pose.pose.position.x;
         RobotPosition[1] = msg->pose.pose.position.y;
-
+    
         tf2::Quaternion q(
             msg->pose.pose.orientation.x,
             msg->pose.pose.orientation.y,
@@ -79,10 +80,7 @@ public:
         tau_external[1] = msg -> data[1];
         tau_external[2] = msg -> data[2];
         
-        //pub reference disturbance (plot 분석용)
-        std_msgs::msg::Float64MultiArray msg_;
-        msg_.data = {tau_external[0], tau_external[1], tau_external[2]};
-        disturbance_ref_pub->publish(msg_);
+
     }
 
     void param_callback(const std_msgs::msg::Float64MultiArray::SharedPtr Param_Data)
@@ -93,35 +91,16 @@ public:
 
     }
     void run()  
-    {
+    {   
         rclcpp::Rate loop_rate(100);
         while(rclcpp::ok())
         {       
+            // RCLCPP_INFO(this->get_logger(), "루프 시작");
             //M,D,K값 실시간으로 바뀌는거 확인용
             // std::cout << "M: " << std::endl << M_adm << std::endl;
             // std::cout << "D: " << std::endl << D_adm << std::endl;
             // std::cout << "K: " << std::endl << K << std::endl;
-            
-            // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // // // Get current time
-            // // rclcpp::Time curr_time = this->now();
-
-            // // // Calculate dt
-            // // double dt = (curr_time - prev_time_).seconds();
-
-            // // //r_dot
-            // // double d = 0.5; // Distance between wheels
-            // // RobotVelocity[0] = (JointVelocity[0] + JointVelocity[1]) / 2; // Robot Linear velocity
-            // // RobotVelocity[1] = (JointVelocity[1] - JointVelocity[0]) / d; // Robot Angular velocity
-
-            // // RobotPosition[0] += RobotVelocity[0] * cos(RobotPosition[2]) * dt; //x position
-            // // RobotPosition[1] += RobotVelocity[0] * cos(RobotPosition[2]) * dt; // y position
-            // // RobotPosition[2] += RobotVelocity[1] * dt; // Orientation
-
-            // // prev_time_ = curr_time;
-            // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
-
+        
             KDL::JntArray r(3);
             for (int i = 0; i < 3; i++) {
                 r(i) = RobotPosition[i];
@@ -141,8 +120,8 @@ public:
             tau_external_ = temp_external.data;
             // desired_r_vec = tau_external_ ;
             
-            std::cout << "r_vec: " << std::endl << r_vec.transpose() << std::endl;
-            std::cout << "desired_r_vec: " << std::endl << desired_r_vec.transpose() << std::endl;
+            // std::cout << "r_vec: " << std::endl << r_vec.transpose() << std::endl;
+            // std::cout << "desired_r_vec: " << std::endl << desired_r_vec.transpose() << std::endl;
 
 
             //loop 도는데 걸리는 시간 측정
@@ -168,7 +147,12 @@ public:
             cmd_vel_msg.angular.z = desired_r_vel[2];
 
             cmd_vel_pub->publish(cmd_vel_msg);
-            
+
+            //pub reference disturbance (plot 분석용)
+            std_msgs::msg::Float64MultiArray msg_;
+            msg_.data = {tau_external[0], tau_external[1], tau_external[2]};
+            disturbance_ref_pub->publish(msg_);
+
             loop_rate.sleep();
         }
     }
@@ -227,8 +211,6 @@ private:
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub;
     rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr disturbance_ref_pub;
     
-    
-
 };
 
 int main(int argc, char **argv)
@@ -241,10 +223,11 @@ int main(int argc, char **argv)
   rclcpp::executors::MultiThreadedExecutor executor;
   executor.add_node(admittance_interface);
   std::thread executor_thread([&executor]() { executor.spin(); });
-
+  
+  RCLCPP_INFO(admittance_interface->get_logger(), "노드 실행 준비 완료");
   admittance_interface->run();
   executor_thread.join();
-
+  RCLCPP_INFO(admittance_interface->get_logger(), "노드 종료");
   rclcpp::shutdown();
   return 0;
 }

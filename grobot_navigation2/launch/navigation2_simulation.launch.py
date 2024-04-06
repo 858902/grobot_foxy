@@ -49,6 +49,12 @@ def generate_launch_description():
         'rviz',
         'nav2_default_view.rviz')
 
+    velocity_manager_node = Node(package='grobot_node',
+                          executable='velocity_manager',
+                          name='velocity_manager',
+                          output='screen',
+                          )
+    
     return LaunchDescription([
         DeclareLaunchArgument(
             'map',
@@ -80,4 +86,6 @@ def generate_launch_description():
             arguments=['-d', rviz_config_dir],
             parameters=[{'use_sim_time': use_sim_time}],
             output='screen'),
+
+        # velocity_manager_node
     ])
