@@ -24,7 +24,7 @@ find_package(grobot_interfaces REQUIRED)
 # Install
 ################################################################################
 install(
-  DIRECTORY launch param
+  DIRECTORY launch param rviz
   DESTINATION share/${PROJECT_NAME}
 )
 
