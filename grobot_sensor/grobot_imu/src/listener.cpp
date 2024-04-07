@@ -4,7 +4,7 @@ int main(int argc, char **argv)
 {
     rclcpp::init(argc, argv);
 
-    // char *port = "/dev/ttyUSB1";
+    // char *port = "/dev/ttyUSB0";
     char *port = "/dev/ttyIMU";
 
     /*

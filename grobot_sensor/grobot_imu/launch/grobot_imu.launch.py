@@ -12,7 +12,7 @@ from launch_ros.actions import LifecycleNode
 
 def generate_launch_description():
     
-    config_dir = get_package_share_directory('hyrian_imu')
+    config_dir = get_package_share_directory('grobot_imu')
     config_file = os.path.join(config_dir, 'config', 'config.yaml')
 
     rviz_config_file = LaunchConfiguration('rviz_config_file')
@@ -36,9 +36,9 @@ def generate_launch_description():
         arguments=['-d', rviz_config_file],
         output='screen')
 
-    driver_node = LifecycleNode(package='hyrian_imu',
-                                node_executable='hyrian_imu_node',
-                                node_name='hyrian_imu_node',
+    driver_node = LifecycleNode(package='grobot_imu',
+                                node_executable='grobot_imu_node',
+                                node_name='grobot_imu_node',
                                 output='screen',
                                 emulate_tty=True,
                                 node_namespace='/',
