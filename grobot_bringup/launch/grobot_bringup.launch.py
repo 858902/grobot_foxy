@@ -11,6 +11,7 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions import ThisLaunchFileDir
+import launch_ros.actions
 
 
 def generate_launch_description():
@@ -41,6 +42,15 @@ def generate_launch_description():
   )
 
   return LaunchDescription([
+    
+    launch_ros.actions.Node(
+            package='robot_localization',
+            executable='ekf_node',
+            name='ekf_filter_node',
+            output='screen',
+            parameters=[os.path.join(get_package_share_directory("grobot_bringup"), 'param', 'ekf.yaml')],
+    ),
+    
     DeclareLaunchArgument(
       'grobot_mcu_parameter',
       default_value=grobot_mcu_parameter

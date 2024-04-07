@@ -135,10 +135,10 @@ class GrobotNode(Node):
     ############################### son 추가
 
     # Services
-    self.srvHeadlight = self.create_service(Onoff, 'set_headlight', self.cbSrv_headlight)
-    self.srvSetColor = self.create_service(Color, 'set_rgbled', self.cbSrv_setColor)
+    # self.srvHeadlight = self.create_service(Onoff, 'set_headlight', self.cbSrv_headlight)
+    # self.srvSetColor = self.create_service(Color, 'set_rgbled', self.cbSrv_setColor)
     self.srvResetODOM = self.create_service(ResetOdom, 'reset_odom', self.cbSrv_resetODOM)
-    self.srvCheckBAT = self.create_service(Battery, 'check_battery', self.cbSrv_checkBattery)
+    # self.srvCheckBAT = self.create_service(Battery, 'check_battery', self.cbSrv_checkBattery)
 
     # Set subscriber
     self.subCmdVelMsg = self.create_subscription(Twist, 'cmd_vel', self.cbCmdVelMsg, 10)
@@ -220,25 +220,28 @@ class GrobotNode(Node):
 
     self.pub_Odom.publish(odom)
 
+
+    ################### ekf on -> unactive ##############################
     # Set odomTF data
-    odom_tf = TransformStamped()
-    odom_tf.header.frame_id = odom.header.frame_id
-    odom_tf.child_frame_id = odom.child_frame_id
-    odom_tf.header.stamp = timestamp_now
+  #   odom_tf = TransformStamped()
+  #   odom_tf.header.frame_id = odom.header.frame_id
+  #   odom_tf.child_frame_id = odom.child_frame_id
+  #   odom_tf.header.stamp = timestamp_now
 
-    odom_tf.transform.translation.x = odom.pose.pose.position.x
-    odom_tf.transform.translation.y = odom.pose.pose.position.y
-    odom_tf.transform.translation.z = odom.pose.pose.position.z
-    odom_tf.transform.rotation = odom.pose.pose.orientation
-    self.pub_OdomTF.sendTransform(odom_tf)
+  #   odom_tf.transform.translation.x = odom.pose.pose.position.x
+  #   odom_tf.transform.translation.y = odom.pose.pose.position.y
+  #   odom_tf.transform.translation.z = odom.pose.pose.position.z
+  #   odom_tf.transform.rotation = odom.pose.pose.orientation
+  #   self.pub_OdomTF.sendTransform(odom_tf)
 
-  def updatePoseStates(self, roll, pitch, yaw):
-    #Added to publish pose orientation of IMU
-    pose = Pose()
-    pose.orientation.x = roll
-    pose.orientation.y = pitch
-    pose.orientation.z = yaw
-    self.pub_pose.publish(pose)
+  # def updatePoseStates(self, roll, pitch, yaw):
+  #   #Added to publish pose orientation of IMU
+  #   pose = Pose()
+  #   pose.orientation.x = roll
+  #   pose.orientation.y = pitch
+  #   pose.orientation.z = yaw
+  #   self.pub_pose.publish(pose)
+    ###################################################################
 
   def updateJointStates(self, odo_l, odo_r, trans_vel, orient_vel):
     odo_l /= 1000.
