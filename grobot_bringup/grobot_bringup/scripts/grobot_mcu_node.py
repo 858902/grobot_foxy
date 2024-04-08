@@ -147,7 +147,7 @@ class GrobotNode(Node):
     # Set publisher
     self.pub_JointStates = self.create_publisher(JointState, 'joint_states', 10)
     self.pub_IMU = self.create_publisher(Imu, 'imu', 10)
-    self.pub_Odom = self.create_publisher(Odometry, 'odom', 10)
+    self.pub_Odom = self.create_publisher(Odometry, 'odom_encoder', 10)
     self.pub_OdomTF = TransformBroadcaster(self)
     self.pub_pose = self.create_publisher(Pose, 'pose', 10)
 
@@ -274,14 +274,14 @@ class GrobotNode(Node):
     odo_r = self.ph._wodom[1]
     trans_vel = self.ph._vel[0]
     orient_vel = self.ph._vel[1]
-    # vel_z = self.ph._gyro[2]
+    vel_z = self.ph._gyro[2]
     # roll_imu = self.ph._imu[0]
     # pitch_imu = self.ph._imu[1]
     # yaw_imu = self.ph._imu[2]
-
+    
     self.update_odometry(odo_l, odo_r, trans_vel, orient_vel, self.vel_z)
     self.updateJointStates(odo_l, odo_r, trans_vel, orient_vel)
-    self.updatePoseStates(self.roll_imu, self.pitch_imu, self.yaw_imu)
+    # self.updatePoseStates(self.roll_imu, self.pitch_imu, self.yaw_imu)
 
   def cbCmdVelMsg(self, cmd_vel_msg):
     lin_vel_x = cmd_vel_msg.linear.x
