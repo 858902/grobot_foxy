@@ -27,6 +27,7 @@ public:
     {   
         RCLCPP_INFO(this->get_logger(), "navigation_velocity_callback called");
         navigation_velocity_ = *msg;
+        publish_combined_velocity();
 
 
     }
@@ -48,9 +49,9 @@ public:
 
         // }
 
-        publish_combined_velocity();
+        // publish_combined_velocity();
         
-    }
+    }   
 
     void publish_combined_velocity()
     {
@@ -58,8 +59,8 @@ public:
         auto combined_velocity = geometry_msgs::msg::Twist();
 
         // admittance_velocity_ 가 0이 아니면 weight를 1로 설정
-        double weight = !isZero(admittance_velocity_) ? 1.0 : 0.0;
-
+        // double weight = !isZero(admittance_velocity_) ? 1.0 : 0.0;
+        double weight = 0.0;
         combined_velocity.linear.x = (1 - weight) * navigation_velocity_.linear.x + weight * admittance_velocity_.linear.x;
         combined_velocity.linear.y = (1 - weight) * navigation_velocity_.linear.y + weight * admittance_velocity_.linear.y;
         combined_velocity.angular.z = (1 - weight) * navigation_velocity_.angular.z + weight * admittance_velocity_.angular.z;

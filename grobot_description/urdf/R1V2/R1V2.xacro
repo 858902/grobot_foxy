@@ -2,7 +2,6 @@
 <robot name="R1V2" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 <xacro:include filename="$(find grobot_description)/urdf/materials.xacro" />
-<!-- <xacro:include filename="$(find grobot_description)/urdf/R1V2.trans" /> -->
 <xacro:include filename="$(find grobot_description)/urdf/R1V2.gazebo" />
 <xacro:property name="body_color" value="Gazebo/Grey" />
 
