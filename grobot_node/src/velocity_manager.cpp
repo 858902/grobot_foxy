@@ -69,8 +69,6 @@ public:
     }
 
 private:
-
-
     bool isZero(const geometry_msgs::msg::Twist &twist) 
     {
         return (twist.linear.x >= -0.01 && twist.linear.x <= 0.01) &&

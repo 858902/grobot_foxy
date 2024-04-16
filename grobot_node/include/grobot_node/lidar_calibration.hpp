@@ -31,6 +31,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <thread>
 
 #include <mutex>
 #include <chrono>
