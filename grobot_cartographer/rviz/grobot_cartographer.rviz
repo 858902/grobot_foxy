@@ -55,19 +55,13 @@ Visualization Manager:
           Value: true
         base_scan:
           Value: true
-        camera_link:
-          Value: true
-        camera_rgb_frame:
-          Value: true
-        camera_rgb_optical_frame:
-          Value: true
-        caster_back_left_link:
-          Value: true
-        caster_back_right_link:
+        base_scan2:
           Value: true
         imu_link:
           Value: true
         map:
+          Value: true
+        merged_base_scan:
           Value: true
         odom:
           Value: true
@@ -87,15 +81,11 @@ Visualization Manager:
               base_link:
                 base_scan:
                   {}
-                camera_link:
-                  camera_rgb_frame:
-                    camera_rgb_optical_frame:
-                      {}
-                caster_back_left_link:
-                  {}
-                caster_back_right_link:
+                base_scan2:
                   {}
                 imu_link:
+                  {}
+                merged_base_scan:
                   {}
                 wheel_left_link:
                   {}
@@ -446,7 +436,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 6.2725830078125
+      Distance: 13.866683006286621
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -461,10 +451,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.17479735612869263
+      Pitch: 1.3197965621948242
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.795415163040161
+      Yaw: 3.095416307449341
     Saved: ~
 Window Geometry:
   Displays:
