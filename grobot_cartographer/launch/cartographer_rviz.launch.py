@@ -28,7 +28,7 @@ from launch.substitutions import ThisLaunchFileDir
 
 
 def generate_launch_description():
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='false')
 
     rviz_config_dir = os.path.join(get_package_share_directory('grobot_cartographer'),
                                    'rviz', 'grobot_cartographer.rviz')
@@ -36,7 +36,7 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             'use_sim_time',
-            default_value='true',
+            default_value='false',
             description='Use simulation (Gazebo) clock if true'),
 
         Node(
