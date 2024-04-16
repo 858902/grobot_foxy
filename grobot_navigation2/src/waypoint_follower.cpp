@@ -62,21 +62,6 @@ public:
     initial_pose_pub_->publish(initial_pose);
 
     // Define waypoints
-    waypoints_["A"].header.frame_id = "map";
-    waypoints_["A"].pose.position.x = 8.0;
-    waypoints_["A"].pose.position.y = -1.0;
-    waypoints_["A"].pose.orientation.w = 1.0;
-
-    waypoints_["B"].header.frame_id = "map";
-    waypoints_["B"].pose.position.x = 3.0;
-    waypoints_["B"].pose.position.y = 3.0;
-    waypoints_["B"].pose.orientation.w = 1.0;
-
-    waypoints_["C"].header.frame_id = "map";
-    waypoints_["C"].pose.position.x = 0.0;
-    waypoints_["C"].pose.position.y = -5.0;
-    waypoints_["C"].pose.orientation.w = 1.0;
-
     load_yaml_();
 
   }
@@ -100,7 +85,14 @@ public:
             waypoints_[id].header.frame_id = "map";
             waypoints_[id].pose.position.x = x;
             waypoints_[id].pose.position.y = y;
-            waypoints_[id].pose.orientation.w = 1.0;
+
+            tf2::Quaternion q;
+
+            q.setRPY(0, 0, yaw);
+            waypoints_[id].pose.orientation.x = q.x();
+            waypoints_[id].pose.orientation.y = q.y();
+            waypoints_[id].pose.orientation.z = q.z();
+            waypoints_[id].pose.orientation.w = q.w();
 
             RCLCPP_INFO(this->get_logger(), "Waypoint loaded: %s, Position: (%f, %f), Orientation: %f", id.c_str(), x, y, yaw);
 
