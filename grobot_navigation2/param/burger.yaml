@@ -13,7 +13,7 @@ amcl:
     do_beamskip: false
     global_frame_id: "map"
     lambda_short: 0.1
-    laser_likelihood_max_dist: 4.0 #2.0-> 4.0
+    laser_likelihood_max_dist: 2.0
     laser_max_range: 100.0
     laser_min_range: -1.0
     laser_model_type: "likelihood_field"
@@ -28,19 +28,15 @@ amcl:
     resample_interval: 1
     robot_model_type: "differential"
     save_pose_rate: 0.5
-    sigma_hit: 0.1 #0.2 -> 0.1
+    sigma_hit: 0.2
     tf_broadcast: true
     transform_tolerance: 1.0
     update_min_a: 0.2
     update_min_d: 0.25
-    z_hit: 0.9 #0.5->0.9
+    z_hit: 0.5
     z_max: 0.05
     z_rand: 0.5
     z_short: 0.05
-    initial_pose:
-        x: 0.0
-        y: 0.0
-        yaw: 0.0
 
 amcl_map_client:
   ros__parameters:
@@ -100,7 +96,7 @@ controller_server:
       min_vel_y: 0.0
       max_vel_x: 0.4 #0.22 -> 0.4
       max_vel_y: 0.0
-      max_vel_theta: 0.5 #1.0 -> 0.5
+      max_vel_theta: 1.0 #1.0
       min_speed_xy: 0.0
       max_speed_xy: 0.4 #0.22 -> 0.4
       min_speed_theta: 0.0
@@ -118,7 +114,7 @@ controller_server:
       angular_granularity: 0.025
       transform_tolerance: 0.2
       xy_goal_tolerance: 0.05
-      # yaw_goal_tolerance: 0.05 #add 
+      # yaw_goal_tolerance: 0.1 #add 
       trans_stopped_velocity: 0.25
       short_circuit_trajectory_evaluation: True
       stateful: True
@@ -133,7 +129,6 @@ controller_server:
       RotateToGoal.scale: 32.0
       RotateToGoal.slowing_factor: 5.0
       RotateToGoal.lookahead_time: -1.0
-
 
 controller_server_rclcpp_node:
   ros__parameters:
@@ -155,7 +150,7 @@ local_costmap:
       plugins: ["obstacle_layer", "voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        inflation_radius: 1.2 #1.0 -> 1.2
+        inflation_radius: 1.0
         cost_scaling_factor: 3.0
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
@@ -236,7 +231,7 @@ global_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 1.0
-        inflation_radius: 0.6 #0.55 -> 0.8
+        inflation_radius: 0.55
       always_send_full_costmap: True
   global_costmap_client:
     ros__parameters:

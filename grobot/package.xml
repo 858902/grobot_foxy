@@ -12,6 +12,7 @@
   <author email="bishopearson@gmail.com">Bishop Pearson</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>grobot_bringup</exec_depend>
+  <exec_depend>grobot_motor</exec_depend>
   <exec_depend>grobot_cartographer</exec_depend>
   <exec_depend>grobot_description</exec_depend>
   <exec_depend>grobot_navigation2</exec_depend>
