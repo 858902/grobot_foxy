@@ -1,0 +1,8 @@
+pwm_range = 512
+pwm_frequency = 20000
+pwm_limit = 512
+control_cycle = 10
+acceleration_ratio = 25
+wheel_radius = 0.049
+robot_radius = 20.52
+encoder_resolution = 1300
