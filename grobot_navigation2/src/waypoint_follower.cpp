@@ -221,7 +221,7 @@ private:
   size_t current_waypoint_index_ = 0; // 현재 웨이포인트 인덱스
   std::vector<std::string> waypoint_keys_;
 
-
+  
 };
 
 int main(int argc, char **argv)

@@ -28,14 +28,16 @@ public:
         disturbance_ref_pub = this->create_publisher<std_msgs::msg::Float64MultiArray>("disturbance_ref",  rclcpp::SystemDefaultsQoS());
         
         //가상의 Mass(M_,M_ori_), Damping(D_), Stiffness(K_)
-        double M_ = 1;
-        double M_ori_ = 0.1;
-        double D_ = 1;
-        double K_ = 1;
+        double M_ = 5;
+        double M_ori_ = 5;
+        double D_ = 11;
+        double D_ori_ = 1;
+        double K_ = 8;
+        double K_ori_ = 1;
 
-        M_adm.diagonal() << M_, M_, M_;
-        D_adm.diagonal() << D_,D_,D_;
-        K.diagonal() << K_,K_,K_; 
+        M_adm.diagonal() << M_, M_, M_ori_;
+        D_adm.diagonal() << D_,D_,D_ori_;
+        K.diagonal() << K_,K_,K_ori_; 
 
     }
 
@@ -79,8 +81,6 @@ public:
         tau_external[0] = msg -> data[0];
         tau_external[1] = msg -> data[1];
         tau_external[2] = msg -> data[2];
-        
-
     }
 
     void param_callback(const std_msgs::msg::Float64MultiArray::SharedPtr Param_Data)
@@ -121,7 +121,7 @@ public:
             // desired_r_vec = tau_external_ ;
             
             // std::cout << "r_vec: " << std::endl << r_vec.transpose() << std::endl;
-            // std::cout << "desired_r_vec: " << std::endl << desired_r_vec.transpose() << std::endl;
+            std::cout << "desired_r_vec: " << std::endl << desired_r_vec.transpose() << std::endl;
 
 
             //loop 도는데 걸리는 시간 측정
@@ -131,7 +131,7 @@ public:
             //update desried_r 
             direction = tau_external_.normalized();
             magnitude = tau_external_.norm() * dt;
-            desired_r_vec += direction * magnitude;
+            desired_r_vec = r_vec + direction * magnitude;
 
             compute_impedance(K,
                               r_vec, desired_r_vec,

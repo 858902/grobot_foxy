@@ -1,8 +1,8 @@
 # Format: [x, y, yaw]
 waypoint_0: [0.0, 0.0, 0] #Start
 waypoint_1: [23.0, 1.0, 0.0]
-waypoint_2: [10.0, 0.0, -3.14]
-waypoint_3: [6.0, 5.0, -3.14]
+waypoint_2: [10.0, 0.2, -3.14]
+waypoint_3: [6.0, 4.0, -3.14]
 waypoint_4: [-1.0, 3.0, -1.57]
 waypoint_5: [-1.0, 8.0, 1.57]
 waypoint_6: [-2.0, 5.0, 0]
