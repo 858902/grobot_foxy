@@ -130,7 +130,7 @@ public:
             // desired_r_vec = tau_external_ ;
             
             // std::cout << "r_vec: " << std::endl << r_vec.transpose() << std::endl;
-            // std::cout << "desired_r_vec: " << std::endl << desired_r_vec.transpose() << std::endl;
+            std::cout << "desired_r_vec: " << std::endl << desired_r_vec.transpose() << std::endl;
 
 
             //loop 도는데 걸리는 시간 측정
