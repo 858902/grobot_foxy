@@ -66,8 +66,8 @@ private:
         preprocessAndPublish(lidar_cloud);
         geometry_msgs::msg::TransformStamped transformStamped;
         transformStamped.header.stamp = rclcpp::Clock().now();
-        transformStamped.header.frame_id = "lidar_frame";
-        transformStamped.child_frame_id = "base_link";
+        transformStamped.header.frame_id = "base_link";
+        transformStamped.child_frame_id = "lidar_frame";
         transformStamped.transform.translation.x = 0.0;
         transformStamped.transform.translation.y = 0.0;
         transformStamped.transform.translation.z = 0.0;
@@ -86,8 +86,8 @@ private:
         preprocessAndPublish(camera_cloud);
         geometry_msgs::msg::TransformStamped transformStamped;
         transformStamped.header.stamp = rclcpp::Clock().now();
-        transformStamped.header.frame_id = "camera_frame";
-        transformStamped.child_frame_id = "base_link";
+        transformStamped.header.frame_id = "base_link";
+        transformStamped.child_frame_id = "camera_frame";
         transformStamped.transform.translation.x = 0.0;
         transformStamped.transform.translation.y = 0.0;
         transformStamped.transform.translation.z = 0.0;
@@ -119,12 +119,11 @@ private:
         // icp.setMaximumIterations(50);
         // icp.setRANSACOutlierRejectionThreshold(0.01);
 
-        // Example: K-means clustering
         pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
         tree->setInputCloud(filtered_cloud);
         std::vector<pcl::PointIndices> cluster_indices;
         pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
-        ec.setClusterTolerance(0.02); // 2cm
+        ec.setClusterTolerance(0.02);
         ec.setMinClusterSize(100);
         ec.setMaxClusterSize(25000);
         ec.setSearchMethod(tree);
