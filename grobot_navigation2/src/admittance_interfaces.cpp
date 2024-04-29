@@ -18,7 +18,7 @@ public:
             "/odom", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::callback_odom, this, std::placeholders::_1));
 
         subscription_external_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
-            "/command_external", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::callback_external, this, std::placeholders::_1));
+            "/external_force", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::callback_external, this, std::placeholders::_1));
         
         subscription_param_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
             "/param_sub", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::param_callback, this, std::placeholders::_1));
