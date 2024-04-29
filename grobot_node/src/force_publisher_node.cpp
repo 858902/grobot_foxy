@@ -47,8 +47,8 @@ private:
 
     void publish_force()
     {
-        double x_force = (force_sensor[0] + force_sensor[1]) - (force_sensor[2] + force_sensor[3]);
-        double yaw_force = (force_sensor[1] - force_sensor[0]) * K;
+        double x_force = ((force_sensor[0] + force_sensor[1]) - (force_sensor[2] + force_sensor[3])) * K_x;
+        double yaw_force = (force_sensor[1] - force_sensor[0]) * K_yaw;
 
         std_msgs::msg::Float64MultiArray force_msg;
         force_msg.data = {x_force, 0, yaw_force};
@@ -57,7 +57,9 @@ private:
     }
 
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
-    double K = 1.0;
+    double K_x = 0.0005;
+    double K_yaw = 0.0005;
+
 
     // Subscriber
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr sensor_sub_1;
