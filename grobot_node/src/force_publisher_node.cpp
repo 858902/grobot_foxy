@@ -12,13 +12,13 @@ public:
     {
         // 센서 데이터 subscriber 생성
         sensor_sub_1 = this->create_subscription<std_msgs::msg::Int32>(
-            "sensor_data_1", 10, std::bind(&ForcePublisherNode::sensor_callback_1, this, std::placeholders::_1));
+            "sensor_data/sensor1", 10, std::bind(&ForcePublisherNode::sensor_callback_1, this, std::placeholders::_1));
         sensor_sub_2 = this->create_subscription<std_msgs::msg::Int32>(
-            "sensor_data_2", 10, std::bind(&ForcePublisherNode::sensor_callback_2, this, std::placeholders::_1));
+            "sensor_data/sensor2", 10, std::bind(&ForcePublisherNode::sensor_callback_2, this, std::placeholders::_1));
         sensor_sub_3 = this->create_subscription<std_msgs::msg::Int32>(
-            "sensor_data_3", 10, std::bind(&ForcePublisherNode::sensor_callback_3, this, std::placeholders::_1));
+            "sensor_data/sensor3", 10, std::bind(&ForcePublisherNode::sensor_callback_3, this, std::placeholders::_1));
         sensor_sub_4 = this->create_subscription<std_msgs::msg::Int32>(
-            "sensor_data_4", 10, std::bind(&ForcePublisherNode::sensor_callback_4, this, std::placeholders::_1));
+            "sensor_data/sensor4", 10, std::bind(&ForcePublisherNode::sensor_callback_4, this, std::placeholders::_1));
 
         timer_ = this->create_wall_timer(std::chrono::milliseconds(100), std::bind(&ForcePublisherNode::publish_force, this));
         force_pub = this->create_publisher<std_msgs::msg::Float64MultiArray>("external_force", rclcpp::SystemDefaultsQoS());
@@ -57,8 +57,8 @@ private:
     }
 
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
-    double K_x = 0.0005;
-    double K_yaw = 0.0005;
+    double K_x = 0.001;
+    double K_yaw = 0.001;
 
 
     // Subscriber

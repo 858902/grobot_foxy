@@ -20,7 +20,7 @@ public:
             "/cmd_vel_admittance", rclcpp::SystemDefaultsQoS(), std::bind(&VelocityManagerNode::admittance_velocity_callback, this, std::placeholders::_1));
 
         subscription_external = this->create_subscription<std_msgs::msg::Float64MultiArray>(
-            "/command_external", rclcpp::SystemDefaultsQoS(), std::bind(&VelocityManagerNode::callback_external_, this, std::placeholders::_1));
+            "/external_force", rclcpp::SystemDefaultsQoS(), std::bind(&VelocityManagerNode::callback_external_, this, std::placeholders::_1));
         // Publisher 
         cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", rclcpp::SystemDefaultsQoS());
         
