@@ -2,6 +2,7 @@
 #include "std_msgs/msg/int32.hpp"
 #include "std_msgs/msg/float64_multi_array.hpp"
 #include <chrono>
+#include <deque>
 
 using namespace std::chrono_literals;
 
@@ -27,22 +28,26 @@ public:
 private:
     void sensor_callback_1(const std_msgs::msg::Int32::SharedPtr msg)
     {
-        force_sensor[0] = msg->data;
+        // force_sensor[0] = msg->data;
+        update_moving_average(0, msg->data);
     }
 
     void sensor_callback_2(const std_msgs::msg::Int32::SharedPtr msg)
     {
-        force_sensor[1] = msg->data;
+        // force_sensor[1] = msg->data;
+        update_moving_average(1, msg->data);
     }
 
     void sensor_callback_3(const std_msgs::msg::Int32::SharedPtr msg)
     {
-        force_sensor[2] = msg->data;
+        // force_sensor[2] = msg->data;
+        update_moving_average(2, msg->data);
     }
 
     void sensor_callback_4(const std_msgs::msg::Int32::SharedPtr msg)
     {
-        force_sensor[3] = msg->data;
+        // force_sensor[3] = msg->data;
+        update_moving_average(3, msg->data);
     }
 
     void publish_force()
@@ -56,6 +61,17 @@ private:
         force_pub->publish(force_msg);
     }
 
+    void update_moving_average(int index, int new_data)
+    {
+        sensor_data[index].push_back(new_data);
+        if (sensor_data[index].size() > N)
+            sensor_data[index].pop_front();
+        
+        force_sensor[index] = std::accumulate(sensor_data[index].begin(), sensor_data[index].end(), 0.0) / sensor_data[index].size();
+    }
+
+    static constexpr size_t N = 15; 
+    std::deque<int> sensor_data[4];
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
     double K_x = 0.002;
     double K_yaw = 0.002;
