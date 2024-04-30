@@ -8,11 +8,13 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(PCL REQUIRED)
+find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
 find_package(laser_geometry REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
+find_package(tf2_sensor_msgs REQUIRED)
 
 include_directories(
   ${PCL_INCLUDE_DIRS}
@@ -20,6 +22,7 @@ include_directories(
 
 add_executable(grobot_sensor_fusion_node src/grobot_sensor_fusion_node.cpp)  # 파일 이름 수정
 add_executable(laser_to_pointcloud src/grobot_laser2pcl2.cpp)
+add_executable(sensor_fusion_node src/grobot_fusion_node.cpp)
 ament_target_dependencies(
   grobot_sensor_fusion_node
   rclcpp 
@@ -38,6 +41,15 @@ ament_target_dependencies(
   laser_geometry
 )
 
+ament_target_dependencies(sensor_fusion_node
+  rclcpp
+  sensor_msgs
+  tf2_ros
+  tf2
+  laser_geometry
+  tf2_sensor_msgs
+)
+
 
 target_link_libraries(grobot_sensor_fusion_node
   ${tf2_ros_LIBRARIES}
@@ -48,6 +60,7 @@ target_link_libraries(grobot_sensor_fusion_node
 install(TARGETS
   grobot_sensor_fusion_node
   laser_to_pointcloud
+  sensor_fusion_node
   DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
