@@ -1,5 +1,4 @@
 #include <rclcpp/rclcpp.hpp>
-#include <sensor_msgs/msg/point_cloud2.hpp>
 #include <pcl_conversions/pcl_conversions.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
@@ -11,6 +10,10 @@
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <tf2_ros/transform_broadcaster.h>
 
+#include "sensor_msgs/msg/laser_scan.hpp"
+#include "sensor_msgs/msg/point_cloud2.hpp"
+#include "laser_geometry/laser_geometry.hpp"
+
 class SensorFusionNode : public rclcpp::Node {
 public:
     SensorFusionNode() : Node("grobot_sensor_fusion_node") {
@@ -19,10 +22,12 @@ public:
         //     "/LIDAR1/scan", 10,
         //     std::bind(&SensorFusionNode::lidar1Callback, this, std::placeholders::_1));
 
-        lidar2_subscriber_ = this->create_subscription
-        <sensor_msgs::msg::PointCloud2>(
-            "/LIDAR2/scan", 10,
-            std::bind(&SensorFusionNode::lidar2Callback, this, std::placeholders::_1));
+        // lidar2_subscriber_ = this->create_subscription
+        // <sensor_msgs::msg::PointCloud2>(
+        //     "/LIDAR2/scan", 10,
+        //     std::bind(&SensorFusionNode::lidar2Callback, this, std::placeholders::_1));
+        lidar2_subscriber_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
+            "/LIDAR2/scan", 10, std::bind(&SensorFusionNode::lidar2Callback, this, std::placeholders::_1));
 
         camera_subscriber_ = this->create_subscription
         <sensor_msgs::msg::PointCloud2>(
@@ -39,7 +44,6 @@ public:
     }
 
 private:
-    std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
     // void lidar1Callback(const sensor_msgs::msg::PointCloud2::SharedPtr lidar_msg) {
     //     pcl::PointCloud<pcl::PointXYZ>::Ptr lidar_cloud(new pcl::PointCloud<pcl::PointXYZ>);
     //     pcl::fromROSMsg(*lidar_msg, *lidar_cloud);
@@ -60,23 +64,55 @@ private:
     //     tf_broadcaster_->sendTransform(transformStamped);
     // }
 
+    // void lidar2Callback(const sensor_msgs::msg::PointCloud2::SharedPtr lidar_msg) {
+    //     pcl::PointCloud<pcl::PointXYZ>::Ptr lidar_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    //     pcl::fromROSMsg(*lidar_msg, *lidar_cloud);
+    //     preprocessAndPublish(lidar_cloud);
+
+    //     geometry_msgs::msg::TransformStamped transformStamped;
+    //     transformStamped.header.stamp = lidar_msg->header.stamp;  // 시간 동기화
+    //     transformStamped.header.frame_id = "base_link";
+    //     transformStamped.child_frame_id = "base_scan2";
+        
+    //     transformStamped.transform.translation.x = 0.0;
+    //     transformStamped.transform.translation.y = 0.0;
+    //     transformStamped.transform.translation.z = 0.0;
+
+    //     tf2::Quaternion q;
+    //     q.setRPY(0, 0, 0);
+    //     transformStamped.transform.rotation.x = q.x();
+    //     transformStamped.transform.rotation.y = q.y();
+    //     transformStamped.transform.rotation.z = q.z();
+    //     transformStamped.transform.rotation.w = q.w();
+
+    //     tf_broadcaster_->sendTransform(transformStamped);
+    // }
     void lidar2Callback(const sensor_msgs::msg::PointCloud2::SharedPtr lidar_msg) {
+        // laser_geometry::LaserProjection projector_;
+        // sensor_msgs::msg::PointCloud2 cloud;
+        // projector_.projectLaser(*scan_msg, cloud);
+
         pcl::PointCloud<pcl::PointXYZ>::Ptr lidar_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::fromROSMsg(*lidar_msg, *lidar_cloud);
+        
         preprocessAndPublish(lidar_cloud);
+
         geometry_msgs::msg::TransformStamped transformStamped;
-        transformStamped.header.stamp = rclcpp::Clock().now();
+        transformStamped.header.stamp = lidar_msg->header.stamp; // 시간 동기화
         transformStamped.header.frame_id = "base_link";
-        transformStamped.child_frame_id = "lidar_frame";
+        transformStamped.child_frame_id = "base_scan2";
+        
         transformStamped.transform.translation.x = 0.0;
         transformStamped.transform.translation.y = 0.0;
         transformStamped.transform.translation.z = 0.0;
+
         tf2::Quaternion q;
         q.setRPY(0, 0, 0);
         transformStamped.transform.rotation.x = q.x();
         transformStamped.transform.rotation.y = q.y();
         transformStamped.transform.rotation.z = q.z();
         transformStamped.transform.rotation.w = q.w();
+
         tf_broadcaster_->sendTransform(transformStamped);
     }
 
@@ -84,19 +120,24 @@ private:
         pcl::PointCloud<pcl::PointXYZ>::Ptr camera_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::fromROSMsg(*camera_msg, *camera_cloud);
         preprocessAndPublish(camera_cloud);
+
         geometry_msgs::msg::TransformStamped transformStamped;
-        transformStamped.header.stamp = rclcpp::Clock().now();
+        transformStamped.header.stamp = camera_msg->header.stamp;
         transformStamped.header.frame_id = "base_link";
-        transformStamped.child_frame_id = "camera_frame";
+        transformStamped.child_frame_id = "camera_link";
+        
+        // 센서의 실제 위치
         transformStamped.transform.translation.x = 0.0;
         transformStamped.transform.translation.y = 0.0;
         transformStamped.transform.translation.z = 0.0;
+
         tf2::Quaternion q;
         q.setRPY(0, 0, 0);
         transformStamped.transform.rotation.x = q.x();
         transformStamped.transform.rotation.y = q.y();
         transformStamped.transform.rotation.z = q.z();
         transformStamped.transform.rotation.w = q.w();
+
         tf_broadcaster_->sendTransform(transformStamped);
     }
     void preprocessAndPublish(pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud) {
@@ -106,7 +147,7 @@ private:
         // Example: Voxel grid downsampling
         pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_filter;
         voxel_grid_filter.setInputCloud(input_cloud);
-        voxel_grid_filter.setLeafSize(0.1f, 0.1f, 0.1f); // Adjust leaf size as needed
+        voxel_grid_filter.setLeafSize(0.1f, 0.1f, 0.1f);
         pcl::PointCloud<pcl::PointXYZ>::Ptr filtered_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         voxel_grid_filter.filter(*filtered_cloud);
 
@@ -146,12 +187,17 @@ private:
 
     rclcpp::Subscription
     <sensor_msgs::msg::PointCloud2>::SharedPtr lidar1_subscriber_;
+    
     rclcpp::Subscription
     <sensor_msgs::msg::PointCloud2>::SharedPtr lidar2_subscriber_;
+    
     rclcpp::Subscription
     <sensor_msgs::msg::PointCloud2>::SharedPtr camera_subscriber_;
+    
     rclcpp::Publisher
     <sensor_msgs::msg::PointCloud2>::SharedPtr fused_publisher_;
+
+    std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 };
 
 int main(int argc, char** argv) {
