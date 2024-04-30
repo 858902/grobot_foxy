@@ -60,7 +60,7 @@ ament_target_dependencies(force_publisher_node rclcpp std_srvs  sensor_msgs std_
 # Install
 ################################################################################
 install(
-  DIRECTORY include
+  DIRECTORY include launch
   DESTINATION share/${PROJECT_NAME}
 )
 

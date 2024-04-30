@@ -37,7 +37,7 @@ public:
 
     void navigation_velocity_callback(const geometry_msgs::msg::Twist::SharedPtr msg)
     {   
-        RCLCPP_INFO(this->get_logger(), "navigation_velocity_callback called");
+        // RCLCPP_INFO(this->get_logger(), "navigation_velocity_callback called");
         navigation_velocity_ = *msg;
         // publish_combined_velocity();
 
@@ -46,7 +46,7 @@ public:
 
     void admittance_velocity_callback(const geometry_msgs::msg::Twist::SharedPtr msg)
     {   
-        RCLCPP_INFO(this->get_logger(), "admittance_velocity_callback called");
+        // RCLCPP_INFO(this->get_logger(), "admittance_velocity_callback called");
         admittance_velocity_ = *msg;
 
 
