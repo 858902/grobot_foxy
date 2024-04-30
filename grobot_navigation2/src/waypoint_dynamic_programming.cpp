@@ -15,6 +15,10 @@
 #include <map>
 #include <algorithm>
 
+//Big O check
+#include <chrono>
+#include <memory>
+
 using namespace std;
 
 // waypoint 경로 표기용 구조체
@@ -48,6 +52,8 @@ public:
   //방문해야하는 waypoint list 받아오기
   void list_callback(const std_msgs::msg::String::SharedPtr msg)
   {
+    auto start_time = std::chrono::high_resolution_clock::now(); // 시작 시간 기록
+    
     std::istringstream iss(msg->data);
     std::string s;
     waypoint_vec.clear(); 
@@ -64,8 +70,13 @@ public:
         RCLCPP_INFO(this->get_logger(), "Waypoint: %s", waypoint.c_str());
     }
 
+
     initialize_distance_matrix();
     std::cout << "최소 거리: " << calculate_optimal_path(distanceMatrix, waypoint_indices,11) << std::endl;
+  
+    auto end_time = std::chrono::high_resolution_clock::now(); // 종료 시간 기록
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time); // 실행 시간 계산
+    RCLCPP_INFO(this->get_logger(), "Function execution time: %ld microseconds", duration.count());
   } 
 
 private:

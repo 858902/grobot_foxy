@@ -323,6 +323,10 @@
 #include <algorithm>
 #include <random>
 
+//Big O check
+#include <chrono>
+#include <memory>
+
 using namespace std;
 
 // Waypoint 경로 표기용 구조체
@@ -353,6 +357,8 @@ public:
     //lsit callback temp1
     void list_callback(const std_msgs::msg::String::SharedPtr message)
     {
+        start_ = std::chrono::high_resolution_clock::now(); // Big o check
+
         std::istringstream iss(message->data);
         std::string s;
         waypoint_vec.clear();
@@ -378,7 +384,7 @@ public:
         RCLCPP_INFO(this->get_logger(), "Raw list: %s", message->data.c_str());
 
 
-        // 유전 알고리즘을 사용하여 최적 경로 계산
+        // ga -> optimal path calculation
         initialize_distance_matrix();
         TSPResult result = solve_genetic_algorithm(distanceMatrix, waypoint_indices, 11);
         RCLCPP_INFO(get_logger(), "최소 거리: %f", result.cost);
@@ -400,6 +406,10 @@ public:
 
         waypoint_list_pub_->publish(result_msg);
         RCLCPP_INFO(this->get_logger(), "Publishing message: %s", result_msg.data.c_str());
+    
+        auto end = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start_);
+        RCLCPP_INFO(this->get_logger(), "Total execution time: %ld microseconds", duration.count());
     }
 
     // // 방문해야하는 waypoint list 받아오기
@@ -469,6 +479,7 @@ private:
     std::map<std::string, double> distance_map;           // 경유지 간 거리를 저장할 맵
     vector<vector<double>> distanceMatrix;
 
+    std::chrono::time_point<std::chrono::high_resolution_clock> start_; // Big O check
     // YAML 파일 불러오기
     void load_yaml()
     {
@@ -610,7 +621,6 @@ private:
                 optimal_path = individual;
             }
         }
-
         return {min_cost, optimal_path};
     }
 
