@@ -4,6 +4,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(grobot_node)
 
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
 ################################################################################
 # Find ament packages and libraries for ament and system dependencies
 ################################################################################

@@ -3,6 +3,7 @@
 #include "std_msgs/msg/float64_multi_array.hpp"
 #include <chrono>
 #include <deque>
+#include <algorithm>
 
 using namespace std::chrono_literals;
 
@@ -55,6 +56,10 @@ private:
         double x_force = ((force_sensor[0] + force_sensor[1]) - (force_sensor[2] + force_sensor[3])) * K_x;
         double yaw_force = (force_sensor[1] - force_sensor[0]) * K_yaw;
 
+        // limit 
+        x_force = std::clamp(x_force, -0.5, 0.5); 
+        yaw_force = std::clamp(yaw_force, -0.1, 0.1); 
+
         std_msgs::msg::Float64MultiArray force_msg;
         force_msg.data = {x_force, 0, yaw_force};
 
@@ -70,10 +75,10 @@ private:
         force_sensor[index] = std::accumulate(sensor_data[index].begin(), sensor_data[index].end(), 0.0) / sensor_data[index].size();
     }
 
-    static constexpr size_t N = 15; 
+    static constexpr size_t N = 50; 
     std::deque<int> sensor_data[4];
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
-    double K_x = 0.002;
+    double K_x = 0.005;
     double K_yaw = 0.002;
 
 
