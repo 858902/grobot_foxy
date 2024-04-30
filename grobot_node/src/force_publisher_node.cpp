@@ -30,25 +30,32 @@ private:
     void sensor_callback_1(const std_msgs::msg::Int32::SharedPtr msg)
     {
         // force_sensor[0] = msg->data;
-        update_moving_average(0, msg->data);
+        // update_moving_average(0, msg->data);
+        update_low_pass_filter(0, msg->data);
     }
 
     void sensor_callback_2(const std_msgs::msg::Int32::SharedPtr msg)
     {
         // force_sensor[1] = msg->data;
-        update_moving_average(1, msg->data);
+        // update_moving_average(1, msg->data);
+        update_low_pass_filter(1, msg->data);
+
     }
 
     void sensor_callback_3(const std_msgs::msg::Int32::SharedPtr msg)
     {
         // force_sensor[2] = msg->data;
-        update_moving_average(2, msg->data);
+        // update_moving_average(2, msg->data);
+        update_low_pass_filter(2, msg->data);
+
     }
 
     void sensor_callback_4(const std_msgs::msg::Int32::SharedPtr msg)
     {
         // force_sensor[3] = msg->data;
-        update_moving_average(3, msg->data);
+        // update_moving_average(3, msg->data);
+        update_low_pass_filter(3, msg->data);
+
     }
 
     void publish_force()
@@ -66,6 +73,7 @@ private:
         force_pub->publish(force_msg);
     }
 
+    // moving average fillter 
     void update_moving_average(int index, int new_data)
     {
         sensor_data[index].push_back(new_data);
@@ -75,10 +83,18 @@ private:
         force_sensor[index] = std::accumulate(sensor_data[index].begin(), sensor_data[index].end(), 0.0) / sensor_data[index].size();
     }
 
-    static constexpr size_t N = 50; 
+    // low-pass filter
+    void update_low_pass_filter(int index, int new_data)
+    {
+        // Apply the low-pass filter
+        force_sensor[index] = alpha * new_data + (1.0 - alpha) * force_sensor[index];
+    }
+    
+    static constexpr double alpha = 0.1; // 저주파 필터의 감쇠 계수
+    static constexpr size_t N = 30; 
     std::deque<int> sensor_data[4];
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
-    double K_x = 0.005;
+    double K_x = 0.006;
     double K_yaw = 0.002;
 
 
