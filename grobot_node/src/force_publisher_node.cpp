@@ -57,8 +57,8 @@ private:
     }
 
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
-    double K_x = 0.001;
-    double K_yaw = 0.001;
+    double K_x = 0.002;
+    double K_yaw = 0.002;
 
 
     // Subscriber
