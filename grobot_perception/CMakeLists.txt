@@ -45,15 +45,21 @@ ament_target_dependencies(sensor_fusion_node
   rclcpp
   sensor_msgs
   tf2_ros
+  geometry_msgs
   tf2
   laser_geometry
   tf2_sensor_msgs
+  PCL
 )
 
 
 target_link_libraries(grobot_sensor_fusion_node
   ${tf2_ros_LIBRARIES}
   ${geometry_msgs_LIBRARIES}
+  ${PCL_LIBRARIES}
+)
+
+target_link_libraries(sensor_fusion_node
   ${PCL_LIBRARIES}
 )
 
