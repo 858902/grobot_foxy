@@ -71,7 +71,7 @@ private:
         double yaw_force = (force_sensor[1] - force_sensor[0]) * K_yaw;
 
         // 외력 upper limit 설정 
-        x_force = std::clamp(x_force, -0.5, 0.5); 
+        x_force = std::clamp(x_force, -0.4, 0.4); 
         yaw_force = std::clamp(yaw_force, -0.1, 0.1); 
 
         std_msgs::msg::Float64MultiArray force_msg;
@@ -96,7 +96,6 @@ private:
         // Apply the low-pass filter
         force_sensor[index] = alpha * new_data + (1.0 - alpha) * force_sensor[index];
     }
-    
     // Moving RMS Filter
     void update_moving_rms(int index, int new_data)
     {
@@ -116,7 +115,7 @@ private:
     std::deque<double> sensor_data[4];
 
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
-    double K_x = 0.006;
+    double K_x = 0.005;
     double K_yaw = 0.002;
 
 
