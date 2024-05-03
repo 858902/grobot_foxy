@@ -49,10 +49,24 @@ private:
     }
 
     void cameraCallback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg) {
+        
+        pcl::PointCloud<pcl::PointXYZ>::Ptr camera_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::fromROSMsg(*cloud_msg, *camera_cloud);
+
+        for (auto& point : camera_cloud->points) {
+            point.z = 0.0f;
+        }
+
+        sensor_msgs::msg::PointCloud2 camera_cloud_msg;
+        pcl::toROSMsg(*camera_cloud, camera_cloud_msg);
+
         sensor_msgs::msg::PointCloud2 fused_cloud;
-        concatenatePointCloud(last_lidar_cloud_, *cloud_msg, fused_cloud);
+        // concatenatePointCloud(last_lidar_cloud_, *cloud_msg, fused_cloud);
+        concatenatePointCloud(last_lidar_cloud_, camera_cloud_msg, fused_cloud); // z projection
+
         sensor_msgs::msg::PointCloud2 output_cloud_msg;
         downsampleAndCluster(fused_cloud, output_cloud_msg);
+
         cloud_publisher_->publish(output_cloud_msg);
     }
 
@@ -73,15 +87,15 @@ private:
         pcl::PointCloud<pcl::PointXYZ>::Ptr downsampled_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::VoxelGrid<pcl::PointXYZ> vg;
         vg.setInputCloud(input_cloud);
-        vg.setLeafSize(0.1f, 0.1f, 0.1f);
+        vg.setLeafSize(0.1f, 0.1f, 0.1f); // 0.1 ->
         vg.filter(*downsampled_cloud);
 
         pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
         tree->setInputCloud(downsampled_cloud);
         std::vector<pcl::PointIndices> cluster_indices;
         pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
-        ec.setClusterTolerance(0.02); 
-        ec.setMinClusterSize(100);   
+        ec.setClusterTolerance(0.05); // 0.02 -> 0.05 
+        ec.setMinClusterSize(50); // 100 -> 50   
         ec.setMaxClusterSize(25000);  
         ec.setSearchMethod(tree);
         ec.setInputCloud(downsampled_cloud);
