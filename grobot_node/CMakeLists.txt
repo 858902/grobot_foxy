@@ -4,6 +4,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(grobot_node)
 
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
 ################################################################################
 # Find ament packages and libraries for ament and system dependencies
 ################################################################################
@@ -53,17 +56,21 @@ ament_target_dependencies(lidar_calibration rclcpp std_srvs  sensor_msgs  tf2 tf
 add_executable(velocity_manager src/velocity_manager.cpp)  
 ament_target_dependencies(velocity_manager rclcpp std_srvs  sensor_msgs  gazebo_msgs std_msgs geometry_msgs nav2_msgs ament_index_cpp)
 
+add_executable(force_publisher_node src/force_publisher_node.cpp)  
+ament_target_dependencies(force_publisher_node rclcpp std_srvs  sensor_msgs std_msgs ament_index_cpp)
+
 ################################################################################
 # Install
 ################################################################################
 install(
-  DIRECTORY include
+  DIRECTORY include launch
   DESTINATION share/${PROJECT_NAME}
 )
 
 install(TARGETS
   lidar_calibration
   velocity_manager
+  force_publisher_node
   DESTINATION lib/${PROJECT_NAME}
 )
 

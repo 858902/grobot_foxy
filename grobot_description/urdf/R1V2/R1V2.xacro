@@ -2,7 +2,6 @@
 <robot name="R1V2" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
 <xacro:include filename="$(find grobot_description)/urdf/materials.xacro" />
-<!-- <xacro:include filename="$(find grobot_description)/urdf/R1V2.trans" /> -->
 <xacro:include filename="$(find grobot_description)/urdf/R1V2.gazebo" />
 <xacro:property name="body_color" value="Gazebo/Grey" />
 
@@ -272,9 +271,10 @@
 </gazebo>
 
 <!-- IMU -->
+  <!-- <origin xyz="0.35 0.0 0.2" rpy="0 0 0"/> -->
 
 <joint name="imu_joint" type="fixed">
-  <origin xyz="0.35 0.0 0.2" rpy="0 0 0"/>
+  <origin xyz="0.0 0.0 0.2" rpy="0 0 0"/>
   <parent link="base_link"/>
   <child link="imu_link"/>
   <axis xyz="0.0 0.0 1.0"/>
