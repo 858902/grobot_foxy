@@ -126,20 +126,28 @@ class GrobotNode(Node):
     self.odom_pose.pre_timestamp = self.get_clock().now()
     self.odom_vel = OdomVel()
     self.joint = Joint()
-  
+
+    ############################### son 추가
+    self.vel_z = 0.0
+    self.roll_imu =0.0
+    self.pitch_imu =0.0
+    self.yaw_imu =0.0
+    ############################### son 추가
+
     # Services
-    self.srvHeadlight = self.create_service(Onoff, 'set_headlight', self.cbSrv_headlight)
-    self.srvSetColor = self.create_service(Color, 'set_rgbled', self.cbSrv_setColor)
+    # self.srvHeadlight = self.create_service(Onoff, 'set_headlight', self.cbSrv_headlight)
+    # self.srvSetColor = self.create_service(Color, 'set_rgbled', self.cbSrv_setColor)
     self.srvResetODOM = self.create_service(ResetOdom, 'reset_odom', self.cbSrv_resetODOM)
-    self.srvCheckBAT = self.create_service(Battery, 'check_battery', self.cbSrv_checkBattery)
+    # self.srvCheckBAT = self.create_service(Battery, 'check_battery', self.cbSrv_checkBattery)
 
     # Set subscriber
     self.subCmdVelMsg = self.create_subscription(Twist, 'cmd_vel', self.cbCmdVelMsg, 10)
+    self.subscription_imu = self.create_subscription(Imu, 'imu/data', self.cbIMU, 10)
     
     # Set publisher
     self.pub_JointStates = self.create_publisher(JointState, 'joint_states', 10)
-    self.pub_IMU = self.create_publisher(Imu, 'imu', 10)
-    self.pub_Odom = self.create_publisher(Odometry, 'odom', 10)
+    # self.pub_IMU = self.create_publisher(Imu, 'imu', 10)
+    self.pub_Odom = self.create_publisher(Odometry, 'odom_encoder', 10)
     self.pub_OdomTF = TransformBroadcaster(self)
     self.pub_pose = self.create_publisher(Pose, 'pose', 10)
 
@@ -212,25 +220,28 @@ class GrobotNode(Node):
 
     self.pub_Odom.publish(odom)
 
+
+    ################### ekf on -> unactive ##############################
     # Set odomTF data
-    odom_tf = TransformStamped()
-    odom_tf.header.frame_id = odom.header.frame_id
-    odom_tf.child_frame_id = odom.child_frame_id
-    odom_tf.header.stamp = timestamp_now
+  #   odom_tf = TransformStamped()
+  #   odom_tf.header.frame_id = odom.header.frame_id
+  #   odom_tf.child_frame_id = odom.child_frame_id
+  #   odom_tf.header.stamp = timestamp_now
 
-    odom_tf.transform.translation.x = odom.pose.pose.position.x
-    odom_tf.transform.translation.y = odom.pose.pose.position.y
-    odom_tf.transform.translation.z = odom.pose.pose.position.z
-    odom_tf.transform.rotation = odom.pose.pose.orientation
-    self.pub_OdomTF.sendTransform(odom_tf)
+  #   odom_tf.transform.translation.x = odom.pose.pose.position.x
+  #   odom_tf.transform.translation.y = odom.pose.pose.position.y
+  #   odom_tf.transform.translation.z = odom.pose.pose.position.z
+  #   odom_tf.transform.rotation = odom.pose.pose.orientation
+  #   self.pub_OdomTF.sendTransform(odom_tf)
 
-  def updatePoseStates(self, roll, pitch, yaw):
-    #Added to publish pose orientation of IMU
-    pose = Pose()
-    pose.orientation.x = roll
-    pose.orientation.y = pitch
-    pose.orientation.z = yaw
-    self.pub_pose.publish(pose)
+  # def updatePoseStates(self, roll, pitch, yaw):
+  #   #Added to publish pose orientation of IMU
+  #   pose = Pose()
+  #   pose.orientation.x = roll
+  #   pose.orientation.y = pitch
+  #   pose.orientation.z = yaw
+  #   self.pub_pose.publish(pose)
+    ###################################################################
 
   def updateJointStates(self, odo_l, odo_r, trans_vel, orient_vel):
     odo_l /= 1000.
@@ -264,13 +275,13 @@ class GrobotNode(Node):
     trans_vel = self.ph._vel[0]
     orient_vel = self.ph._vel[1]
     vel_z = self.ph._gyro[2]
-    roll_imu = self.ph._imu[0]
-    pitch_imu = self.ph._imu[1]
-    yaw_imu = self.ph._imu[2]
-
-    self.update_odometry(odo_l, odo_r, trans_vel, orient_vel, vel_z)
+    # roll_imu = self.ph._imu[0]
+    # pitch_imu = self.ph._imu[1]
+    # yaw_imu = self.ph._imu[2]
+    
+    self.update_odometry(odo_l, odo_r, trans_vel, orient_vel, self.vel_z)
     self.updateJointStates(odo_l, odo_r, trans_vel, orient_vel)
-    self.updatePoseStates(roll_imu, pitch_imu, yaw_imu)
+    # self.updatePoseStates(self.roll_imu, self.pitch_imu, self.yaw_imu)
 
   def cbCmdVelMsg(self, cmd_vel_msg):
     lin_vel_x = cmd_vel_msg.linear.x
@@ -334,6 +345,15 @@ class GrobotNode(Node):
     self.ph.write_port(command)
     return CalgResponse()
 
+  ############################### son 추가
+  def cbIMU(self, msg):
+    self.roll_imu = msg.orientation.x
+    self.pitch_imu = msg.orientation.y
+    self.yaw_imu = msg.orientation.z
+    self.vel_z = msg.angular_velocity.z 
+    # self.updatePoseStates(roll_imu, pitch_imu, yaw_imu)
+  ############################### son 추가
+  
 def main(args=None):
   rclpy.init(args=args)
   grobotNode = GrobotNode()

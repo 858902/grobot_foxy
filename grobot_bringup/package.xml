@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>grobot_bringup</name>
-  <version>0.0.1</version>
+  <version>0.1.0</version>
   <description>
     ROS 2 launch scripts for starting the Grobot
   </description>
@@ -22,6 +22,9 @@
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>tf2_ros_py</exec_depend>
   <exec_depend>rosidl_default_runtime</exec_depend>
+
+  <exec_depend>robot_localization</exec_depend>
+  
   <depend>grobot_interfaces</depend>
   <depend>message_filters</depend>
   <export>
