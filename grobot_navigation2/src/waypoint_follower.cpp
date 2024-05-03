@@ -62,21 +62,6 @@ public:
     initial_pose_pub_->publish(initial_pose);
 
     // Define waypoints
-    waypoints_["A"].header.frame_id = "map";
-    waypoints_["A"].pose.position.x = 8.0;
-    waypoints_["A"].pose.position.y = -1.0;
-    waypoints_["A"].pose.orientation.w = 1.0;
-
-    waypoints_["B"].header.frame_id = "map";
-    waypoints_["B"].pose.position.x = 3.0;
-    waypoints_["B"].pose.position.y = 3.0;
-    waypoints_["B"].pose.orientation.w = 1.0;
-
-    waypoints_["C"].header.frame_id = "map";
-    waypoints_["C"].pose.position.x = 0.0;
-    waypoints_["C"].pose.position.y = -5.0;
-    waypoints_["C"].pose.orientation.w = 1.0;
-
     load_yaml_();
 
   }
@@ -85,7 +70,7 @@ public:
         std::string package_name = "grobot_navigation2";
 
         std::string package_path = ament_index_cpp::get_package_share_directory(package_name);
-        std::string path = package_path + "/param/waypoint_warehouse.yaml";
+        std::string path = package_path + "/param/waypoint_bunker.yaml";
         YAML::Node yaml_file = YAML::LoadFile(path);
 
         for(YAML::const_iterator it=yaml_file.begin(); it!=yaml_file.end(); ++it)
@@ -100,7 +85,14 @@ public:
             waypoints_[id].header.frame_id = "map";
             waypoints_[id].pose.position.x = x;
             waypoints_[id].pose.position.y = y;
-            waypoints_[id].pose.orientation.w = 1.0;
+
+            tf2::Quaternion q;
+
+            q.setRPY(0, 0, yaw);
+            waypoints_[id].pose.orientation.x = q.x();
+            waypoints_[id].pose.orientation.y = q.y();
+            waypoints_[id].pose.orientation.z = q.z();
+            waypoints_[id].pose.orientation.w = q.w();
 
             RCLCPP_INFO(this->get_logger(), "Waypoint loaded: %s, Position: (%f, %f), Orientation: %f", id.c_str(), x, y, yaw);
 
@@ -229,7 +221,7 @@ private:
   size_t current_waypoint_index_ = 0; // 현재 웨이포인트 인덱스
   std::vector<std::string> waypoint_keys_;
 
-
+  
 };
 
 int main(int argc, char **argv)

@@ -12,29 +12,33 @@ public:
     {   
         //Subscribers
         subscription_ = this->create_subscription<sensor_msgs::msg::JointState>(
-            "/joint_states", 100, std::bind(&AdmittanceInterface::joint_states_callback, this, std::placeholders::_1));
+            "/joint_states", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::joint_states_callback, this, std::placeholders::_1));
 
         subscription_odom_ = this->create_subscription<nav_msgs::msg::Odometry>(
-            "/odom", 10, std::bind(&AdmittanceInterface::callback_odom, this, std::placeholders::_1));
+            "/odom", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::callback_odom, this, std::placeholders::_1));
 
         subscription_external_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
-            "/command_external", 10, std::bind(&AdmittanceInterface::callback_external, this, std::placeholders::_1));
+            "/external_force", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::callback_external, this, std::placeholders::_1));
         
         subscription_param_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
-            "/param_sub", 100, std::bind(&AdmittanceInterface::param_callback, this, std::placeholders::_1));
+            "/param_sub", rclcpp::SystemDefaultsQoS(), std::bind(&AdmittanceInterface::param_callback, this, std::placeholders::_1));
 
         // Publisher 
-        cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 10);
-
+        cmd_vel_pub = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel_admittance", rclcpp::SystemDefaultsQoS());
+        disturbance_ref_pub = this->create_publisher<std_msgs::msg::Float64MultiArray>("disturbance_ref",  rclcpp::SystemDefaultsQoS());
+        
         //가상의 Mass(M_,M_ori_), Damping(D_), Stiffness(K_)
-        double M_ = 1;
-        double M_ori_ = 0.1;
-        double D_ = 1;
-        double K_ = 1;
+        double M_ = 5;
+        double M_ori_ = 10;
+        double D_ = 11;
+        double D_ori_ = 1;
+        double K_ = 8;
+        double K_ori_ = 1;
 
         M_adm.diagonal() << M_, M_, M_;
         D_adm.diagonal() << D_,D_,D_;
         K.diagonal() << K_,K_,K_; 
+
     }
 
     void joint_states_callback(const sensor_msgs::msg::JointState::SharedPtr JointState_Data)
@@ -54,7 +58,7 @@ public:
         // Get r from the Odometry message
         RobotPosition[0] = msg->pose.pose.position.x;
         RobotPosition[1] = msg->pose.pose.position.y;
-
+    
         tf2::Quaternion q(
             msg->pose.pose.orientation.x,
             msg->pose.pose.orientation.y,
@@ -64,6 +68,8 @@ public:
         double roll, pitch, yaw;
         m.getRPY(roll, pitch, yaw);
         RobotPosition[2] = yaw;
+
+        // std::cout << "yaw: " <<RobotPosition[2] << std::endl;
 
         // Get \dot{r} from the Odometry message
         RobotVelocity[0] = msg->twist.twist.linear.x;
@@ -75,6 +81,7 @@ public:
         tau_external[0] = msg -> data[0];
         tau_external[1] = msg -> data[1];
         tau_external[2] = msg -> data[2];
+    
     }
 
     void param_callback(const std_msgs::msg::Float64MultiArray::SharedPtr Param_Data)
@@ -85,37 +92,18 @@ public:
 
     }
     void run()  
-    {
+    {   
         rclcpp::Rate loop_rate(100);
         while(rclcpp::ok())
         {       
+            // RCLCPP_INFO(this->get_logger(), "루프 시작");
             //M,D,K값 실시간으로 바뀌는거 확인용
             // std::cout << "M: " << std::endl << M_adm << std::endl;
             // std::cout << "D: " << std::endl << D_adm << std::endl;
             // std::cout << "K: " << std::endl << K << std::endl;
-            
-            // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // // // Get current time
-            // // rclcpp::Time curr_time = this->now();
-
-            // // // Calculate dt
-            // // double dt = (curr_time - prev_time_).seconds();
-
-            // // //r_dot
-            // // double d = 0.5; // Distance between wheels
-            // // RobotVelocity[0] = (JointVelocity[0] + JointVelocity[1]) / 2; // Robot Linear velocity
-            // // RobotVelocity[1] = (JointVelocity[1] - JointVelocity[0]) / d; // Robot Angular velocity
-
-            // // RobotPosition[0] += RobotVelocity[0] * cos(RobotPosition[2]) * dt; //x position
-            // // RobotPosition[1] += RobotVelocity[0] * cos(RobotPosition[2]) * dt; // y position
-            // // RobotPosition[2] += RobotVelocity[1] * dt; // Orientation
-
-            // // prev_time_ = curr_time;
-            // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
-
+        
             KDL::JntArray r(3);
-            for (int i = 0; i < joint_size; i++) {
+            for (int i = 0; i < 3; i++) {
                 r(i) = RobotPosition[i];
             }
             r_vec = r.data;
@@ -131,9 +119,17 @@ public:
                 temp_external(i) = tau_external[i];
             }
             tau_external_ = temp_external.data;
+
+            double current_yaw = r_vec(2);
+
+            double adjusted_x = cos(current_yaw) * tau_external_(0) - sin(current_yaw) * tau_external_(1);
+            double adjusted_y = sin(current_yaw) * tau_external_(0) + cos(current_yaw) * tau_external_(1);
+
+            external_force << adjusted_x, adjusted_y, tau_external_(2); 
+
             // desired_r_vec = tau_external_ ;
             
-            std::cout << "r_vec: " << std::endl << r_vec.transpose() << std::endl;
+            // std::cout << "r_vec: " << std::endl << r_vec.transpose() << std::endl;
             std::cout << "desired_r_vec: " << std::endl << desired_r_vec.transpose() << std::endl;
 
 
@@ -142,9 +138,7 @@ public:
             last_update_time = rclcpp::Clock{}.now();
 
             //update desried_r 
-            direction = tau_external_.normalized();
-            magnitude = tau_external_.norm() * dt;
-            desired_r_vec += direction * magnitude;
+            desired_r_vec = r_vec + external_force;
 
             compute_impedance(K,
                               r_vec, desired_r_vec,
@@ -160,7 +154,12 @@ public:
             cmd_vel_msg.angular.z = desired_r_vel[2];
 
             cmd_vel_pub->publish(cmd_vel_msg);
-            
+
+            //pub reference disturbance (plot 분석용)
+            std_msgs::msg::Float64MultiArray msg_;
+            msg_.data = {tau_external[0], tau_external[1], tau_external[2]};
+            disturbance_ref_pub->publish(msg_);
+
             loop_rate.sleep();
         }
     }
@@ -199,6 +198,8 @@ private:
     Eigen::VectorXd grad_V_imp =Eigen::VectorXd::Zero(3);
 
     Eigen::VectorXd direction =Eigen::VectorXd::Zero(3);
+    Eigen::VectorXd external_force =Eigen::VectorXd::Zero(3);
+
 
     float JointPosition[6] = {0.0};
     float JointVelocity[6] = {0.0};
@@ -217,9 +218,8 @@ private:
     
     //Pubsliher
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub;
+    rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr disturbance_ref_pub;
     
-    
-
 };
 
 int main(int argc, char **argv)
@@ -232,10 +232,11 @@ int main(int argc, char **argv)
   rclcpp::executors::MultiThreadedExecutor executor;
   executor.add_node(admittance_interface);
   std::thread executor_thread([&executor]() { executor.spin(); });
-
+  
+  RCLCPP_INFO(admittance_interface->get_logger(), "노드 실행 준비 완료");
   admittance_interface->run();
   executor_thread.join();
-
+  RCLCPP_INFO(admittance_interface->get_logger(), "노드 종료");
   rclcpp::shutdown();
   return 0;
 }
