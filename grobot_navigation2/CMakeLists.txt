@@ -53,12 +53,20 @@ ament_target_dependencies(waypoint_planning rclcpp std_srvs  sensor_msgs  tf2  g
 add_executable(waypoint_dynamic_programming src/waypoint_dynamic_programming.cpp)  
 ament_target_dependencies(waypoint_dynamic_programming rclcpp std_srvs  sensor_msgs  tf2 std_msgs yaml-cpp ament_index_cpp)
 
+add_executable(waypoint_genetic_algorithm_node src/waypoint_genetic_algorithm_node.cpp)  
+ament_target_dependencies(waypoint_genetic_algorithm_node rclcpp std_srvs geometry_msgs tf2 std_msgs yaml-cpp ament_index_cpp)
+
 target_link_libraries(waypoint_dynamic_programming
   ${rclcpp_LIBRARIES}
   yaml-cpp
 )
 
 target_link_libraries(waypoint_follower
+  ${rclcpp_LIBRARIES}
+  yaml-cpp
+)
+
+target_link_libraries(waypoint_genetic_algorithm_node
   ${rclcpp_LIBRARIES}
   yaml-cpp
 )
@@ -75,6 +83,7 @@ install(TARGETS
   waypoint_follower
   waypoint_planning
   waypoint_dynamic_programming
+  waypoint_genetic_algorithm_node
   DESTINATION lib/${PROJECT_NAME}
 )
 
