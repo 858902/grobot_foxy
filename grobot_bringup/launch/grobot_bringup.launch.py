@@ -40,6 +40,12 @@ def generate_launch_description():
       'launch'
     )
   )
+  
+  grobot_imu_launch_file = os.path.join(
+      get_package_share_directory('grobot_sensor'),
+      'launch',
+      'grobot_imu.launch.py'
+  )
 
   return LaunchDescription([
     
@@ -73,6 +79,10 @@ def generate_launch_description():
     
     IncludeLaunchDescription(
       PythonLaunchDescriptionSource([grobot_description_dir, '/grobot_state_publisher.launch.py']),
+      launch_arguments={'use_sim_time': use_sim_time}.items(),
+    ),
+    IncludeLaunchDescription(
+      PythonLaunchDescriptionSource(grobot_imu_launch_file),
       launch_arguments={'use_sim_time': use_sim_time}.items(),
     ),
   ])

@@ -37,7 +37,9 @@ private:
     void signal_offset_callback(const std_msgs::msg::String::SharedPtr msg)
     {
         if (msg->data == "start")
-        {
+        {   
+            std::cout << "signal"<< std::endl;
+
             // 오프셋 측정 시작
             std::fill(std::begin(initial_force_sum_), std::end(initial_force_sum_), 0);
             std::fill(std::begin(initial_samples_collected_), std::end(initial_samples_collected_), 0);
@@ -53,6 +55,7 @@ private:
                     offset_[i] = initial_force_sum_[i] / initial_samples_collected_[i];
                 }
             }
+            std::cout << "offset vector :"<< offset_[0] << " " << offset_[1] << " " << offset_[2] << " " << offset_[3]<< std::endl;
             offset_initialized_ = true;
         }
     }
@@ -61,14 +64,15 @@ private:
     {   
         if (!offset_initialized_)
         {
-            initial_force_sum_[0] += msg->data;
+            initial_force_sum_[0] += msg->data * K_x;
             initial_samples_collected_[0]++;
         }
 
         else
         {
-            int adjusted_data = msg->data - offset_[0];
-            update_moving_rms(0, adjusted_data);
+            double adjusted_data_0 = (msg->data * K_x) - offset_[0];
+            adjusted_data_0 = std::clamp(adjusted_data_0, 0.0, 100.0); 
+            update_moving_rms(0, adjusted_data_0);
             // force_sensor[0] = msg->data;
             // update_moving_average(0, msg->data);
             // update_low_pass_filter(0, msg->data);
@@ -80,14 +84,16 @@ private:
     {   
         if (!offset_initialized_)
         {
-            initial_force_sum_[1] += msg->data;
+            initial_force_sum_[1] += msg->data * K_x;
             initial_samples_collected_[1]++;
         }
 
         else
         {
-            int adjusted_data = msg->data - offset_[1];
-            update_moving_rms(1, adjusted_data);
+            double adjusted_data_1 = (msg->data * K_x) - offset_[1];
+            adjusted_data_1 = std::clamp(adjusted_data_1, 0.0, 100.0); 
+            // std::cout << " adjusted_data_1 :"<< adjusted_data_1<< std::endl;
+            update_moving_rms(1, adjusted_data_1);
             // force_sensor[1] = msg->data;
             // update_moving_average(1, msg->data);
             // update_low_pass_filter(1, msg->data);
@@ -99,14 +105,15 @@ private:
     {
         if (!offset_initialized_)
         {
-            initial_force_sum_[2] += msg->data;
+            initial_force_sum_[2] += msg->data * K_x;
             initial_samples_collected_[2]++;
         }
 
         else
         {
-            int adjusted_data = msg->data - offset_[2];
-            update_moving_rms(2, adjusted_data);
+            double adjusted_data_2 = msg->data * K_x - offset_[2];
+            adjusted_data_2 = std::clamp(adjusted_data_2, 0.0, 100.0); 
+            update_moving_rms(2, adjusted_data_2);
             // force_sensor[2] = msg->data;
             // update_moving_average(2, msg->data);
             // update_low_pass_filter(2, msg->data);
@@ -118,14 +125,15 @@ private:
     {
         if (!offset_initialized_)
         {
-            initial_force_sum_[3] += msg->data;
+            initial_force_sum_[3] += msg->data * K_x;
             initial_samples_collected_[3]++;
         }
 
         else
         {
-            int adjusted_data = msg->data - offset_[3];
-            update_moving_rms(3, adjusted_data);
+            double adjusted_data_3 = (msg->data * K_x) - offset_[3];
+            adjusted_data_3 = std::clamp(adjusted_data_3, 0.0, 100.0); 
+            update_moving_rms(3, adjusted_data_3);
             // force_sensor[3] = msg->data;
             // update_moving_average(3, msg->data);
             // update_low_pass_filter(3, msg->data);
@@ -137,12 +145,20 @@ private:
     {
         if (offset_initialized_)
         {
-            double x_force = ((force_sensor[0] + force_sensor[1]) - (force_sensor[2] + force_sensor[3])) * K_x;
-            double yaw_force = (force_sensor[1] - force_sensor[0]) * K_yaw;
+            double x_force = ((force_sensor[0] + force_sensor[1]) - (force_sensor[2] + force_sensor[3]));
+            double yaw_force = (force_sensor[1] - force_sensor[0]);
 
+            // x_force = std::exp(x_force * 0.5) - 1;
+            
             // 외력 upper limit 설정 
-            x_force = std::clamp(x_force, -0.4, 0.4); 
+            x_force = std::clamp(x_force, -0.4, 0.5); 
             yaw_force = std::clamp(yaw_force, -0.1, 0.1); 
+
+            // //Dead Zone
+            // if (x_force > -0.08 && x_force < 0.08)
+            // {
+            //     x_force = 0;
+            // }
 
             std_msgs::msg::Float64MultiArray force_msg;
             force_msg.data = {x_force, 0, yaw_force};
@@ -168,7 +184,7 @@ private:
     }
 
     // Moving RMS Filter
-    void update_moving_rms(int index, int new_data)
+    void update_moving_rms(int index, double new_data)
     {
         if (sensor_data[index].size() >= N)
         {
@@ -191,7 +207,7 @@ private:
 
 
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
-    double K_x = 0.005;
+    double K_x = 0.0015;
     double K_yaw = 0.002;
 
     // Subscriber
