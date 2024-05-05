@@ -72,8 +72,8 @@ private:
         {
             double adjusted_data_0 = (msg->data * K_x) - offset_[0];
             adjusted_data_0 = std::clamp(adjusted_data_0, 0.0, 100.0); 
-            update_moving_rms(0, adjusted_data_0);
-            // force_sensor[0] = msg->data;
+            // update_moving_rms(0, adjusted_data_0);
+            force_sensor[0] = adjusted_data_0;
             // update_moving_average(0, msg->data);
             // update_low_pass_filter(0, msg->data);
             // update_moving_rms(0, msg->data);
@@ -93,8 +93,8 @@ private:
             double adjusted_data_1 = (msg->data * K_x) - offset_[1];
             adjusted_data_1 = std::clamp(adjusted_data_1, 0.0, 100.0); 
             // std::cout << " adjusted_data_1 :"<< adjusted_data_1<< std::endl;
-            update_moving_rms(1, adjusted_data_1);
-            // force_sensor[1] = msg->data;
+            // update_moving_rms(1, adjusted_data_1);
+            force_sensor[1] = adjusted_data_1;
             // update_moving_average(1, msg->data);
             // update_low_pass_filter(1, msg->data);
             // update_moving_rms(1, msg->data);
@@ -113,8 +113,8 @@ private:
         {
             double adjusted_data_2 = msg->data * K_x - offset_[2];
             adjusted_data_2 = std::clamp(adjusted_data_2, 0.0, 100.0); 
-            update_moving_rms(2, adjusted_data_2);
-            // force_sensor[2] = msg->data;
+            // update_moving_rms(2, adjusted_data_2);
+            force_sensor[2] = adjusted_data_2;
             // update_moving_average(2, msg->data);
             // update_low_pass_filter(2, msg->data);
             // update_moving_rms(2, msg->data);
@@ -133,8 +133,8 @@ private:
         {
             double adjusted_data_3 = (msg->data * K_x) - offset_[3];
             adjusted_data_3 = std::clamp(adjusted_data_3, 0.0, 100.0); 
-            update_moving_rms(3, adjusted_data_3);
-            // force_sensor[3] = msg->data;
+            // update_moving_rms(3, adjusted_data_3);
+            force_sensor[3] = adjusted_data_3;
             // update_moving_average(3, msg->data);
             // update_low_pass_filter(3, msg->data);
             // update_moving_rms(3, msg->data);
