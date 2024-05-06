@@ -122,28 +122,32 @@ public:
             tau_external_ = temp_external.data;
 
             double current_yaw = r_vec(2);
-
+            
+            // External Force to World Frame
             double adjusted_x = cos(current_yaw) * tau_external_(0) - sin(current_yaw) * tau_external_(1);
             double adjusted_y = sin(current_yaw) * tau_external_(0) + cos(current_yaw) * tau_external_(1);
 
             external_force << adjusted_x, adjusted_y, tau_external_(2); 
 
-            // desired_r_vec = tau_exxternal_ ;
-            
+            // std_msgs::msg::Float64MultiArray msg_;
+            // msg_.data = {external_force[0], external_force[1], external_force[2]};
+            // disturbance_ref_pub->publish(msg_);
+
+            // std::cout << "external_force: " << std::endl << external_force.transpose() << std::endl;
+
+            // Odom to Robot Frame
+            double odom_x = cos(current_yaw) * r_vec(0) + sin(current_yaw) * r_vec(1);
+            double odom_y = -sin(current_yaw) * r_vec(0) + cos(current_yaw) * r_vec(1);
+            double odom_yaw = atan2(odom_y, odom_x);
+            r_vec_odom << odom_x, odom_y, odom_yaw; 
+
+
             // std::cout << "r_vec: " << std::endl << r_vec.transpose() << std::endl;
             // std::cout << "r_vec_error: " << std::endl << desired_r_vec.transpose() - r_vec.transpose()  << std::endl;
 
-            std_msgs::msg::Float64MultiArray msg_;
-            msg_.data = {external_force[0], external_force[1], external_force[2]};
-            disturbance_ref_pub->publish(msg_);
-
-
-            std::cout << "external_force: " << std::endl << external_force.transpose() << std::endl;
             //update desried_r 
-            // desired_r_vec = r_vec + external_force;
-            desired_r_vec = r_vec;
+            desired_r_vec = r_vec_odom + tau_external_;
              
-
             //loop 도는데 걸리는 시간 측정
             dt = (rclcpp::Clock{}.now() - last_update_time).seconds();
             last_update_time = rclcpp::Clock{}.now();
@@ -153,7 +157,8 @@ public:
                               tau_impedance);
             
 
-            desired_r_acc = M_adm.inverse() * (tau_impedance + external_force - D_adm * desired_r_vel);
+            // Admittance Control 
+            desired_r_acc = M_adm.inverse() * (tau_impedance + tau_external_ - D_adm * desired_r_vel);
             desired_r_vel += desired_r_acc * dt;
             
             geometry_msgs::msg::Twist cmd_vel_msg;
@@ -207,7 +212,7 @@ private:
 
     Eigen::VectorXd direction =Eigen::VectorXd::Zero(3);
     Eigen::VectorXd external_force =Eigen::VectorXd::Zero(3);
-
+    Eigen::VectorXd r_vec_odom =Eigen::VectorXd::Zero(3);
 
     float JointPosition[6] = {0.0};
     float JointVelocity[6] = {0.0};
