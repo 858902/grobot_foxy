@@ -29,15 +29,15 @@ public:
         
         //가상의 Mass(M_,M_ori_), Damping(D_), Stiffness(K_)
         double M_ = 5;
-        double M_ori_ = 10;
+        double M_ori_ = 5;
         double D_ = 11;
-        double D_ori_ = 1;
+        double D_ori_ = 11;
         double K_ = 8;
-        double K_ori_ = 1;
+        double K_ori_ = 8;
 
-        M_adm.diagonal() << M_, M_, M_;
-        D_adm.diagonal() << D_,D_,D_;
-        K.diagonal() << K_,K_,K_; 
+        M_adm.diagonal() << M_, M_, M_ori_;
+        D_adm.diagonal() << D_,D_,D_ori_;
+        K.diagonal() << K_,K_,K_ori_; 
 
     }
 
@@ -64,6 +64,7 @@ public:
             msg->pose.pose.orientation.y,
             msg->pose.pose.orientation.z,
             msg->pose.pose.orientation.w);
+        
         tf2::Matrix3x3 m(q);
         double roll, pitch, yaw;
         m.getRPY(roll, pitch, yaw);
@@ -127,25 +128,32 @@ public:
 
             external_force << adjusted_x, adjusted_y, tau_external_(2); 
 
-            // desired_r_vec = tau_external_ ;
+            // desired_r_vec = tau_exxternal_ ;
             
             // std::cout << "r_vec: " << std::endl << r_vec.transpose() << std::endl;
-            // std::cout << "desired_r_vec: " << std::endl << desired_r_vec.transpose() << std::endl;
+            // std::cout << "r_vec_error: " << std::endl << desired_r_vec.transpose() - r_vec.transpose()  << std::endl;
 
+            std_msgs::msg::Float64MultiArray msg_;
+            msg_.data = {external_force[0], external_force[1], external_force[2]};
+            disturbance_ref_pub->publish(msg_);
+
+
+            std::cout << "external_force: " << std::endl << external_force.transpose() << std::endl;
+            //update desried_r 
+            // desired_r_vec = r_vec + external_force;
+            desired_r_vec = r_vec;
+             
 
             //loop 도는데 걸리는 시간 측정
             dt = (rclcpp::Clock{}.now() - last_update_time).seconds();
             last_update_time = rclcpp::Clock{}.now();
-
-            //update desried_r 
-            desired_r_vec = r_vec + external_force;
 
             compute_impedance(K,
                               r_vec, desired_r_vec,
                               tau_impedance);
             
 
-            desired_r_acc = M_adm.inverse() * (tau_impedance + tau_external_ - D_adm * desired_r_vel);
+            desired_r_acc = M_adm.inverse() * (tau_impedance + external_force - D_adm * desired_r_vel);
             desired_r_vel += desired_r_acc * dt;
             
             geometry_msgs::msg::Twist cmd_vel_msg;
@@ -156,9 +164,9 @@ public:
             cmd_vel_pub->publish(cmd_vel_msg);
 
             //pub reference disturbance (plot 분석용)
-            std_msgs::msg::Float64MultiArray msg_;
-            msg_.data = {tau_external[0], tau_external[1], tau_external[2]};
-            disturbance_ref_pub->publish(msg_);
+            // std_msgs::msg::Float64MultiArray msg_;
+            // msg_.data = {tau_external[0], tau_external[1], tau_external[2]};
+            // disturbance_ref_pub->publish(msg_);
 
             loop_rate.sleep();
         }

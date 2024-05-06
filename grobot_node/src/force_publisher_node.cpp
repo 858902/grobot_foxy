@@ -7,6 +7,7 @@
 #include <cmath>
 #include <string>
 #include "std_msgs/msg/string.hpp"
+#include <numeric>
 
 using namespace std::chrono_literals;
 
@@ -76,7 +77,6 @@ private:
             force_sensor[0] = adjusted_data_0;
             // update_moving_average(0, msg->data);
             // update_low_pass_filter(0, msg->data);
-            // update_moving_rms(0, msg->data);
         }
     }
 
@@ -97,7 +97,6 @@ private:
             force_sensor[1] = adjusted_data_1;
             // update_moving_average(1, msg->data);
             // update_low_pass_filter(1, msg->data);
-            // update_moving_rms(1, msg->data);
         }
     }
 
@@ -105,19 +104,18 @@ private:
     {
         if (!offset_initialized_)
         {
-            initial_force_sum_[2] += msg->data * K_x;
+            initial_force_sum_[2] += msg->data * K_x2;
             initial_samples_collected_[2]++;
         }
 
         else
         {
-            double adjusted_data_2 = msg->data * K_x - offset_[2];
+            double adjusted_data_2 = msg->data * K_x2 - offset_[2];
             adjusted_data_2 = std::clamp(adjusted_data_2, 0.0, 100.0); 
             // update_moving_rms(2, adjusted_data_2);
             force_sensor[2] = adjusted_data_2;
             // update_moving_average(2, msg->data);
             // update_low_pass_filter(2, msg->data);
-            // update_moving_rms(2, msg->data);
         }
     }
 
@@ -125,19 +123,18 @@ private:
     {
         if (!offset_initialized_)
         {
-            initial_force_sum_[3] += msg->data * K_x;
+            initial_force_sum_[3] += msg->data * K_x2;
             initial_samples_collected_[3]++;
         }
 
         else
         {
-            double adjusted_data_3 = (msg->data * K_x) - offset_[3];
+            double adjusted_data_3 = (msg->data * K_x2) - offset_[3];
             adjusted_data_3 = std::clamp(adjusted_data_3, 0.0, 100.0); 
             // update_moving_rms(3, adjusted_data_3);
             force_sensor[3] = adjusted_data_3;
             // update_moving_average(3, msg->data);
             // update_low_pass_filter(3, msg->data);
-            // update_moving_rms(3, msg->data);
         }
     }
 
@@ -146,19 +143,27 @@ private:
         if (offset_initialized_)
         {
             double x_force = ((force_sensor[0] + force_sensor[1]) - (force_sensor[2] + force_sensor[3]));
-            double yaw_force = (force_sensor[1] - force_sensor[0]);
+            double yaw_force = (force_sensor[1]- force_sensor[0]) *K_yaw;
+            // double yaw_force = (force_sensor[1] +force_sensor[2])- (force_sensor[0] + force_sensor[3]) * K_yaw;
 
             // x_force = std::exp(x_force * 0.5) - 1;
             
             // 외력 upper limit 설정 
             x_force = std::clamp(x_force, -0.4, 0.5); 
-            yaw_force = std::clamp(yaw_force, -0.1, 0.1); 
+            yaw_force = std::clamp(yaw_force, -1.0, 1.0); 
 
             // //Dead Zone
-            // if (x_force > -0.08 && x_force < 0.08)
-            // {
-            //     x_force = 0;
-            // }
+            if (x_force > -0.07 && x_force < 0.07)
+            {
+                x_force = 0;
+            }
+
+            if (yaw_force > -0.01 && yaw_force < 0.01)
+            {
+                yaw_force = 0;
+            }
+
+            // update_yaw_force_moving_average(yaw_force);
 
             std_msgs::msg::Float64MultiArray force_msg;
             force_msg.data = {x_force, 0, yaw_force};
@@ -196,8 +201,23 @@ private:
         force_sensor[index] = sqrt(sum / sensor_data[index].size()); // RMS 계산
     }
 
+    void update_yaw_force_moving_average(double new_yaw_force)
+    {
+        yaw_force_history.push_back(new_yaw_force);
+        if (yaw_force_history.size() > N)
+            yaw_force_history.pop_front();
+    }
+
+    double get_yaw_force_moving_average()
+    {
+        if (yaw_force_history.empty()) return 0; // 데이터가 없을 경우 0 반환
+        return std::accumulate(yaw_force_history.begin(), yaw_force_history.end(), 0.0) / yaw_force_history.size();
+    }
+
     static constexpr double alpha = 0.1; // 저주파 필터의 감쇠 계수
-    static constexpr size_t N = 50; //moving size 
+    // static constexpr size_t N = 10; //moving size 
+    std::deque<double> yaw_force_history;
+    int N = 100;
     // std::deque<int> sensor_data[4];
     std::deque<double> sensor_data[4];
     bool offset_initialized_ = false;
@@ -207,8 +227,9 @@ private:
 
 
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
-    double K_x = 0.0015;
-    double K_yaw = 0.002;
+    double K_x = 0.0025;
+    double K_x2 = 0.004;
+    double K_yaw = 0.2;
 
     // Subscriber
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr sensor_sub_1;
