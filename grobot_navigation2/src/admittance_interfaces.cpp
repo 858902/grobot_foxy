@@ -153,7 +153,7 @@ public:
             last_update_time = rclcpp::Clock{}.now();
 
             compute_impedance(K,
-                              r_vec, desired_r_vec,
+                              r_vec_odom, desired_r_vec,
                               tau_impedance);
             
 

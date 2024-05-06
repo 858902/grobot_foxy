@@ -8,6 +8,7 @@
 #include <string>
 #include "std_msgs/msg/string.hpp"
 #include <numeric>
+#include <memory>
 
 using namespace std::chrono_literals;
 
@@ -31,6 +32,10 @@ public:
 
         timer_ = this->create_wall_timer(std::chrono::milliseconds(100), std::bind(&ForcePublisherNode::publish_force, this));
         force_pub = this->create_publisher<std_msgs::msg::Float64MultiArray>("external_force", rclcpp::SystemDefaultsQoS());
+        plot_pub = this->create_publisher<std_msgs::msg::Float64MultiArray>("filter_check", rclcpp::SystemDefaultsQoS());
+
+        compute_gaussian_weights(); 
+
     }
 
 private:
@@ -65,17 +70,17 @@ private:
     {   
         if (!offset_initialized_)
         {
-            initial_force_sum_[0] += msg->data * K_x;
+            initial_force_sum_[0] += msg->data;
             initial_samples_collected_[0]++;
         }
 
         else
         {
-            double adjusted_data_0 = (msg->data * K_x) - offset_[0];
+            double adjusted_data_0 = (msg->data - offset_[0]) * scale_gain_;
             adjusted_data_0 = std::clamp(adjusted_data_0, 0.0, 100.0); 
-            // update_moving_rms(0, adjusted_data_0);
-            force_sensor[0] = adjusted_data_0;
-            // update_moving_average(0, msg->data);
+            update_gaussian_filter(0, adjusted_data_0);
+            // force_sensor[0] = adjusted_data_0;
+            // update_moving_average(0, adjusted_data_0);
             // update_low_pass_filter(0, msg->data);
         }
     }
@@ -84,18 +89,17 @@ private:
     {   
         if (!offset_initialized_)
         {
-            initial_force_sum_[1] += msg->data * K_x;
+            initial_force_sum_[1] += msg->data;
             initial_samples_collected_[1]++;
         }
 
         else
         {
-            double adjusted_data_1 = (msg->data * K_x) - offset_[1];
+            double adjusted_data_1 = (msg->data - offset_[1])* scale_gain_;
             adjusted_data_1 = std::clamp(adjusted_data_1, 0.0, 100.0); 
-            // std::cout << " adjusted_data_1 :"<< adjusted_data_1<< std::endl;
-            // update_moving_rms(1, adjusted_data_1);
-            force_sensor[1] = adjusted_data_1;
-            // update_moving_average(1, msg->data);
+            update_gaussian_filter(1, adjusted_data_1);
+            // force_sensor[1] = adjusted_data_1;
+            // update_moving_average(1, adjusted_data_1);
             // update_low_pass_filter(1, msg->data);
         }
     }
@@ -104,17 +108,17 @@ private:
     {
         if (!offset_initialized_)
         {
-            initial_force_sum_[2] += msg->data * K_x2;
+            initial_force_sum_[2] += msg->data;
             initial_samples_collected_[2]++;
         }
 
         else
         {
-            double adjusted_data_2 = msg->data * K_x2 - offset_[2];
+            double adjusted_data_2 = (msg->data - offset_[2]) * scale_gain_2;
             adjusted_data_2 = std::clamp(adjusted_data_2, 0.0, 100.0); 
-            // update_moving_rms(2, adjusted_data_2);
-            force_sensor[2] = adjusted_data_2;
-            // update_moving_average(2, msg->data);
+            update_gaussian_filter(2, adjusted_data_2);
+            // force_sensor[2] = adjusted_data_2;
+            // update_moving_average(2, adjusted_data_2);
             // update_low_pass_filter(2, msg->data);
         }
     }
@@ -123,17 +127,17 @@ private:
     {
         if (!offset_initialized_)
         {
-            initial_force_sum_[3] += msg->data * K_x2;
+            initial_force_sum_[3] += msg->data;
             initial_samples_collected_[3]++;
         }
 
         else
         {
-            double adjusted_data_3 = (msg->data * K_x2) - offset_[3];
+            double adjusted_data_3 = (msg->data - offset_[3]) * scale_gain_2;
             adjusted_data_3 = std::clamp(adjusted_data_3, 0.0, 100.0); 
-            // update_moving_rms(3, adjusted_data_3);
-            force_sensor[3] = adjusted_data_3;
-            // update_moving_average(3, msg->data);
+            update_gaussian_filter(3, adjusted_data_3);
+            // force_sensor[3] = adjusted_data_3;
+            // update_moving_average(3, adjusted_data_3);
             // update_low_pass_filter(3, msg->data);
         }
     }
@@ -141,15 +145,17 @@ private:
     void publish_force()
     {
         if (offset_initialized_)
-        {
-            double x_force = ((force_sensor[0] + force_sensor[1]) - (force_sensor[2] + force_sensor[3]));
-            double yaw_force = (force_sensor[1]- force_sensor[0]) *K_yaw;
-            // double yaw_force = (force_sensor[1] +force_sensor[2])- (force_sensor[0] + force_sensor[3]) * K_yaw;
+        {   
+            std_msgs::msg::Float64MultiArray msg_;
+            msg_.data = {force_sensor[0], force_sensor[1], force_sensor[2],force_sensor[3]};
+            plot_pub->publish(msg_);
 
-            // x_force = std::exp(x_force * 0.5) - 1;
+            double x_force = ((force_sensor[0] + force_sensor[1]) - (force_sensor[2] + force_sensor[3]));
+            double yaw_force = (force_sensor[1]- force_sensor[0]) * scale_gain_yaw;
+            // double yaw_force = (force_sensor[1] +force_sensor[2])- (force_sensor[0] + force_sensor[3]) * scale_gain_yaw;
             
-            // 외력 upper limit 설정 
-            x_force = std::clamp(x_force, -0.4, 0.5); 
+            // 외력 upper & under limit 설정 
+            x_force = std::clamp(x_force, -0.5, 0.5); 
             yaw_force = std::clamp(yaw_force, -1.0, 1.0); 
 
             // //Dead Zone
@@ -173,7 +179,9 @@ private:
     }
 
     // Moving Average Fillter 
-    void update_moving_average(int index, int new_data)
+    static constexpr size_t N = 10; //moving size 
+
+    void update_moving_average(int index, double new_data)
     {
         sensor_data[index].push_back(new_data);
         if (sensor_data[index].size() > N)
@@ -183,53 +191,74 @@ private:
     }
 
     // Low-Pass Filter
+    static constexpr double alpha = 0.1;
+
     void update_low_pass_filter(int index, int new_data)
     {
         force_sensor[index] = alpha * new_data + (1.0 - alpha) * force_sensor[index];
     }
 
-    // Moving RMS Filter
-    void update_moving_rms(int index, double new_data)
-    {
-        if (sensor_data[index].size() >= N)
+    // Gaussian Filter
+    double sigma = 50.0; 
+    const size_t gaussian_size = 151;  // Kernal Size
+    std::vector<double> gaussian_weights;
+
+    void compute_gaussian_weights() 
+    {   
+
+        gaussian_weights.resize(gaussian_size);
+        double sum = 0.0;
+        int half_size = gaussian_size / 2;
+        for (int i = 0; i < gaussian_size; ++i) 
         {
-            sensor_data[index].pop_front();
+            int x = i - half_size;
+            gaussian_weights[i] = std::exp(-0.5 * (x * x) / (sigma * sigma)) / (sigma * std::sqrt(2.0 * M_PI));
+            sum += gaussian_weights[i];
         }
-        sensor_data[index].push_back(pow(new_data, 2)); //제곱 값 저장
+
+        // 가중치 정규화
+        for (double& weight : gaussian_weights) 
+        {
+            weight /= sum;
+        }
+
+        for (const double& weight : gaussian_weights)
+        {
+            std::cout << weight << " ";
+        }
+        std::cout << std::endl;
+    }
+
+    void update_gaussian_filter(int index, double new_data)
+     {
+        sensor_data[index].push_back(new_data);
+        if (sensor_data[index].size() > gaussian_size)
+            sensor_data[index].pop_front();
         
-        double sum = std::accumulate(sensor_data[index].begin(), sensor_data[index].end(), 0.0);
-        force_sensor[index] = sqrt(sum / sensor_data[index].size()); // RMS 계산
+        if (sensor_data[index].size() == gaussian_size)
+        {
+            double filtered_value = 0.0;
+            for (size_t i = 0; i < gaussian_size; ++i)
+            {
+                filtered_value += sensor_data[index][i] * gaussian_weights[i];
+            }
+            force_sensor[index] = filtered_value;
+        }
     }
 
-    void update_yaw_force_moving_average(double new_yaw_force)
-    {
-        yaw_force_history.push_back(new_yaw_force);
-        if (yaw_force_history.size() > N)
-            yaw_force_history.pop_front();
-    }
-
-    double get_yaw_force_moving_average()
-    {
-        if (yaw_force_history.empty()) return 0; // 데이터가 없을 경우 0 반환
-        return std::accumulate(yaw_force_history.begin(), yaw_force_history.end(), 0.0) / yaw_force_history.size();
-    }
-
-    static constexpr double alpha = 0.1; // 저주파 필터의 감쇠 계수
-    // static constexpr size_t N = 10; //moving size 
-    std::deque<double> yaw_force_history;
-    int N = 100;
-    // std::deque<int> sensor_data[4];
+    // Offset 
     std::deque<double> sensor_data[4];
     bool offset_initialized_ = false;
     double offset_[4] = {0.0, 0.0, 0.0, 0.0};
     double initial_force_sum_[4] = {0.0, 0.0, 0.0, 0.0};
     double initial_samples_collected_[4] = {0.0, 0.0, 0.0, 0.0};
 
-
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
-    double K_x = 0.0025;
-    double K_x2 = 0.004;
-    double K_yaw = 0.2;
+
+    // double scale_gain_ = 0.0025;
+    double scale_gain_ = 0.003;
+    double scale_gain_2 = 0.005;
+    double scale_gain_yaw = 0.2;
 
     // Subscriber
     rclcpp::Subscription<std_msgs::msg::Int32>::SharedPtr sensor_sub_1;
@@ -240,6 +269,8 @@ private:
 
     //Publisher
     rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr force_pub;
+    rclcpp::Publisher<std_msgs::msg::Float64MultiArray>::SharedPtr plot_pub;
+
 
     rclcpp::TimerBase::SharedPtr timer_;
 };
