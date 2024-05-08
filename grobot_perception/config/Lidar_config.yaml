@@ -1,8 +1,0 @@
-Lidar_config:
-  FOVS:
-    horizontal: 120.0
-    vertical: 25.0
-  
-  resolutions:
-    horizontal: 0.2
-    vertical: 0.2
