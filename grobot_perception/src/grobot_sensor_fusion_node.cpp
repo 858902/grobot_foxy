@@ -16,6 +16,7 @@
 
 class SensorFusionNode : public rclcpp::Node {
 public:
+        // 이거 말고 sensor_fusion_node 사용할 것
     SensorFusionNode() : Node("grobot_sensor_fusion_node") {
         lidar2_subscriber_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
             // "/LIDAR2/scan", 10, std::bind(&SensorFusionNode::lidar2Callback, this, std::placeholders::_1));
