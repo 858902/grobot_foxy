@@ -24,7 +24,8 @@ public:
         transform_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
 
         lidar_subscriber_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-            "/LIDAR2/scan", rclcpp::SensorDataQoS(),
+            // "/LIDAR2/scan", rclcpp::SensorDataQoS(),
+            "/scan", rclcpp::SensorDataQoS(),
             std::bind(&SensorFusionNode::lidarCallback, this, std::placeholders::_1));
 
         camera_subscriber_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(

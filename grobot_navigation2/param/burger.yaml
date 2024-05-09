@@ -173,7 +173,8 @@ local_costmap:
         mark_threshold: 0
         observation_sources: pointcloud
         pointcloud:
-          topic: /intel_realsense_r200_depth/points
+          # topic: /intel_realsense_r200_depth/points
+          topic: /camera/depth/color/points
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -220,7 +221,8 @@ global_costmap:
         mark_threshold: 0
         observation_sources: pointcloud
         pointcloud:
-          topic: /intel_realsense_r200_depth/points
+          # topic: /intel_realsense_r200_depth/points
+          topic: /camera/depth/color/points
           max_obstacle_height: 2.0
           clearing: True
           marking: True
