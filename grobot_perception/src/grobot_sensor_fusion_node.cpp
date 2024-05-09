@@ -17,17 +17,9 @@
 class SensorFusionNode : public rclcpp::Node {
 public:
     SensorFusionNode() : Node("grobot_sensor_fusion_node") {
-        // lidar1_subscriber_ = this->create_subscription
-        // <sensor_msgs::msg::PointCloud2>(
-        //     "/LIDAR1/scan", 10,
-        //     std::bind(&SensorFusionNode::lidar1Callback, this, std::placeholders::_1));
-
-        // lidar2_subscriber_ = this->create_subscription
-        // <sensor_msgs::msg::PointCloud2>(
-        //     "/LIDAR2/scan", 10,
-        //     std::bind(&SensorFusionNode::lidar2Callback, this, std::placeholders::_1));
         lidar2_subscriber_ = this->create_subscription<sensor_msgs::msg::PointCloud2>(
-            "/LIDAR2/scan", 10, std::bind(&SensorFusionNode::lidar2Callback, this, std::placeholders::_1));
+            // "/LIDAR2/scan", 10, std::bind(&SensorFusionNode::lidar2Callback, this, std::placeholders::_1));
+            "/scan", 10, std::bind(&SensorFusionNode::lidar2Callback, this, std::placeholders::_1));
 
         camera_subscriber_ = this->create_subscription
         <sensor_msgs::msg::PointCloud2>(
@@ -41,56 +33,13 @@ public:
         // tf broadcaster 초기화
         tf_broadcaster_ = std::make_shared
         <tf2_ros::TransformBroadcaster>(this);
+
+        lidar_cloud_publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/lidar_cloud", 10);
     }
 
 private:
-    // void lidar1Callback(const sensor_msgs::msg::PointCloud2::SharedPtr lidar_msg) {
-    //     pcl::PointCloud<pcl::PointXYZ>::Ptr lidar_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-    //     pcl::fromROSMsg(*lidar_msg, *lidar_cloud);
-    //     preprocessAndPublish(lidar_cloud);
-    //     geometry_msgs::msg::TransformStamped transformStamped;
-    //     transformStamped.header.stamp = rclcpp::Clock().now();
-    //     transformStamped.header.frame_id = "lidar_frame";
-    //     transformStamped.child_frame_id = "base_link";
-    //     transformStamped.transform.translation.x = 0.0;
-    //     transformStamped.transform.translation.y = 0.0;
-    //     transformStamped.transform.translation.z = 0.0;
-    //     tf2::Quaternion q;
-    //     q.setRPY(0, 0, 0);
-    //     transformStamped.transform.rotation.x = q.x();
-    //     transformStamped.transform.rotation.y = q.y();
-    //     transformStamped.transform.rotation.z = q.z();
-    //     transformStamped.transform.rotation.w = q.w();
-    //     tf_broadcaster_->sendTransform(transformStamped);
-    // }
 
-    // void lidar2Callback(const sensor_msgs::msg::PointCloud2::SharedPtr lidar_msg) {
-    //     pcl::PointCloud<pcl::PointXYZ>::Ptr lidar_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-    //     pcl::fromROSMsg(*lidar_msg, *lidar_cloud);
-    //     preprocessAndPublish(lidar_cloud);
-
-    //     geometry_msgs::msg::TransformStamped transformStamped;
-    //     transformStamped.header.stamp = lidar_msg->header.stamp;  // 시간 동기화
-    //     transformStamped.header.frame_id = "base_link";
-    //     transformStamped.child_frame_id = "base_scan2";
-        
-    //     transformStamped.transform.translation.x = 0.0;
-    //     transformStamped.transform.translation.y = 0.0;
-    //     transformStamped.transform.translation.z = 0.0;
-
-    //     tf2::Quaternion q;
-    //     q.setRPY(0, 0, 0);
-    //     transformStamped.transform.rotation.x = q.x();
-    //     transformStamped.transform.rotation.y = q.y();
-    //     transformStamped.transform.rotation.z = q.z();
-    //     transformStamped.transform.rotation.w = q.w();
-
-    //     tf_broadcaster_->sendTransform(transformStamped);
-    // }
     void lidar2Callback(const sensor_msgs::msg::PointCloud2::SharedPtr lidar_msg) {
-        // laser_geometry::LaserProjection projector_;
-        // sensor_msgs::msg::PointCloud2 cloud;
-        // projector_.projectLaser(*scan_msg, cloud);
 
         pcl::PointCloud<pcl::PointXYZ>::Ptr lidar_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::fromROSMsg(*lidar_msg, *lidar_cloud);
@@ -98,7 +47,7 @@ private:
         preprocessAndPublish(lidar_cloud);
 
         geometry_msgs::msg::TransformStamped transformStamped;
-        transformStamped.header.stamp = lidar_msg->header.stamp; // 시간 동기화
+        transformStamped.header.stamp = lidar_msg->header.stamp;
         transformStamped.header.frame_id = "base_link";
         transformStamped.child_frame_id = "base_scan2";
         
@@ -126,7 +75,6 @@ private:
         transformStamped.header.frame_id = "base_link";
         transformStamped.child_frame_id = "camera_link";
         
-        // 센서의 실제 위치
         transformStamped.transform.translation.x = 0.0;
         transformStamped.transform.translation.y = 0.0;
         transformStamped.transform.translation.z = 0.0;
@@ -141,24 +89,13 @@ private:
         tf_broadcaster_->sendTransform(transformStamped);
     }
     void preprocessAndPublish(pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud) {
-        // Preprocessing steps (e.g., voxel grid downsampling, outlier removal, etc.)
-        // You can add your preprocessing steps here
 
-        // Example: Voxel grid downsampling
+        // voxel grid downsampling
         pcl::VoxelGrid<pcl::PointXYZ> voxel_grid_filter;
         voxel_grid_filter.setInputCloud(input_cloud);
         voxel_grid_filter.setLeafSize(0.1f, 0.1f, 0.1f);
         pcl::PointCloud<pcl::PointXYZ>::Ptr filtered_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         voxel_grid_filter.filter(*filtered_cloud);
-
-        // Example: ICP
-        // pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
-        // Set parameters for ICP if needed
-        // icp.setMaxCorrespondenceDistance(0.05);
-        // icp.setTransformationEpsilon(1e-8);
-        // icp.setEuclideanFitnessEpsilon(1);
-        // icp.setMaximumIterations(50);
-        // icp.setRANSACOutlierRejectionThreshold(0.01);
 
         pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
         tree->setInputCloud(filtered_cloud);
@@ -179,7 +116,6 @@ private:
             cluster->is_dense = true;
         }
 
-        // Publish preprocessed point cloud
         sensor_msgs::msg::PointCloud2 filtered_msg;
         pcl::toROSMsg(*filtered_cloud, filtered_msg);
         fused_publisher_->publish(filtered_msg);
@@ -197,6 +133,10 @@ private:
     rclcpp::Publisher
     <sensor_msgs::msg::PointCloud2>::SharedPtr fused_publisher_;
 
+    sensor_msgs::msg::PointCloud2 last_lidar_cloud_;
+
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr lidar_cloud_publisher_;
+    
     std::shared_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster_;
 };
 
