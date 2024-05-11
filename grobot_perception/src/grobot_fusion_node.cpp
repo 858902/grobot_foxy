@@ -49,51 +49,25 @@ private:
         lidar_cloud_publisher_->publish(last_lidar_cloud_);
     }
 
-    // void cameraCallback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg) {
-    //     // 카메라 콜백 origin
-    //     pcl::PointCloud<pcl::PointXYZ>::Ptr camera_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-    //     pcl::fromROSMsg(*cloud_msg, *camera_cloud);
-
-
-    //     for (auto& point : camera_cloud->points) {
-    //         point.z = 0.0f;
-    //     }
-
-    //     sensor_msgs::msg::PointCloud2 camera_cloud_msg;
-    //     pcl::toROSMsg(*camera_cloud, camera_cloud_msg);
-
-    //     sensor_msgs::msg::PointCloud2 fused_cloud;
-    //     // concatenatePointCloud(last_lidar_cloud_, *cloud_msg, fused_cloud);
-    //     concatenatePointCloud(last_lidar_cloud_, camera_cloud_msg, fused_cloud); // z projection
-
-    //     sensor_msgs::msg::PointCloud2 output_cloud_msg;
-    //     downsampleAndCluster(fused_cloud, output_cloud_msg);
-
-    //     cloud_publisher_->publish(output_cloud_msg);
-    // }
-
     void cameraCallback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg) {
+        
         pcl::PointCloud<pcl::PointXYZ>::Ptr camera_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::fromROSMsg(*cloud_msg, *camera_cloud);
 
-        // 카메라 좌표계에서 LiDAR 좌표계로 변환
-        pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-        pcl::transformPointCloud(*camera_cloud, *transformed_cloud, camera_to_lidar_transform_);
-
-        // 투영: 각 점의 Z 좌표를 0으로 설정
-        for (auto& point : transformed_cloud->points) {
+        for (auto& point : camera_cloud->points) {
             point.z = 0.0f;
         }
 
-        // 변환된 클라우드를 기존의 LiDAR 클라우드와 결합
-        sensor_msgs::msg::PointCloud2 fused_cloud_msg;
-        concatenatePointCloud(last_lidar_cloud_, *transformed_cloud, fused_cloud_msg);
+        sensor_msgs::msg::PointCloud2 camera_cloud_msg;
+        pcl::toROSMsg(*camera_cloud, camera_cloud_msg);
 
-        // 다운샘플링 및 클러스터링 수행
+        sensor_msgs::msg::PointCloud2 fused_cloud;
+        // concatenatePointCloud(last_lidar_cloud_, *cloud_msg, fused_cloud);
+        concatenatePointCloud(last_lidar_cloud_, camera_cloud_msg, fused_cloud); // z projection
+
         sensor_msgs::msg::PointCloud2 output_cloud_msg;
-        downsampleAndCluster(fused_cloud_msg, output_cloud_msg);
+        downsampleAndCluster(fused_cloud, output_cloud_msg);
 
-        // 결과 클라우드 게시
         cloud_publisher_->publish(output_cloud_msg);
     }
 
@@ -132,20 +106,8 @@ private:
         // 이 부분에서 군집화된 클러스터를 하나의 포인트 클라우드로 합치거나, 선택적으로 처리할 수 있습니다.
         // 예시에서는 간략화를 위해 변환 없이 진행하였습니다.
         pcl::toROSMsg(*downsampled_cloud, output_cloud_msg);
-    }
+    }   
 
-    // void cameraProjection(const pcl::PointCloud<pcl::PointXYZ>::Ptr camera_cloud, const pcl::PointCloud<pcl::PointXYZ>::Ptr lidar_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr projected_cloud){
-    //     float z_plane = 0.0;
-
-    //     for(const auto& point : camera_cloud -> points){
-    //         pcl::PointXYZ projected_point;
-
-    //         projected_point.x = point.x;
-    //         projected_point.y = point.y;
-    //         projected_point.z = z_plane;
-    //         projected_cloud -> points.push_back(projected_point);
-    //     }
-    // }
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
     std::unique_ptr<tf2_ros::TransformListener> transform_listener_;
     rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr lidar_subscriber_;

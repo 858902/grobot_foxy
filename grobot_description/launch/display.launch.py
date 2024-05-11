@@ -18,6 +18,7 @@ def generate_launch_description():
     robot_urdf = robot_description_config.toxml()
 
     rviz_config_file = os.path.join(share_dir, 'config', 'display.rviz')
+    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
 
     gui_arg = DeclareLaunchArgument(
         name='gui',
@@ -31,7 +32,8 @@ def generate_launch_description():
         executable='robot_state_publisher',
         name='robot_state_publisher',
         parameters=[
-            {'robot_description': robot_urdf}
+            {'robot_description': robot_urdf,
+             'use_sim_time': use_sim_time}
         ]
     )
 
@@ -39,7 +41,11 @@ def generate_launch_description():
         condition=UnlessCondition(show_gui),
         package='joint_state_publisher',
         executable='joint_state_publisher',
-        name='joint_state_publisher'
+        name='joint_state_publisher',
+        parameters=[
+            {'robot_description': robot_urdf,
+             'use_sim_time': use_sim_time}
+        ],
     )
 
     joint_state_publisher_gui_node = Node(
