@@ -1,6 +1,8 @@
 #include "rclcpp/rclcpp.hpp" 
 #include "geometry_msgs/msg/twist.hpp" 
 #include "std_msgs/msg/float64_multi_array.hpp" 
+#include <string>
+#include "std_msgs/msg/string.hpp"
 
 #include <functional> 
 
@@ -21,9 +23,23 @@ public:
 
         subscription_external = this->create_subscription<std_msgs::msg::Float64MultiArray>(
             "/external_force", rclcpp::SystemDefaultsQoS(), std::bind(&VelocityManagerNode::callback_external_, this, std::placeholders::_1));
+
+        mode_sub = this->create_subscription<std_msgs::msg::String>(
+            "manual_mode", 10, std::bind(&VelocityManagerNode::manual_mode_callback, this, std::placeholders::_1));
+
         // Publisher 
         cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", rclcpp::SystemDefaultsQoS());
         
+    }
+
+    void manual_mode_callback(const std_msgs::msg::String::SharedPtr msg)
+    {
+        if (msg->data == "on")
+        {   
+            std::cout << "mannual_mode_on"<< std::endl;
+            mannual_mode_ = true;
+        }
+
     }
 
     void callback_external_(const std_msgs::msg::Float64MultiArray::SharedPtr msg)
@@ -71,7 +87,7 @@ public:
         auto combined_velocity = geometry_msgs::msg::Twist();
 
         // admittance_velocity_ 가 0이 아니면 weight를 1로 설정
-        double weight = (isZero_(tau_external) && isZero(admittance_velocity_)) ? 0.0 : 1.0;
+        double weight = (isZero_(tau_external) && isZero(admittance_velocity_) && mannual_mode_) ? 0.0 : 1.0;
 
         combined_velocity.linear.x = (1 - weight) * navigation_velocity_.linear.x + weight * admittance_velocity_.linear.x;
         combined_velocity.linear.y = (1 - weight) * navigation_velocity_.linear.y + weight * admittance_velocity_.linear.y;
@@ -105,6 +121,7 @@ private:
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_navigation;
     rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_admittance;
     rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr subscription_external;
+    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr mode_sub;
 
 
 
@@ -112,6 +129,7 @@ private:
     rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_vel_pub_;
 
     float tau_external[3] = {0.0}; 
+    bool mannual_mode_ = false;
 
 
 };
