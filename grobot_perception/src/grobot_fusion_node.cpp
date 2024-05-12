@@ -15,6 +15,7 @@
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/kdtree/kdtree.h>
 #include <pcl/segmentation/extract_clusters.h>
+#include <pcl/filters/passthrough.h>
 
 class SensorFusionNode : public rclcpp::Node {
 public:
@@ -82,33 +83,88 @@ private:
         fused_cloud.data.insert(fused_cloud.data.end(), cloud2.data.begin(), cloud2.data.end());
     }
 
-    void downsampleAndCluster(const sensor_msgs::msg::PointCloud2 &fused_cloud_msg, sensor_msgs::msg::PointCloud2 &output_cloud_msg) {
+    // void downsampleAndCluster(const sensor_msgs::msg::PointCloud2 &fused_cloud_msg, sensor_msgs::msg::PointCloud2 &output_cloud_msg) {
         
+    //     pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    //     pcl::fromROSMsg(fused_cloud_msg, *input_cloud);
+    //     pcl::PointCloud<pcl::PointXYZ>::Ptr downsampled_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+    //     pcl::VoxelGrid<pcl::PointXYZ> vg;
+    //     vg.setInputCloud(input_cloud);
+    //     vg.setLeafSize(0.1f, 0.1f, 0.1f); // 0.1 ->
+    //     vg.filter(*downsampled_cloud);
+
+    //     pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
+    //     tree->setInputCloud(downsampled_cloud);
+    //     std::vector<pcl::PointIndices> cluster_indices;
+    //     pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
+    //     ec.setClusterTolerance(0.05); // 0.02 -> 0.05 
+    //     ec.setMinClusterSize(50); // 100 -> 50   
+    //     ec.setMaxClusterSize(25000);  
+    //     ec.setSearchMethod(tree);
+    //     ec.setInputCloud(downsampled_cloud);
+    //     ec.extract(cluster_indices);
+
+    //     // 군집화 결과를 output_cloud_msg에 저장
+    //     // 이 부분에서 군집화된 클러스터를 하나의 포인트 클라우드로 합치거나, 선택적으로 처리할 수 있습니다.
+    //     // 예시에서는 간략화를 위해 변환 없이 진행하였습니다.
+    //     pcl::toROSMsg(*downsampled_cloud, output_cloud_msg);
+    // }
+    void downsampleAndCluster(const sensor_msgs::msg::PointCloud2 &fused_cloud_msg, sensor_msgs::msg::PointCloud2 &output_cloud_msg) {
         pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::fromROSMsg(fused_cloud_msg, *input_cloud);
+
+        // Passthrough 필터 적용 - X 축
+        pcl::PointCloud<pcl::PointXYZ>::Ptr x_filtered_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::PassThrough<pcl::PointXYZ> pass_x;
+        pass_x.setInputCloud(input_cloud);
+        pass_x.setFilterFieldName("x");
+        pass_x.setFilterLimits(0.0, 5.0); // X 축 경계 설정
+        pass_x.filter(*x_filtered_cloud);
+
+        // Passthrough 필터 적용 - Z 축
+        pcl::PointCloud<pcl::PointXYZ>::Ptr z_filtered_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+        pcl::PassThrough<pcl::PointXYZ> pass_z;
+        pass_z.setInputCloud(x_filtered_cloud);
+        pass_z.setFilterFieldName("z");
+        pass_z.setFilterLimits(-0.3f, 0.3f); // Z 축 경계 설정
+        pass_z.filter(*z_filtered_cloud);
+
+        // Voxel Grid 다운샘플링
         pcl::PointCloud<pcl::PointXYZ>::Ptr downsampled_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::VoxelGrid<pcl::PointXYZ> vg;
-        vg.setInputCloud(input_cloud);
-        vg.setLeafSize(0.1f, 0.1f, 0.1f); // 0.1 ->
+        vg.setInputCloud(z_filtered_cloud);
+        vg.setLeafSize(0.03f, 0.03f, 0.03f); // 모든 축에 대해 0.03f로 설정
         vg.filter(*downsampled_cloud);
 
+        // 여기서부터는 군집화 코드 (변경 없음)
         pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
         tree->setInputCloud(downsampled_cloud);
         std::vector<pcl::PointIndices> cluster_indices;
         pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
-        ec.setClusterTolerance(0.05); // 0.02 -> 0.05 
-        ec.setMinClusterSize(50); // 100 -> 50   
+        ec.setClusterTolerance(0.05); // 0.02에서 0.05로 조정 
+        ec.setMinClusterSize(50); // 100에서 50으로 조정   
         ec.setMaxClusterSize(25000);  
         ec.setSearchMethod(tree);
         ec.setInputCloud(downsampled_cloud);
         ec.extract(cluster_indices);
 
         // 군집화 결과를 output_cloud_msg에 저장
-        // 이 부분에서 군집화된 클러스터를 하나의 포인트 클라우드로 합치거나, 선택적으로 처리할 수 있습니다.
-        // 예시에서는 간략화를 위해 변환 없이 진행하였습니다.
         pcl::toROSMsg(*downsampled_cloud, output_cloud_msg);
-    }   
+    }
 
+
+    // void cameraProjection(const pcl::PointCloud<pcl::PointXYZ>::Ptr camera_cloud, const pcl::PointCloud<pcl::PointXYZ>::Ptr lidar_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr projected_cloud){
+    //     float z_plane = 0.0;
+
+    //     for(const auto& point : camera_cloud -> points){
+    //         pcl::PointXYZ projected_point;
+
+    //         projected_point.x = point.x;
+    //         projected_point.y = point.y;
+    //         projected_point.z = z_plane;
+    //         projected_cloud -> points.push_back(projected_point);
+    //     }
+    // }
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
     std::unique_ptr<tf2_ros::TransformListener> transform_listener_;
     rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr lidar_subscriber_;
