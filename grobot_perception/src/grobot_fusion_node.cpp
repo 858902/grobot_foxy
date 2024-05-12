@@ -107,20 +107,8 @@ private:
         // 이 부분에서 군집화된 클러스터를 하나의 포인트 클라우드로 합치거나, 선택적으로 처리할 수 있습니다.
         // 예시에서는 간략화를 위해 변환 없이 진행하였습니다.
         pcl::toROSMsg(*downsampled_cloud, output_cloud_msg);
-    }
+    }   
 
-    // void cameraProjection(const pcl::PointCloud<pcl::PointXYZ>::Ptr camera_cloud, const pcl::PointCloud<pcl::PointXYZ>::Ptr lidar_cloud, pcl::PointCloud<pcl::PointXYZ>::Ptr projected_cloud){
-    //     float z_plane = 0.0;
-
-    //     for(const auto& point : camera_cloud -> points){
-    //         pcl::PointXYZ projected_point;
-
-    //         projected_point.x = point.x;
-    //         projected_point.y = point.y;
-    //         projected_point.z = z_plane;
-    //         projected_cloud -> points.push_back(projected_point);
-    //     }
-    // }
     std::unique_ptr<tf2_ros::Buffer> tf_buffer_;
     std::unique_ptr<tf2_ros::TransformListener> transform_listener_;
     rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr lidar_subscriber_;

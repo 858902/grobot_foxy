@@ -15,6 +15,15 @@
   <origin xyz="0 0.0 0.0" rpy="0 0 0.0"/>
 </joint>
 
+<!-- CAMERA LINK -->
+<link name="camera_link"/>
+
+<joint name="camera_joint" type="fixed">
+  <parent link="imu_link"/>
+  <child link="camera_link"/>
+  <origin xyz="0 0.0 0.0" rpy="0 0 0.0"/>
+</joint>
+
 <!-- BASE LINK -->
 
 <link name="base_link">
