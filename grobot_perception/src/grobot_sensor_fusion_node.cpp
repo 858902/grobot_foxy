@@ -50,7 +50,7 @@ private:
         geometry_msgs::msg::TransformStamped transformStamped;
         transformStamped.header.stamp = lidar_msg->header.stamp;
         transformStamped.header.frame_id = "base_link";
-        transformStamped.child_frame_id = "base_scan2";
+        transformStamped.child_frame_id = "base_scan";
         
         transformStamped.transform.translation.x = 0.0;
         transformStamped.transform.translation.y = 0.0;

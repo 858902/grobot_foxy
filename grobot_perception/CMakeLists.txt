@@ -16,13 +16,15 @@ find_package(laser_geometry REQUIRED)
 find_package(tf2_geometry_msgs REQUIRED)
 find_package(tf2_sensor_msgs REQUIRED)
 
+
 include_directories(
   ${PCL_INCLUDE_DIRS}
 )
 
-add_executable(grobot_sensor_fusion_node src/grobot_sensor_fusion_node.cpp)  # 파일 이름 수정
+add_executable(grobot_sensor_fusion_node src/grobot_sensor_fusion_node.cpp)
 add_executable(laser_to_pointcloud src/grobot_laser2pcl2.cpp)
 add_executable(sensor_fusion_node src/grobot_fusion_node.cpp)
+
 ament_target_dependencies(
   grobot_sensor_fusion_node
   rclcpp 

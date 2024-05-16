@@ -44,7 +44,48 @@
         .part2 { width: 59%; }
         .part3 {
             width: 6%;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 자식 요소를 가운데 정렬 */
+            padding-left: 20px;
         }
+
+        .part3_top {
+            flex: 1;
+            width: 100px; /* 너비 지정 */
+            height: 100px; /* 높이 지정 */
+            display: flex; /* Flexbox를 사용하여 정렬 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+            padding-top: 20px;
+        }
+
+        .part3_bottom {
+            font-size: 30px; /* 글씨 크기 지정 */
+            align-items: top; 
+            color: white; /* 글자 색상 */
+            font-family: 'Pretendard'; 
+            font-weight: bold;
+        }
+
+        .autoButton {
+            color: white; /* 버튼 내의 글자색을 흰색으로 설정 */
+            font-family: 'Pretendard';
+            font-weight: bold;
+            background-color: transparent; /* 버튼 배경색을 투명하게 설정 */
+            border: none; /* 버튼의 테두리 제거 */
+            cursor: pointer; /* 마우스 오버 시 커서 변경 */
+            padding: 0; /* 내부 여백 제거 */
+            display: flex; /* Flexbox를 사용하여 정렬 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+        }
+
+        .autoButton img {
+            width: 100%; /* 이미지의 너비를 버튼 너비에 맞춤 */
+            height: auto; /* 이미지의 높이를 자동으로 조절하여 비율 유지 */
+        }
+
         .part4 { 
             width: 6%;
             padding-top: 20px;
@@ -225,6 +266,7 @@
             height: 100%; /* 이미지가 버튼 크기에 맞게 조정 */
             object-fit: contain; /* 이미지 비율을 유지하면서 영역에 맞게 조절 */
         }
+        
         /* 모달 스타일 */
         .modal {
             display: none; /* 처음에는 숨김 */
@@ -369,6 +411,10 @@
             font-size: 40px;
             border-radius: 10px;
         }
+        
+       
+        
+    
     </style>
 </head>
 <body>
@@ -381,7 +427,10 @@
             <div class="part2">
             </div>
             <div class="part3">
-                <button class="button" onclick="goBack()"><img src="/static/images/AUTO.png" alt="AUTO">ON</button> 
+                <div class="part3_top">
+                    <button id = 'autoButton' class="autoButton"><img src="/static/images/AUTO.png" alt="AUTO"></button>  
+                </div>
+                <div class="part3_bottom">ON</div>
             </div>
             <div class="part4">
                 <!-- 뒤로가기 버튼 -->
@@ -445,7 +494,7 @@
         <!-- 모달 컨텐츠 -->
         <div class="modal-content">
             <span class="close"></span>
-            <p>로봇과 카트를 결합하시겠습니까?</p>
+            <p><div id="modalText"></div></p>
             <div class="modal-buttons">
                 <button class="yes-button">예</button>
                 <button class="no-button">아니오</button>
@@ -473,7 +522,38 @@
     </div>
     
 
-<script type="text/javascript" src="/static/roslib.js"></script>
+
+<script>
+    function goHome() {
+        window.location.href = 'https://www.google.com/webhp?authuser=1'; // 홈페이지 URL로 변경하세요
+    }
+    
+    function goProduct() {
+        window.location.href = 'http://127.0.0.1:5000/home'; // 홈페이지 URL로 변경하세요
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+</script>
+<script src="{{ url_for('static', filename='cart_bind.js') }}"></script>
+
+<script>
+    let slideIndex = 0;
+    showSlides();
+    
+    function showSlides() {
+      let i;
+      let slides = document.getElementsByClassName("mySlides");
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";  
+      }
+      slideIndex++;
+      if (slideIndex > slides.length) {slideIndex = 1}    
+      slides[slideIndex-1].style.display = "block";  
+      setTimeout(showSlides, 5000); // 5초 후에 다음 이미지로 변경
+    }
+</script>
 
 <script>
 
@@ -509,39 +589,6 @@
         data : '2'
       });
 </script>
-<script>
-    function goHome() {
-        window.location.href = 'https://www.google.com/webhp?authuser=1'; // 홈페이지 URL로 변경하세요
-    }
-    
-    function goProduct() {
-        window.location.href = 'http://127.0.0.1:5000/home'; // 홈페이지 URL로 변경하세요
-    }
-
-    function goBack() {
-        window.history.back();
-    }
-</script>
-<script src="{{ url_for('static', filename='cart_bind.js') }}"></script>
-
-<script>
-    let slideIndex = 0;
-    showSlides();
-    
-    function showSlides() {
-      let i;
-      let slides = document.getElementsByClassName("mySlides");
-      for (i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";  
-      }
-      slideIndex++;
-      if (slideIndex > slides.length) {slideIndex = 1}    
-      slides[slideIndex-1].style.display = "block";  
-      setTimeout(showSlides, 5000); // 5초 후에 다음 이미지로 변경
-    }
-    </script>
-
-
 
 </body>
     

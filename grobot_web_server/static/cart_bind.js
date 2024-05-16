@@ -1,38 +1,70 @@
+// 모달 요소를 얻습니다.
 var modal = document.getElementById("myModal");
 
 // 새 모달 요소를 얻습니다.
 var newModal = document.getElementById("newModal");
 
 // 버튼 객체를 얻습니다.
-var btn = document.getElementById("cartButton");
+var cartBtn = document.getElementById("cartButton");
+var autoBtn = document.getElementById("autoButton");
 
-// 모달 닫기 <span> 요소를 얻습니다. (별도로 <span>으로 닫는 버튼이 있다면)
+// 모달 닫기 <span> 요소를 얻습니다.
 var span = document.getElementsByClassName("close")[0];
+var newModalSpan = newModal.getElementsByClassName("close")[0];
 
+// '예' 버튼 클릭 시 수행할 동작을 저장할 변수
+var yesAction = function() {};
 
-
-// 사용자가 버튼 클릭 시 모달을 표시합니다.
-btn.onclick = function() {
-    modal.style.display = "block";
-}
-
-// '예' 버튼 클릭 이벤트 리스너
+// '예' 버튼에 대한 이벤트 리스너를 한 번만 추가합니다.
 document.querySelector('.yes-button').addEventListener('click', function() {
-    console.log('예 버튼 클릭');
-    // 기존 모달을 숨깁니다.
-    /*modal.style.display = "none";*/
-    // 새 모달을 즉시 표시합니다.
-    newModal.style.display = "block";
+    yesAction(); // 현재 설정된 동작을 실행합니다.
 });
 
-// 새 모달의 닫기 버튼을 위한 코드
-var newModalClose = newModal.getElementsByClassName("close")[0];
-newModalClose.onclick = function() {
-    newModal.style.display = "none";
-};
+// cart 버튼 클릭 시 모달을 표시합니다.
+cartBtn.onclick = function() {
+    console.log('Cart button clicked');
+    document.getElementById("modalText").innerHTML = "로봇과 카트를 결합하시겠습니까?";
+    modal.style.display = "block";
+    // '예' 버튼 클릭 시 수행할 동작 변경
+    yesAction = function() {
+        console.log('Cart combination started');
+        //modal.style.display = "none";
+        newModal.style.display = "block"; // 새 모달 표시
+    };
+}
 
-// 모달 외부를 클릭했을 때 모달이 닫히도록 하는 코드
-// 여기서 window.onclick 이벤트 리스너가 중복되어 있으므로 하나로 합쳐서 처리합니다.
+// auto 버튼 클릭 시 모달을 표시합니다.
+autoBtn.onclick = function() {
+    var currentStatus = document.querySelector('.part3_bottom').textContent;
+    if (currentStatus === "ON") {
+        document.getElementById("modalText").innerHTML = "자율 주행 모드를 멈추시고, 수동 운전 모드로 전환하시겠습니까?";
+    } else {
+        document.getElementById("modalText").innerHTML = "수동 운전 모드를 멈추시고, 자율 주행 모드로 전환하시겠습니까?";
+    }
+    modal.style.display = "block";
+    // '예' 버튼 클릭 시 수행할 동작 변경
+    yesAction = function() {
+        if (currentStatus === "ON") {
+            console.log('Manual mode activated');
+            document.querySelector('.part3_bottom').textContent = 'OFF';
+        } else {
+            console.log('Auto mode activated');
+            document.querySelector('.part3_bottom').textContent = 'ON';
+        }
+        modal.style.display = "none";
+    };
+}
+
+
+// 모달 닫기 버튼 이벤트 리스너
+span.onclick = function() {
+    modal.style.display = "none";
+}
+newModalSpan.onclick = function() {
+    newModal.style.display = "none";
+}
+
+// 모달 외부 클릭 시 닫힘 처리
 window.onclick = function(event) {
     if (event.target == modal) {
         modal.style.display = "none";
@@ -43,9 +75,8 @@ window.onclick = function(event) {
 
 // '아니오' 버튼 클릭 이벤트 리스너
 document.querySelector('.no-button').addEventListener('click', function() {
-    console.log('아니오 버튼 클릭');
+    console.log('No button clicked');
     modal.style.display = "none";
-    // 여기에 "아니오" 버튼 클릭 시 수행할 추가 로직을 넣을 수 있습니다.
 });
 
 // 완료 버튼 객체를 얻습니다.
@@ -53,15 +84,11 @@ var completeButton = document.getElementById("nextButton");
 
 // 완료 버튼 클릭 이벤트 리스너
 completeButton.addEventListener('click', function() {
-    // 모든 모달을 숨깁니다.
-    
-    console.log("Publishing message:", mode_on);
+    console.log('Complete button clicked');
     modeCheck.publish(mode_on);
     micCheck2.subscribe(function(message) {
         console.log(`Receive message: ${message}`);
       });
     modal.style.display = "none";
     newModal.style.display = "none";
-    // 여기에 "완료" 버튼 클릭 시 수행할 추가 로직을 넣을 수 있습니다.
-
 });
