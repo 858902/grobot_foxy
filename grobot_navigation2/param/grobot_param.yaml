@@ -183,7 +183,7 @@ local_costmap:
         camera_cloud:
           topic: /processed_cloud
           max_obstacle_height: 2.0
-          min_obstacle_height: .0
+          min_obstacle_height: -0.1
           clearing: True
           marking: True
           data_type: "PointCloud2"
@@ -239,7 +239,7 @@ global_costmap:
         camera_cloud:
           topic: /processed_cloud
           max_obstacle_height: 2.0
-          min_obstacle_height: .0
+          min_obstacle_height: -0.1
           clearing: True
           marking: True
           data_type: "PointCloud2"
