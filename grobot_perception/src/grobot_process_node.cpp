@@ -71,14 +71,14 @@ private:
         pcl::PassThrough<pcl::PointXYZ> pass_x;
         pass_x.setInputCloud(input_cloud);
         pass_x.setFilterFieldName("x");
-        pass_x.setFilterLimits(0.0, 0.5f);
+        pass_x.setFilterLimits(0.0, 5.0);
         pass_x.filter(*x_filtered_cloud);
 
         pcl::PointCloud<pcl::PointXYZ>::Ptr z_filtered_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::PassThrough<pcl::PointXYZ> pass_z;
         pass_z.setInputCloud(x_filtered_cloud);
         pass_z.setFilterFieldName("z");
-        pass_z.setFilterLimits(-0.5f, 0.0);
+        pass_z.setFilterLimits(-0.5f, 0.5f);
         pass_z.filter(*z_filtered_cloud);
 
         // ROI -------

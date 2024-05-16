@@ -42,6 +42,8 @@ ament_target_dependencies(
   rclcpp
   sensor_msgs
   laser_geometry
+  tf2_ros
+  tf2_sensor_msgs
 )
 
 ament_target_dependencies(sensor_fusion_node
@@ -75,6 +77,10 @@ target_link_libraries(sensor_fusion_node
 
 target_link_libraries(grobot_process_node
   ${PCL_LIBRARIES}
+)
+
+target_link_libraries(laser_to_pointcloud
+  ${tf2_ros_LIBRARIES}
 )
 
 install(TARGETS

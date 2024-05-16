@@ -46,9 +46,13 @@ autoBtn.onclick = function() {
     yesAction = function() {
         if (currentStatus === "ON") {
             console.log('Manual mode activated');
+            // modeCheck.publish(mode_on); // 수동 모드 on
+
             document.querySelector('.part3_bottom').textContent = 'OFF';
         } else {
             console.log('Auto mode activated');
+            // modeCheck.publish(mode_on); // navigation
+
             document.querySelector('.part3_bottom').textContent = 'ON';
         }
         modal.style.display = "none";

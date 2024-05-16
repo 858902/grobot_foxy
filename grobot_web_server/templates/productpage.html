@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        body {
+            overflow: hidden;
+            margin: 0; /* 기본 마진 제거 */
+            padding: 0; /* 기본 패딩 제거 */
+            height: 100% ; /* 뷰포트 높이에 맞춤 */
+        }
+        .section {
+            color: white; /* 텍스트 색상 */
+        }
+        #section1 {
+            display: flex; /* flexbox 레이아웃 적용 */
+            height: 18vh; /* 높이 설정 */
+            background-color: white; /* 배경 색상 */
+        }
+        #section1 .background-image {
+            height: 100%; /* 높이를 80%로 설정하여 상위 80%가 이미지로 채워짐 */
+            width: 100%; /* 너비를 100%로 설정 */
+            background-image: url('/static/images/BG2.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        #section1 > div {
+            height: 100%; /* 부모 높이에 맞춤 */
+            display: flex;
+            align-items: center; /* 세로 중앙 정렬 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            margin-top: -40px;
+        }
+        .part1 { 
+            width: 20%;
+            font-size: 70px; /* 글자 크기 */
+            color: white; /* 글자 색상 */
+            font-family: 'Pretendard'; 
+            font-weight: bold;
+            padding-top: 20px;
+            padding-left: 70px;
+        } /* 가로 8 비율 */
+        .part2 { width: 59%; }
+        .part3 {
+            width: 6%;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 자식 요소를 가운데 정렬 */
+            padding-left: 20px;
+        }
+
+        .part3_top {
+            flex: 1;
+            width: 100px; /* 너비 지정 */
+            height: 100px; /* 높이 지정 */
+            display: flex; /* Flexbox를 사용하여 정렬 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+            padding-top: 20px;
+        }
+
+        .part3_bottom {
+            font-size: 30px; /* 글씨 크기 지정 */
+            align-items: top; 
+            color: white; /* 글자 색상 */
+            font-family: 'Pretendard'; 
+            font-weight: bold;
+        }
+
+        .autoButton {
+            color: white; /* 버튼 내의 글자색을 흰색으로 설정 */
+            font-family: 'Pretendard';
+            font-weight: bold;
+            background-color: transparent; /* 버튼 배경색을 투명하게 설정 */
+            border: none; /* 버튼의 테두리 제거 */
+            cursor: pointer; /* 마우스 오버 시 커서 변경 */
+            padding: 0; /* 내부 여백 제거 */
+            display: flex; /* Flexbox를 사용하여 정렬 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+        }
+
+        .autoButton img {
+            width: 100%; /* 이미지의 너비를 버튼 너비에 맞춤 */
+            height: auto; /* 이미지의 높이를 자동으로 조절하여 비율 유지 */
+        }
+
+        .part4 { 
+            width: 6%;
+            padding-top: 20px;
+            padding-left: 30px;
+         } 
+        .part5 { 
+            width: 10%; 
+            padding-top: 20px;
+            padding-right: 50px;
+        } /* 각각 가로 1 비율 */
+        .section1-part3 img{
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+        }
+        #section2 {
+            float: left; /* 왼쪽 정렬 */
+            width: 55%; /* 너비 */
+            height: 62vh; /* 높이 */
+            background-color: white; /* 배경 색상 */
+            display: flex; /* Flexbox를 활용 */
+            color : black;
+        }
+
+        .section2-part1 {
+            width: 30%; 
+            background-color: white; /* 배경색은 예시로 설정, 필요에 따라 변경 */
+            display: flex;
+            
+            font-size: 25px;
+            
+        }
+        .section2-part1-1, .sectin2-part1-3{
+            flex:1;
+        }
+
+        .section2-part1-2{
+            flex:8;
+            display: flex;
+            flex-direction: column;
+            
+        }
+
+        .section2-part1-2-title {
+            flex : 1;
+            text-align: center;
+            font-family: 'Pretendard'; 
+            font-weight: bold;
+            border-bottom: 3px solid #888;
+            font-size: 25px;
+            margin-top: -20px;
+        
+
+        }
+
+        .section2-part1-2-product {
+            flex : 15;
+            overflow-y: auto; /* 상품 목록이 많아지면 스크롤 가능 */
+        }
+        .section2-part1-2-product::-webkit-scrollbar {
+            display: none;
+        }
+
+        .product-container {
+            height :210px; /* 전체 높이의 1/3을 차지하도록 설정 */
+            
+        }
+        .product-item {
+            display: flex;
+            flex-direction: column; /* 상품 이미지와 정보를 수직으로 나열 */
+            align-items: center; /* 가운데 정렬 */
+            border-bottom: 3px solid #888;;
+        }
+
+        .product-image {
+            padding-top: 10px;
+            max-width: 160px; /* 이미지 크기 설정 */
+            max-height: 130px;
+            object-fit: cover; /* 이미지 비율 유지하면서 채우기 */
+            padding-left: 60px;
+            
+        }
+
+        .product-info {
+            display: flex;
+            flex-direction: column; /* 이름과 가격을 세로로 나열 */
+            align-items: center; /* 가운데 정렬 */
+        }
+        .product-name {
+            overflow-x: auto; /* 가로 스크롤 생성 */
+            color: black;
+            font-size: 15px;
+            font-weight: bold;
+            padding-left: 10px;
+            
+        }
+
+        .product-price {
+            color: blue;
+            font-size: 15px;
+            font-weight: bold;
+            align-items: center; /* 텍스트 세로 중앙 정렬 */
+            justify-content: flex-end;
+            
+        }
+        .section2-part2 {
+            width: 10%;
+            height: auto;
+            background-color: white; /* 배경색은 예시로 설정, 필요에 따라 변경 */
+        }
+        
+        .section2-part3 {
+            width: 65%;
+            height: auto;
+            background-color: white; /* 배경색은 예시로 설정, 필요에 따라 변경 */
+            /*overflow-y: auto; /* 스크롤 기능 추가 */
+            display: flex;
+            flex-direction: column; /* 컨테이너들을 세로로 나열 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            border: 1px solid black;
+            border-radius: 10px;
+            /*align-items: center; /* 세로 중앙 정렬 */
+        }
+
+        .part3-product-image {
+            flex: 3; /* 이미지 영역을 더 크게 설정 */
+            display: flex;
+            justify-content: center; /* 이미지를 가로 중앙에 위치 */
+            align-items: center; /* 이미지를 세로 중앙에 위치 */
+            
+            border-radius: 10px;
+            margin: 10px;
+        }
+
+        .part3-product-image img {
+            max-width: 500px;
+            max-height: 400px;
+            
+        }
+    
+
+        .product-details {
+            flex: 1; /* 세부 정보 영역을 상대적으로 작게 설정 */
+            display: flex;
+            flex-direction: column;
+            text-align: center; /* 텍스트를 중앙 정렬 */
+            background-color: rgb(181, 177, 177);
+        }
+        
+
+        .product-details-name{
+            flex: 3;
+            color: black;
+            font-family: 'Pretendard';
+            font-weight: bold;
+            font-size: 20px;
+            display: flex; /* Flexbox 사용 */
+            align-items: center; /* 세로 중앙 정렬 */
+            justify-content: center; /* 가로 중앙 정렬 (필요에 따라 추가) */
+        }
+        .product-details-price{
+            flex:1;
+            color :blue;
+            font-family: 'Pretendard';  
+            font-weight: bold;
+            font-size: 25px;
+        }          
+        
+        #section3 {
+            width: 45%; /* 너비 */
+            height: 60vh; /* 높이 */
+            background-color: white; /* 배경 색상 */
+            display: flex;
+        }
+
+        .section3-part1  {
+            flex : 1;
+        }
+        .section3-part2 {
+            flex : 5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section3-part2-part1 {
+            flex : 1
+        }
+
+        .section3-part2-part2 {
+            flex : 8
+        }
+
+        .section3-part2-part2 img {
+            border-radius: 10px;
+            max-width: 700px;
+            max-height: 500px;
+        }
+
+        .section3-part2-part3 {
+            display: flex;
+            flex : 2
+            
+        }
+
+        .section3-part3  {
+            flex : 1;
+        }
+
+        .product_location{
+            flex:1;
+            align-items: center;
+            justify-content: center; 
+            padding-left: 140px;
+            padding-top: 20px;
+
+        }
+        .location_button_container {
+            display: flex;
+            justify-content: center; 
+            align-items: center; /* 버튼을 컨테이너의 하단으로 정렬 */
+            flex: 1;
+            
+        }
+
+        .locationButton {
+            color: white;
+            font-size: 23px;
+            background-color: red; /* 버튼의 배경색 */
+            /*border: 2px solid black; /* 검은색 테두리 */
+            border-radius: 10px;
+            padding: 10px 10px; /* 버튼 내부의 여백 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+            font-family: 'Pretendard'; 
+            font-weight: bold;
+            
+        }
+
+        .locationButton:hover {
+            background-color: black; /* 마우스를 올렸을 때의 배경색 변경 */
+        }
+
+        
+        .basket_in_Button {
+            color: white;
+            font-size: 23px;
+            background-color: rgb(55, 128, 239); /* 버튼의 배경색 */
+            /*border: 2px solid black; /* 검은색 테두리 */
+            border-radius: 10px;
+            padding: 10px 10px; /* 버튼 내부의 여백 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+            font-family: 'Pretendard'; 
+            font-weight: bold;
+            
+        }
+
+        .basket_in_Button:hover {
+            background-color: black; /* 마우스를 올렸을 때의 배경색 변경 */
+        }
+        #section4 {
+            clear: both; /* float 해제 */
+            height: 20vh; /* 높이 */
+            background-color: white; /* 배경 색상 */
+            display: flex;
+        }
+        .section4-part1{
+            flex: 1;
+        }
+        .section4-part2{
+            flex: 13;
+            
+            
+        }
+        
+        .s4-part2-top1{
+            height: 5% ;
+            border-bottom: 1px solid black;
+        }
+        .s4-part2-top2{
+            height: 10% ;
+        }
+        .s4-part2-mid{
+            height: 75% ;
+            border: 1px solid black;
+            border-radius: 10px;
+            display: flex;
+        }
+        .box-part1{
+            flex:1;
+            overflow: hidden;
+            background-image: url("/static/images/face_1.jpg"); /* 전체 배경 이미지 설정 */
+            background-size: 100%; /* 배경 이미지가 전체 화면을 덮도록 */
+            background-position: center; /* 배경 이미지 중앙 정렬 */
+            border-radius: 10px;
+        }
+        .box-part2{
+            flex: 8;
+        }
+        .s4-part2-bottom{
+            height: 10% ;
+        }
+        .section4-part3{
+            flex: 1;
+        }
+        .button {
+            cursor: pointer;
+            width: 100px; /* 버튼 너비 조정 */
+            height: 100px; /* 버튼 높이 조정 */
+            border: none; /* 버튼 테두리 제거 */
+            background: none; /* 버튼 배경 제거 */
+            padding: 0; /* 버튼 패딩 제거 */
+        }
+
+        .button img {
+            width: 100%; /* 이미지가 버튼 크기에 맞게 조정 */
+            height: 100%; /* 이미지가 버튼 크기에 맞게 조정 */
+            object-fit: contain; /* 이미지 비율을 유지하면서 영역에 맞게 조절 */
+        }
+        /* 모달 스타일 */
+        .modal {
+            display: none; /* 처음에는 숨김 */
+            position: fixed; /* 스크롤 시에도 같은 위치에 표시 */
+            z-index: 1; /* 컨텐츠 위에 표시 */
+            left: 0;
+            top: 0;
+            width: 100%; /* 전체 너비 */
+            height: 100%; /* 전체 높이 */
+            overflow: auto; /* 바깥 내용이 넘칠 경우 스크롤바 추가 */
+            background-color: rgb(0,0,0); /* 모달 내용의 뒷배경 색 */
+            background-color: rgba(0,0,0,0.4); /* 백그라운드 색에 약간의 투명도 추가 */
+    
+        }
+
+        /* 모달         컨텐츠 스타일 */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 30%; /* 모달의 가로 크기 */
+            height: 25%; /* 모달의 세로 크기 */
+            overflow: auto; 
+            font-size: 35px;
+            text-align: center;
+            padding-top: 60px;
+            font-family: 'Pretendard'; 
+            font-weight: bold;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); /* 그림자 효과 */
+        }
+        .modal-content {
+    /* 화면 가운데 정렬될 수 있도록 위치 조정 */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .modal-buttons {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .modal-buttons .yes-button,.modal-buttons .no-button {
+        margin: 0 30px;
+        padding: 10px 20px;
+        font-size: 40px;
+        font-family: 'Pretendard'; 
+        font-weight: bold;
+        border: none;
+        border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .modal-buttons .yes-button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+        }
+
+        .modal-buttons .no-button {
+            background-color: #f44336; /* Red */
+            color: white;
+        }      
+        
+    
+    </style>
+</head>
+<body>
+    
+    <div id="section1" class="section">
+        <div class="background-image">
+            <div class="part1">
+                Product : 
+            </div>
+            <div class="part2">
+                상세페이지
+            </div>
+            <div class="part3">
+                <div class="part3_top">
+                    <button id = 'autoButton' class="autoButton"><img src="/static/images/AUTO.png" alt="AUTO"></button>  
+                </div>
+                <div class="part3_bottom"></div>
+            </div>
+            <div class="part4">
+                <!-- 뒤로가기 버튼 -->
+                <button class="button" onclick="goBack()"><img src="/static/images/back_button.png" alt="Back"></button>  
+            </div>
+            <div class="part5">
+                <!-- 홈 버튼 -->
+                <button class="button" onclick="goHome()"><img src="/static/images/home_button.png" alt="Home" style="width:90%"></button>
+            </div>
+        </div>
+    </div>
+    <div id="section2" class="section">
+        <div class="section2-part1">
+            <div class = 'section2-part1-1'></div>
+            <div class = 'section2-part1-2'>
+                <div class = 'section2-part1-2-title'>추천 상품 리스트</div>
+                <div class = 'section2-part1-2-product'>
+                    <div class="product-container">
+                        {% for item in recommends %} 
+                        <div class="product-item">
+                            <a href= "http://127.0.0.1:5000/product/{{ item['ID'] }}" style="text-decoration: none;">
+                                <img src="{{item['url']}}" alt="상품 이미지" class="product-image">
+                                <div class="product-info">
+                                    <h3 class="product-name">{{ item['product_name'] }}</h3> <!-- 상품 이름 -->
+                                    <p class="product-price">{{ item['discount_price'] }}원</p> <!-- 상품 가격 -->
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class = 'section2-part1-3'></div>
+        </div>
+        <div class="section2-part2"></div>
+        <div class="section2-part3">
+            <div class="part3-product-image">
+                <!-- 이미지 URL을 사용하여 이미지를 표시합니다. -->
+                <img src="{{ product['url'] }}" alt="상품 이미지">
+            </div>
+            <div class="product-details">
+                <div class = 'product-details-name'>{{ product['product_fullname'] }}</div>
+                <div class = 'product-details-price'>가격: {{ product['discount_price'] }}원</div>
+            </div>
+        </div>
+    </div>
+    <div id="section3" class="section">
+        <div class = "section3-part1"></div>
+        <div class = "section3-part2">
+            <div class = "section3-part2-part1">상품 위치</div>
+            <div class = "section3-part2-part2">
+                <img src= "\static\images\map_image\map_{{ product['map_location'] }}.png" alt="상품 이미지" class="product-image">
+            </div>
+            <div class = "section3-part2-part3">
+                <div class = "product_location">
+                    <button class="basket_in_Button" data-product-id="{{product['ID']}}">장바구니 담기</button>
+                </div>
+                <div class="location_button_container">
+                    <button id = "locationButton" class="locationButton" data-product-id="{{product['ID']}}">위치안내 받기</button>
+                </div>
+            </div>
+        </div>
+        <div class = "section3-part3"></div>
+        
+    </div>
+    <div id="section4" class="section">
+        <div class="section4-part1"></div>
+        <div class="section4-part2">
+            <div class="s4-part2-top1"></div>
+            <div class="s4-part2-top2"></div>
+            <div class="s4-part2-mid">
+                <div class = "box-part1"></div>
+                <div class = "box-part2">2</div>
+            </div>
+            <div class="s4-part2-bottom">4</div>
+        </div>
+        <div class="section4-part3"></div>
+    </div>
+    <!-- 모달 -->
+    <div id="myModal" class="modal">
+        <!-- 모달 컨텐츠 -->
+        <div class="modal-content">
+            <span class="close"></span>
+            <p> <div id="modalText"></div></p>
+            <div class="modal-buttons">
+                <button class="yes-button">예</button>
+                <button class="no-button">아니오</button>
+        </div>
+    </div>
+
+
+<script>
+    function goHome() {
+        window.location.href = 'http://127.0.0.1:5000'; // 홈페이지 URL로 변경하세요
+    }
+
+    function goBack() {
+        window.history.back();
+    }
+</script>
+<script src="{{ url_for('static', filename='detail.js') }}"></script>
+<!-- 기존 HTML에 추가 -->
+
+<script>
+    // 장바구니 버튼 클릭 이벤트
+document.addEventListener('DOMContentLoaded', function() {
+    var basketButtons = document.querySelectorAll('.basket_in_Button');
+    basketButtons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            var productId = btn.getAttribute('data-product-id');
+            fetch('/add-to-basket', {
+                method: 'POST',
+                body: JSON.stringify({product_id: productId}),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                // 모달을 표시하기 위한 상태를 localStorage에 저장합니다.
+                localStorage.setItem('showModal', 'true');
+                window.location.reload();
+            });
+        });
+    });
+
+    // 페이지 로드 시 localStorage를 확인하여 모달을 표시합니다.
+    if (localStorage.getItem('showModal') === 'true') {
+        // 모달 표시 로직
+        document.getElementById("modalText").innerHTML = "장바구니에 상품이 추가되었습니다.<br> 상품검색 페이지로 이동하시겠습니까?";
+        modal.style.display = "block";
+
+        yesAction = function() {
+            console.log("상품으로 이동");
+            modal.style.display = "none";
+            // 모달 상태 제거
+            localStorage.removeItem('showModal');
+            window.location.href = 'http://127.0.0.1:5000/home'
+        };
+
+        noAction = function() {
+            console.log("위치 안내 취소");
+            modal.style.display = "none";
+            // 모달 상태 제거
+            localStorage.removeItem('showModal');
+        };
+    }
+});
+
+    </script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 로컬 스토리지에서 상품 ID 읽기
+        const productId = localStorage.getItem('productId');
+        if (productId) {
+            console.log('Product ID:', productId);
+            // 필요한 경우 로컬 스토리지에서 상품 ID 삭제
+            // localStorage.removeItem('productId');
+        }
+    });
+        
+    </script>
+
+<script>
+    var yesAction = function() {};
+    // '아니오' 버튼 클릭 시 수행할 동작을 저장할 변수
+    var noAction = function() {};
+
+        document.querySelector('.yes-button').addEventListener('click', function() {
+        yesAction();
+    });
+
+    // '아니오' 버튼 클릭 시 설정된 동작을 실행합니다.
+    document.querySelector('.no-button').addEventListener('click', function() {
+        noAction();
+    });
+
+    // 사용자가 모달 외부 클릭 시, 모달을 닫습니다.
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        
+        }
+    }
+    </script>
+</body>
+    
+</html>
