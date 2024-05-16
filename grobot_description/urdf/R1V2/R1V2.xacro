@@ -270,6 +270,15 @@
         </sensor>
 </gazebo>
 
+<!-- CAMERA LINK -->
+<link name="camera_link"/>
+
+<joint name="camera_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="camera_link"/>
+  <origin xyz="0.11565 0.005 0.2230" rpy="0 0 0"/>
+</joint>
+
 <!-- IMU -->
   <!-- <origin xyz="0.35 0.0 0.2" rpy="0 0 0"/> -->
 

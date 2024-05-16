@@ -12,6 +12,7 @@
 #include "pcl/segmentation/extract_clusters.h"
 #include "pcl/filters/passthrough.h"
 #include "tf2_sensor_msgs/tf2_sensor_msgs.h"
+#include "tf2_ros/static_transform_broadcaster.h"
 
 class CameraProcessing : public rclcpp::Node {
 public:
@@ -28,41 +29,23 @@ public:
 
 private:
     void cameraCallback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg) {
-        
-        // sensor_msgs::msg::PointCloud2 cloud_in_base_frame;
-        // std::string target_frame = "base_link";
-
-        // try {
-        //     if (tf_buffer_->canTransform(target_frame, cloud_msg->header.frame_id, tf2::TimePointZero)) {
-        //         tf_buffer_->transform(*cloud_msg, cloud_in_base_frame, target_frame);
-        //     } else {
-        //         RCLCPP_WARN(this->get_logger(), "No transform available.");
-        //         return;
-        //     }
-        // } catch (tf2::TransformException &ex) {
-        //     RCLCPP_WARN(this->get_logger(), "TF2 exception: %s", ex.what());
-        //     return;
-        // }
-        // 수정된 코드:
-        std::string target_frame = "base_link"; // 변환하려는 대상 frame ID
-        tf2::Duration transform_timeout(std::chrono::seconds(1)); // 변환 시도 최대 대기 시간 설정
-
-        // cloud_msg의 timestamp를 기반으로 tf2::TimePoint 객체 생성
-        tf2::TimePoint time_point = tf2::TimePoint(std::chrono::milliseconds(cloud_msg->header.stamp.sec * 1000LL + cloud_msg->header.stamp.nanosec / 1000000LL));
-
-        // 변환된 포인트 클라우드를 저장할 객체
         sensor_msgs::msg::PointCloud2 cloud_in_base_frame;
+        std::string target_frame = "base_link";
 
         try {
-            // transform 함수를 올바르게 호출
-            tf_buffer_->transform(*cloud_msg, cloud_in_base_frame, target_frame, time_point, target_frame, transform_timeout);
+            if (tf_buffer_->canTransform(target_frame, cloud_msg->header.frame_id, cloud_msg->header.stamp)) {
+                tf_buffer_->transform(*cloud_msg, cloud_in_base_frame, target_frame, tf2::durationFromSec(1.0)); // 1초 타임아웃 추가
+            } else {
+                RCLCPP_WARN(this->get_logger(), "No transform available.");
+                return;
+            }
         } catch (tf2::TransformException &ex) {
-            RCLCPP_ERROR(this->get_logger(), "Could not transform cloud: %s", ex.what());
+            RCLCPP_WARN(this->get_logger(), "TF2 exception: %s", ex.what());
             return;
         }
 
         pcl::PointCloud<pcl::PointXYZ>::Ptr camera_cloud(new pcl::PointCloud<pcl::PointXYZ>);
-        pcl::fromROSMsg(cloud_in_base_frame, *camera_cloud);
+        pcl::fromROSMsg(cloud_in_base_frame, *camera_cloud); // 여기서 변환된 클라우드 사용
 
         for (auto& point : camera_cloud->points) {
             point.z = 0.0f; 
@@ -76,6 +59,7 @@ private:
 
         cloud_publisher_->publish(output_cloud_msg);
     }
+
 
     void downsampleAndCluster(const sensor_msgs::msg::PointCloud2 &input_cloud_msg, sensor_msgs::msg::PointCloud2 &output_cloud_msg) {
         pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud(new pcl::PointCloud<pcl::PointXYZ>);
