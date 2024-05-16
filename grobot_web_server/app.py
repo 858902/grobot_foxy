@@ -8,7 +8,7 @@ app = Flask(__name__)
 file_path = "/home/nuc1/Downloads/Data.csv"
 df = pd.read_csv(file_path)
 
-basket_df = pd.DataFrame()
+basket_df = pd.DataFrame(columns=df.columns)
 destination_list = []
 
 @app.route('/home')  # 이전에 '/'였던 부분을 '/home'으로 변경

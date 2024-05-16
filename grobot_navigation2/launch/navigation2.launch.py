@@ -36,7 +36,8 @@ def generate_launch_description():
             'map',
             'map.yaml'))
 
-    param_file_name = 'burger.yaml'
+    # param_file_name = 'burger.yaml'
+    param_file_name = 'grobot_param.yaml'
     param_dir = LaunchConfiguration(
         'params_file',
         default=os.path.join(
