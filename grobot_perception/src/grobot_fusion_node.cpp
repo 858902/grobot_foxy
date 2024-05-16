@@ -58,7 +58,6 @@ private:
         for (auto& point : camera_cloud->points) {
             point.z = 0.0f;
         }
-
         sensor_msgs::msg::PointCloud2 camera_cloud_msg;
         pcl::toROSMsg(*camera_cloud, camera_cloud_msg);
 
@@ -108,13 +107,12 @@ private:
         vg.setLeafSize(0.03f, 0.03f, 0.03f); // 모든 축에 대해 0.03f로 설정
         vg.filter(*downsampled_cloud);
 
-        // 여기서부터는 군집화 코드 (변경 없음)
         pcl::search::KdTree<pcl::PointXYZ>::Ptr tree(new pcl::search::KdTree<pcl::PointXYZ>);
         tree->setInputCloud(downsampled_cloud);
         std::vector<pcl::PointIndices> cluster_indices;
         pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
-        ec.setClusterTolerance(0.05); // 0.02에서 0.05로 조정 
-        ec.setMinClusterSize(50); // 100에서 50으로 조정   
+        ec.setClusterTolerance(0.05);
+        ec.setMinClusterSize(50);
         ec.setMaxClusterSize(25000);  
         ec.setSearchMethod(tree);
         ec.setInputCloud(downsampled_cloud);

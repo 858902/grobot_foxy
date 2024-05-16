@@ -24,6 +24,7 @@ include_directories(
 add_executable(grobot_sensor_fusion_node src/grobot_sensor_fusion_node.cpp)
 add_executable(laser_to_pointcloud src/grobot_laser2pcl2.cpp)
 add_executable(sensor_fusion_node src/grobot_fusion_node.cpp)
+add_executable(grobot_process_node src/grobot_process_node.cpp)
 
 ament_target_dependencies(
   grobot_sensor_fusion_node
@@ -54,6 +55,13 @@ ament_target_dependencies(sensor_fusion_node
   PCL
 )
 
+ament_target_dependencies(grobot_process_node
+  rclcpp
+  sensor_msgs
+  tf2_ros
+  pcl_conversions
+)
+
 
 target_link_libraries(grobot_sensor_fusion_node
   ${tf2_ros_LIBRARIES}
@@ -65,10 +73,15 @@ target_link_libraries(sensor_fusion_node
   ${PCL_LIBRARIES}
 )
 
+target_link_libraries(grobot_process_node
+  ${PCL_LIBRARIES}
+)
+
 install(TARGETS
   grobot_sensor_fusion_node
   laser_to_pointcloud
   sensor_fusion_node
+  grobot_process_node
   DESTINATION lib/${PROJECT_NAME})
 
 install(DIRECTORY

@@ -10,11 +10,11 @@ class LaserToPointcloudNode : public rclcpp::Node {
 public:
     LaserToPointcloudNode() : Node("laser_to_pointcloud") {
         subscription_ = this->create_subscription<sensor_msgs::msg::LaserScan>(
-            "/LIDAR2/scan", 10,
+            "/scan", 10,
             std::bind(&LaserToPointcloudNode::scanCallback, this, std::placeholders::_1));
         
         publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>(
-            "/scan/pointcloud", 10);
+            "/lidar_pcl", 10);
     }
 
 private:
