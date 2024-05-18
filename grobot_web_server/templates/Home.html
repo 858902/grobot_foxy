@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <script src = "/static/roslib.js"></script>
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
@@ -555,7 +556,7 @@
       setTimeout(showSlides, 5000); // 5초 후에 다음 이미지로 변경
     }
 </script>
-
+<!-- <script src = "/static/RosLib.js"></script> -->
 <script>
 
     var ros = new ROSLIB.Ros({
@@ -569,26 +570,58 @@
     console.log('Error connecting to rosbridge server: ', error);
     });
 
+    // 카트 결합 여부 확인용 (시연때는 결합한 상태로 할거라 안쓸듯 )
     var modeCheck = new ROSLIB.Topic({
         ros : ros,
         name : '/manual_mode',
         messageType : 'std_msgs/String'
       });
 
-    var micCheck2 = new ROSLIB.Topic({
+    // 모드 전환
+    var modeSwitch = new ROSLIB.Topic({
         ros : ros,
-        name : '/micCheck',
+        name : '/mode_switch',
         messageType : 'std_msgs/String'
-      });  
-      
-      //내가 펍할 메세지 미리 변수 선언하는 거임
+      });
+
+    // 수동모드 offset 측정  
+    var signalOffset = new ROSLIB.Topic({
+        ros : ros,
+        name : '/signal_offset',
+        messageType : 'std_msgs/String'
+      });
+    
+    //내가 펍할 메세지 미리 변수 선언하는 거임
     var mode_on = new ROSLIB.Message({
         data : 'on'
       });
       
-    var mic_off = new ROSLIB.Message({
-        data : '2'
+    var mode_type1 = new ROSLIB.Message({
+        data : 'manual'
       });
+    
+    var mode_type2 = new ROSLIB.Message({
+        data : 'auto'
+      });
+
+    var msg_offset1 = new ROSLIB.Message({
+        data : 'start'
+      });
+
+    var msg_offset2 = new ROSLIB.Message({
+        data : 'end'
+      });
+
+    function publishModeOn() {
+        modeCheck.publish(mode_on);
+        console.log('Published mode_on message');
+    }
+
+    // 연결 성공 시, 메세지를 publish하는 함수 호출
+    ros.on('connection', function() {
+        // 연결이 성공하면 메세지를 바로 publish
+        publishModeOn();
+    });
 </script>
 
 </body>

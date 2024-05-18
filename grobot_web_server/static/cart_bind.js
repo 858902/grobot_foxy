@@ -28,6 +28,7 @@ cartBtn.onclick = function() {
     // '예' 버튼 클릭 시 수행할 동작 변경
     yesAction = function() {
         console.log('Cart combination started');
+        signalOffset.publish(msg_offset1); // offset 측정 시작 
         //modal.style.display = "none";
         newModal.style.display = "block"; // 새 모달 표시
     };
@@ -44,15 +45,16 @@ autoBtn.onclick = function() {
     modal.style.display = "block";
     // '예' 버튼 클릭 시 수행할 동작 변경
     yesAction = function() {
-        if (currentStatus === "ON") {
+        if (currentStatus === "ON") 
+            {
             console.log('Manual mode activated');
-            // modeCheck.publish(mode_on); // 수동 모드 on
-
+            modeSwitch.publish(mode_type1); // 수동 모드 on
             document.querySelector('.part3_bottom').textContent = 'OFF';
-        } else {
+            } 
+        else 
+            {
             console.log('Auto mode activated');
-            // modeCheck.publish(mode_on); // navigation
-
+            modeSwitch.publish(mode_type2); // navigation
             document.querySelector('.part3_bottom').textContent = 'ON';
         }
         modal.style.display = "none";
@@ -83,13 +85,61 @@ document.querySelector('.no-button').addEventListener('click', function() {
     modal.style.display = "none";
 });
 
+var ros = new ROSLIB.Ros({
+    url: 'ws://localhost:9090'
+});
+
+ros.on('connection', function() {
+    console.log('연결 완');
+});
+
+ros.on('error', function(error) {
+    console.log('ㅈ망함', error);
+});
+
+ros.on('close', function() {
+    console.log('닫는다');
+});
+
+var modeCheck = new ROSLIB.Topic({
+    ros: ros,
+    name: '/mode_check',
+    messageType: 'std_msgs/String'
+});
+
+var micCheck2 = new ROSLIB.Topic({
+    ros: ros,
+    name: '/mic_check2',
+    messageType: 'std_msgs/String'
+});
+
 // 완료 버튼 객체를 얻습니다.
 var completeButton = document.getElementById("nextButton");
 
 // 완료 버튼 클릭 이벤트 리스너
 completeButton.addEventListener('click', function() {
     console.log('Complete button clicked');
+    // var mode_on = new ROSLIB.Message({
+    //     data: 'mode_on'
+    // });
+
+    // if (modeCheck) {
+    //     modeCheck.publish(mode_on);
+    // } else {
+    //     console.error('모드쳌 없음 안보임');
+    // }
+    // if (micCheck2) {
+    //     micCheck2.subscribe(function(message) {
+    //         console.log(`Receive message: ${message.data}`);
+    //     });
+    // } else {
+    //     console.error('마이크쳌 없음 안보임');
+    // }
+    // modal.style.display = "none";
+    // newModal.style.display = "none";
+
     modeCheck.publish(mode_on);
+    signalOffset.publish(msg_offset2); // offset 측정 시작 
     micCheck2.subscribe(function(message) {
         console.log(`Receive message: ${message}`);
       });

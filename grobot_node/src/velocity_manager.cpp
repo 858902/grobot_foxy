@@ -25,21 +25,26 @@ public:
             "/external_force", rclcpp::SystemDefaultsQoS(), std::bind(&VelocityManagerNode::callback_external_, this, std::placeholders::_1));
 
         mode_sub = this->create_subscription<std_msgs::msg::String>(
-            "manual_mode", 10, std::bind(&VelocityManagerNode::manual_mode_callback, this, std::placeholders::_1));
+            "mode_switch", 10, std::bind(&VelocityManagerNode::mode_type_callback, this, std::placeholders::_1));
 
         // Publisher 
         cmd_vel_pub_ = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", rclcpp::SystemDefaultsQoS());
         
     }
 
-    void manual_mode_callback(const std_msgs::msg::String::SharedPtr msg)
+    void mode_type_callback(const std_msgs::msg::String::SharedPtr msg)
     {
-        if (msg->data == "on")
+        if (msg->data == "manual")
         {   
-            std::cout << "mannual_mode_on"<< std::endl;
+            std::cout << "mannual_mode"<< std::endl;
             mannual_mode_ = true;
         }
 
+        else if (msg->data == "auto")
+        {
+            std::cout << "auto_mode"<< std::endl;
+            mannual_mode_ = false;
+        }
     }
 
     void callback_external_(const std_msgs::msg::Float64MultiArray::SharedPtr msg)

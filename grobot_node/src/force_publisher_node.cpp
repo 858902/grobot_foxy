@@ -44,7 +44,7 @@ private:
     {
         if (msg->data == "start")
         {   
-            std::cout << "signal"<< std::endl;
+            std::cout << "offset_check_start"<< std::endl;
 
             // 오프셋 측정 시작
             std::fill(std::begin(initial_force_sum_), std::end(initial_force_sum_), 0);
@@ -52,7 +52,9 @@ private:
             offset_initialized_ = false;
         }
         else if (msg->data == "end" && !offset_initialized_)
-        {
+        {   
+            std::cout << "offset_check_done"<< std::endl;
+
             // 오프셋 측정 완료 및 초기화
             for (int i = 0; i < 4; i++)
             {
@@ -222,11 +224,11 @@ private:
             weight /= sum;
         }
 
-        for (const double& weight : gaussian_weights)
-        {
-            std::cout << weight << " ";
-        }
-        std::cout << std::endl;
+        // for (const double& weight : gaussian_weights)
+        // {
+        //     std::cout << weight << " ";
+        // }
+        // std::cout << std::endl;
     }
 
     void update_gaussian_filter(int index, double new_data)

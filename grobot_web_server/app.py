@@ -8,7 +8,7 @@ app = Flask(__name__)
 file_path = "/home/nuc1/Downloads/Data.csv"
 df = pd.read_csv(file_path)
 
-basket_df = pd.DataFrame(columns=df.columns)
+basket_df = pd.DataFrame()
 destination_list = []
 
 @app.route('/home')  # 이전에 '/'였던 부분을 '/home'으로 변경
@@ -59,7 +59,7 @@ def add_to_basket():
     product_info = df[df['ID'] == int(product_id)]  # 가정: ID가 유니크하다
 
     # basket_df에 상품 정보 추가
-    basket_df = pd.concat(basket_df, product_info, ignore_index=True)
+    basket_df = pd.concat([basket_df, product_info], ignore_index=True)
     print(basket_df)
     destination_list = basket_df['map_location'].unique()
     print(destination_list)
