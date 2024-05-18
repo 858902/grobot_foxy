@@ -142,7 +142,11 @@ local_costmap:
       width: 4
       height: 3 # 3-> 8
       resolution: 0.05
-      robot_radius: 0.3 # 0.1 -> 0.3 
+      # robot_radius: 0.3 # 0.1 -> 0.3 
+      # footprint: "[[-0.3, -0.5], [-0.3, 0.5], [0.3, 0.5], [0.3, -0.5]]"
+      # footprint: "[[-1.75, -0.2], [-1.75, 0.2], [0.4, 0.2], [0.4, -0.2]]"
+      # footprint: "[[-1.4, -0.25], [-1.4, 0.25], [0.5, 0.25], [0.5, -0.25]]"
+      footprint: "[[-1.4, -0.25], [-1.4, 0.25], [0.5, 0.3], [0.5, -0.3]]"
       plugins: ["obstacle_layer", "voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
@@ -201,7 +205,10 @@ global_costmap:
       global_frame: map
       robot_base_frame: base_link
       use_sim_time: False
-      robot_radius: 0.1
+      # robot_radius: 0.1
+      # footprint: "[[-0.3, -0.5], [-0.3, 0.5], [0.3, 0.5], [0.3, -0.5]]"
+      # footprint: "[[-1.4, -0.25], [-1.4, 0.25], [0.4, 0.25], [0.4, -0.25]]"
+      footprint: "[[-1.4, -0.25], [-1.4, 0.25], [0.5, 0.3], [0.5, -0.3]]"
       resolution: 0.05
       plugins: ["static_layer", "obstacle_layer", "voxel_layer", "inflation_layer"]
       obstacle_layer:
@@ -321,6 +328,8 @@ recoveries_server:
     recovery_plugins: ["spin", "backup", "wait"]
     spin:
       plugin: "nav2_recoveries/Spin"
+      safety_distance: 0.2
+      escape_distance: 0.5
     backup:
       plugin: "nav2_recoveries/BackUp"
     wait:
@@ -330,9 +339,9 @@ recoveries_server:
     transform_timeout: 0.1
     use_sim_time: False
     simulate_ahead_time: 2.0
-    max_rotational_vel: 0.5 # 1.0 -> 0.5
-    min_rotational_vel: 0.1 #0.4 -> 0.1
-    rotational_acc_lim: 1.2 #3.2 -> 1.2
+    max_rotational_vel: 0.3 # 1.0 -> 0.5 -> 0.3
+    min_rotational_vel: 0.05 #0.4 -> 0.1 -> 0.05
+    rotational_acc_lim: 0.5 #3.2 -> 1.2 -> 0.5
 
 robot_state_publisher:
   ros__parameters:
