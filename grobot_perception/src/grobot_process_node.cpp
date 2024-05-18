@@ -25,9 +25,12 @@ public:
             std::bind(&CameraProcessing::cameraCallback, this, std::placeholders::_1));
 
         cloud_publisher_ = this->create_publisher<sensor_msgs::msg::PointCloud2>("/processed_cloud", 10);
+        previous_cloud_ = boost::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
     }
 
 private:
+    pcl::PointCloud<pcl::PointXYZ>::Ptr previous_cloud_;
+
     void cameraCallback(const sensor_msgs::msg::PointCloud2::SharedPtr cloud_msg) {
         sensor_msgs::msg::PointCloud2 cloud_in_base_frame;
         std::string target_frame = "base_link";
@@ -47,15 +50,44 @@ private:
         pcl::PointCloud<pcl::PointXYZ>::Ptr camera_cloud(new pcl::PointCloud<pcl::PointXYZ>);
         pcl::fromROSMsg(cloud_in_base_frame, *camera_cloud); // 여기서 변환된 클라우드 사용
 
-        for (auto& point : camera_cloud->points) {
-            point.z = 0.0f; 
+        // for (auto& point : camera_cloud->points) {
+        //     point.z = 0.0f; 
+        // }
+
+        // sensor_msgs::msg::PointCloud2 camera_cloud_msg;
+        // pcl::toROSMsg(*camera_cloud, camera_cloud_msg);
+
+        // sensor_msgs::msg::PointCloud2 output_cloud_msg;
+        // downsampleAndCluster(camera_cloud_msg, output_cloud_msg);
+
+        // cloud_publisher_->publish(output_cloud_msg);
+        pcl::PointCloud<pcl::PointXYZ>::Ptr filtered_cloud(new pcl::PointCloud<pcl::PointXYZ>);
+
+        if (previous_cloud_) {
+            for (const auto& point : camera_cloud->points) {
+                bool is_moving = false;
+                for (const auto& prev_point : previous_cloud_->points) {
+                    float distance = std::sqrt(std::pow(point.x - prev_point.x, 2) +
+                                               std::pow(point.y - prev_point.y, 2) +
+                                               std::pow(point.z - prev_point.z, 2));
+                    if (distance > 0.1) { // 임계값 0.1m 이상 이동한 포인트들만 필터링
+                        is_moving = true;
+                        break;
+                    }
+                }
+                if (is_moving) {
+                    filtered_cloud->points.push_back(point);
+                }
+            }
         }
 
-        sensor_msgs::msg::PointCloud2 camera_cloud_msg;
-        pcl::toROSMsg(*camera_cloud, camera_cloud_msg);
+        previous_cloud_ = camera_cloud; // 현재 클라우드를 이전 클라우드로 저장
+
+        sensor_msgs::msg::PointCloud2 filtered_cloud_msg;
+        pcl::toROSMsg(*filtered_cloud, filtered_cloud_msg);
 
         sensor_msgs::msg::PointCloud2 output_cloud_msg;
-        downsampleAndCluster(camera_cloud_msg, output_cloud_msg);
+        downsampleAndCluster(filtered_cloud_msg, output_cloud_msg);
 
         cloud_publisher_->publish(output_cloud_msg);
     }

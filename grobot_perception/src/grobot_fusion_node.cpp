@@ -20,7 +20,6 @@
 class SensorFusionNode : public rclcpp::Node {
 public:
     SensorFusionNode() : Node("sensor_fusion_node") {
-        // 변환 리스너 초기화
         tf_buffer_ = std::make_unique<tf2_ros::Buffer>(this->get_clock());
         transform_listener_ = std::make_unique<tf2_ros::TransformListener>(*tf_buffer_);
 
