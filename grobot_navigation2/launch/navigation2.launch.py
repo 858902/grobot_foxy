@@ -37,7 +37,9 @@ def generate_launch_description():
             'map.yaml'))
 
     # param_file_name = 'burger.yaml'
-    param_file_name = 'grobot_param.yaml'
+    # param_file_name = 'grobot_param.yaml'
+    param_file_name = 'grobot_cart_param.yaml'
+    
     param_dir = LaunchConfiguration(
         'params_file',
         default=os.path.join(
@@ -52,7 +54,6 @@ def generate_launch_description():
         'rviz',
         'nav2_default_view.rviz')
     
-    rviz_launch_file_dir = os.path.join(get_package_share_directory('grobot_navigation2'), 'launch') # 미니에는 있음
     return LaunchDescription([
         DeclareLaunchArgument(
             'map',

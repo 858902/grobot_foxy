@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<robot name="grobot_cart" xmlns:xacro="http://www.ros.org/wiki/xacro" >
+
+<xacro:property name="body_color" value="Gazebo/Grey" />
+<xacro:property name="wheel_color" value="Gazebo/DarkGrey" />
+
+<gazebo>
+  <plugin name="control" filename="libgazebo_ros_control.so"/>
+</gazebo>
+
+<gazebo reference="base_link">
+  <material>${body_color}</material>
+  <mu1>0.1</mu1>
+  <mu2>0.1</mu2>
+  <self_collide>true</self_collide>
+  <gravity>true</gravity>
+</gazebo>
+
+<gazebo reference="wheel_right_link">
+  <material>${wheel_color}</material>
+  <mu1>0.1</mu1>
+  <mu2>0.1</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+<gazebo reference="wheel_left_link">
+  <material>${wheel_color}</material>
+  <mu1>0.1</mu1>
+  <mu2>0.1</mu2>
+  <self_collide>true</self_collide>
+</gazebo>
+
+
+</robot>

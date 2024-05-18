@@ -591,11 +591,17 @@
         messageType : 'std_msgs/String'
       });
     
+    // WayPoint List  
+    var waypointPub = new ROSLIB.Topic({
+            ros : ros,
+            name : '/waypoint_list_raw',
+            messageType : 'std_msgs/String'
+        });  
+    
     //내가 펍할 메세지 미리 변수 선언하는 거임
     var mode_on = new ROSLIB.Message({
         data : 'on'
       });
-      
     var mode_type1 = new ROSLIB.Message({
         data : 'manual'
       });
@@ -611,6 +617,8 @@
     var msg_offset2 = new ROSLIB.Message({
         data : 'end'
       });
+
+      data.destinations
 
     function publishModeOn() {
         modeCheck.publish(mode_on);

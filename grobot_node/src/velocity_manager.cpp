@@ -92,8 +92,9 @@ public:
         auto combined_velocity = geometry_msgs::msg::Twist();
 
         // admittance_velocity_ 가 0이 아니면 weight를 1로 설정
-        double weight = (isZero_(tau_external) && isZero(admittance_velocity_) && mannual_mode_) ? 0.0 : 1.0;
-
+        double weight = (isZero_(tau_external) && isZero(admittance_velocity_) && !mannual_mode_) ? 0.0 : 1.0;
+        std::cout << weight<< std::endl;
+        
         combined_velocity.linear.x = (1 - weight) * navigation_velocity_.linear.x + weight * admittance_velocity_.linear.x;
         combined_velocity.linear.y = (1 - weight) * navigation_velocity_.linear.y + weight * admittance_velocity_.linear.y;
         combined_velocity.angular.z = (1 - weight) * navigation_velocity_.angular.z + weight * admittance_velocity_.angular.z;

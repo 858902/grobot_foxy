@@ -16,10 +16,13 @@ import xacro
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time', default='false')
-    # urdf_file_name = 'grobot.urdf' ## 원본
-    urdf_file_name = 'R1V2.xacro'
+    # urdf_file_name = 'R1V2.xacro'
+    urdf_file_name = 'grobot_cart.xacro'
+
     share_dir = get_package_share_directory('grobot_description')
-    xacro_file = os.path.join(share_dir, 'urdf', 'R1V2.xacro')
+    # xacro_file = os.path.join(share_dir, 'urdf', 'R1V2.xacro')
+    xacro_file = os.path.join(share_dir, 'urdf', 'grobot_cart.xacro')
+    
     robot_description_config = xacro.process_file(xacro_file)
     robot_urdf = robot_description_config.toxml()
     
