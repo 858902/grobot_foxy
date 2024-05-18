@@ -13,7 +13,7 @@ amcl:
     do_beamskip: false
     global_frame_id: "map"
     lambda_short: 0.1
-    laser_likelihood_max_dist: 2.0
+    laser_likelihood_max_dist: 4.0 # 0.1
     laser_max_range: 100.0
     laser_min_range: -1.0
     laser_model_type: "likelihood_field"
@@ -33,7 +33,7 @@ amcl:
     transform_tolerance: 1.0
     update_min_a: 0.2
     update_min_d: 0.25
-    z_hit: 0.5
+    z_hit: 0.5 #0.9
     z_max: 0.05
     z_rand: 0.5
     z_short: 0.05
@@ -69,10 +69,10 @@ bt_navigator:
     - nav2_distance_controller_bt_node
     - nav2_speed_controller_bt_node
     - nav2_recovery_node_bt_node
-    - nav2_pipeline_sequence_bt_node
-    - nav2_round_robin_node_bt_node
-    - nav2_transform_available_condition_bt_node
-    - nav2_time_expired_condition_bt_node
+    - nav2_pipeline_se  z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05d_condition_bt_node
     - nav2_distance_traveled_condition_bt_node
 
 bt_navigator_rclcpp_node:

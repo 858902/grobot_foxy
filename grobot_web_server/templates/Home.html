@@ -538,6 +538,7 @@
         window.history.back();
     }
 </script>
+<script src="{{ url_for('static', filename='route_button1.js') }}"></script>  
 <script src="{{ url_for('static', filename='cart_bind.js') }}"></script>
 
 <script>
@@ -545,31 +546,26 @@
     showSlides();
     
     function showSlides() {
-      let i;
-      let slides = document.getElementsByClassName("mySlides");
-      for (i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";  
-      }
-      slideIndex++;
-      if (slideIndex > slides.length) {slideIndex = 1}    
-      slides[slideIndex-1].style.display = "block";  
-      setTimeout(showSlides, 5000); // 5초 후에 다음 이미지로 변경
+        let i;
+        let slides = document.getElementsByClassName("mySlides");
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";  
+        }
+        slideIndex++;
+        if (slideIndex > slides.length) {slideIndex = 1}    
+        slides[slideIndex-1].style.display = "block";  
+        setTimeout(showSlides, 5000); // 5초 후에 다음 이미지로 변경
     }
 </script>
 <!-- <script src = "/static/RosLib.js"></script> -->
-<script>
-
-    var ros = new ROSLIB.Ros({
-      url : 'ws://localhost:9090'
-    });
-    
+<script>   
     ros.on('connection', function() {
-    console.log('Connected to rosbridge server.');
+        console.log('Connected to rosbridge server.');
     });
     ros.on('error', function(error) {
-    console.log('Error connecting to rosbridge server: ', error);
+        console.log('Error connecting to rosbridge server: ', error);
     });
-
+    
     // 카트 결합 여부 확인용 (시연때는 결합한 상태로 할거라 안쓸듯 )
     var modeCheck = new ROSLIB.Topic({
         ros : ros,
@@ -577,61 +573,51 @@
         messageType : 'std_msgs/String'
       });
 
-    // 모드 전환
-    var modeSwitch = new ROSLIB.Topic({
-        ros : ros,
-        name : '/mode_switch',
-        messageType : 'std_msgs/String'
-      });
-
+    
     // 수동모드 offset 측정  
     var signalOffset = new ROSLIB.Topic({
         ros : ros,
         name : '/signal_offset',
         messageType : 'std_msgs/String'
-      });
+    });
     
     // WayPoint List  
     var waypointPub = new ROSLIB.Topic({
-            ros : ros,
-            name : '/waypoint_list_raw',
-            messageType : 'std_msgs/String'
-        });  
+        ros : ros,
+        name : '/waypoint_list_raw',
+        messageType : 'std_msgs/String'
+    });  
     
     //내가 펍할 메세지 미리 변수 선언하는 거임
     var mode_on = new ROSLIB.Message({
         data : 'on'
-      });
+    });
     var mode_type1 = new ROSLIB.Message({
         data : 'manual'
-      });
+    });
     
     var mode_type2 = new ROSLIB.Message({
         data : 'auto'
-      });
-
+    });
+    
     var msg_offset1 = new ROSLIB.Message({
         data : 'start'
-      });
-
+    });
+    
     var msg_offset2 = new ROSLIB.Message({
         data : 'end'
-      });
-
-      data.destinations
-
+    });
+    
     function publishModeOn() {
         modeCheck.publish(mode_on);
         console.log('Published mode_on message');
     }
-
+    
     // 연결 성공 시, 메세지를 publish하는 함수 호출
     ros.on('connection', function() {
         // 연결이 성공하면 메세지를 바로 publish
         publishModeOn();
-    });
-</script>
-
+    });   
 </body>
-    
+
 </html>

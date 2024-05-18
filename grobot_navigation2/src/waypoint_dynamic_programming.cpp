@@ -46,28 +46,49 @@ public:
   }
     
   //방문해야하는 waypoint list 받아오기
-  void list_callback(const std_msgs::msg::String::SharedPtr msg)
-  {
-    std::istringstream iss(msg->data);
-    std::string s;
-    waypoint_vec.clear(); 
-    waypoint_indices.clear();
+//   void list_callback(const std_msgs::msg::String::SharedPtr msg)
+//   {
+//     std::istringstream iss(msg->data);
+//     std::string s;
+//     waypoint_vec.clear(); 
+//     waypoint_indices.clear();
 
-    while (iss >> s)
+//     while (iss >> s)
+//     {
+//         waypoint_vec.push_back(s);
+//         int waypoint_idx = std::stoi(s);
+//         waypoint_indices.push_back(waypoint_idx);
+//     }
+
+//     for (const auto& waypoint : waypoint_vec) {
+//         RCLCPP_INFO(this->get_logger(), "Waypoint: %s", waypoint.c_str());
+//     }
+
+//     initialize_distance_matrix();
+//     std::cout << "최소 거리: " << calculate_optimal_path(distanceMatrix, waypoint_indices,11) << std::endl;
+//   } 
+
+    void list_callback(const std_msgs::msg::String::SharedPtr msg)
     {
-        waypoint_vec.push_back(s);
-        int waypoint_idx = std::stoi(s);
-        waypoint_indices.push_back(waypoint_idx);
+        std::istringstream iss(msg->data);
+        std::string token;
+        waypoint_vec.clear();
+        waypoint_indices.clear();
+
+        while (std::getline(iss, token, ',')) // 구분자 ','를 사용하여 문자열 분리
+        {
+            waypoint_vec.push_back(token);
+            int waypoint_idx = token[0] - 'A' + 1; // 문자를 숫자로 변환 ('A' -> 1, 'B' -> 2, ...)
+            waypoint_indices.push_back(waypoint_idx);
+        }
+
+        for (const auto& waypoint : waypoint_vec) {
+            RCLCPP_INFO(this->get_logger(), "Waypoint: %s", waypoint.c_str());
+        }
+
+        initialize_distance_matrix();
+        std::cout << "최소 거리: " << calculate_optimal_path(distanceMatrix, waypoint_indices, 11) << std::endl;
     }
-
-    for (const auto& waypoint : waypoint_vec) {
-        RCLCPP_INFO(this->get_logger(), "Waypoint: %s", waypoint.c_str());
-    }
-
-    initialize_distance_matrix();
-    std::cout << "최소 거리: " << calculate_optimal_path(distanceMatrix, waypoint_indices,11) << std::endl;
-  } 
-
 private:
 
     // Subscriber

@@ -31,6 +31,7 @@ function loadStatus() {
     // 가져온 값에 따라 화면에 표시될 텍스트를 설정합니다.
     document.querySelector('.part3_bottom').textContent = currentStatus;
 }
+
 // 사용자가 버튼 클릭 시 모달을 표시합니다.
 btn.onclick = function() {
     document.getElementById("modalText").innerHTML = "최적 경로로 안내 받으시겠습니까?";
@@ -38,13 +39,18 @@ btn.onclick = function() {
     yesAction = function() {
         console.log("최적 경로 안내 시작");
         modal.style.display = "none";
-        //승민- data.destinations 값을 topic으로 쏘시면 됩니다.
         fetch('/get-destinations')
         .then(response => response.json())
         .then(data => {
             console.log(data.destinations); // 콘솔에 destination_list 데이터 출력
+            var waypointlist = new ROSLIB.Message({
+                data: JSON.stringify(data.destinations)
+            });
+            waypointPub.publish(waypointlist);
         })
         .catch(error => console.error('Error:', error));
+
+
         };
     noAction = function() {
         console.log("최적 경로 안내 취소");
