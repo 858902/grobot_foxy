@@ -46,6 +46,8 @@ public:
     action_client_ = rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(
     this, "/FollowWaypoints"); //waypoint folllower action 
 
+    waypoint_goal_pub_ = this->create_publisher<std_msgs::msg::String>("waypoint_goal", 10); // 도착 알림
+
     
     // Set Initial Position 
     geometry_msgs::msg::PoseWithCovarianceStamped initial_pose;
@@ -134,7 +136,11 @@ public:
         send_goal(waypoints_to_send);
 
         signal_received_ = false; // 변수 초기화 
-        current_waypoint_index_++; // 다음 waypoint로 업데이트 
+        current_waypoint_index_++; // 다음 waypoint로 업데이트
+
+        std_msgs::msg::String waypoint_goal_msg;
+        waypoint_goal_msg.data = "Arrived at waypoint: " + key;
+        waypoint_goal_pub_->publish(waypoint_goal_msg);
     }
 
     void send_goal(const std::vector<geometry_msgs::msg::PoseStamped>& waypoints) 
@@ -209,6 +215,7 @@ private:
 
   //Publisher
   rclcpp::Publisher<geometry_msgs::msg::PoseWithCovarianceStamped>::SharedPtr initial_pose_pub_;
+  rclcpp::Publisher<std_msgs::msg::String>::SharedPtr waypoint_goal_pub_;
 
   // Action Client
   rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SharedPtr action_client_;
