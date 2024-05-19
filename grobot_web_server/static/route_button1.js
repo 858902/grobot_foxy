@@ -32,6 +32,12 @@ function loadStatus() {
     document.querySelector('.part3_bottom').textContent = currentStatus;
 }
 
+var waypointPub = new ROSLIB.Topic({
+    ros: ros,
+    name: '/waypoint_list_raw',
+    messageType: 'std_msgs/String'
+});
+
 // 사용자가 버튼 클릭 시 모달을 표시합니다.
 btn.onclick = function() {
     document.getElementById("modalText").innerHTML = "최적 경로로 안내 받으시겠습니까?";
@@ -43,14 +49,22 @@ btn.onclick = function() {
         .then(response => response.json())
         .then(data => {
             console.log(data.destinations); // 콘솔에 destination_list 데이터 출력
-            // var waypointlist = new ROSLIB.Message({
-            //     data: JSON.stringify(data.destinations)
-            // });
-            // waypointPub.publish(waypointlist);
+            let destinationsArray;
+            if (typeof data.destinations === 'string') {
+                destinationsArray = data.destinations.split(' '); // 공백을 기준으로 분할
+            } else {
+                destinationsArray = data.destinations;
+            }
+
+            var waypointIndices = destinationsArray.map(destination => {
+                return destination.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+            }).join(' ');
+                    var waypointlist = new ROSLIB.Message({
+                data: JSON.stringify(data.destinations)
+            });
+            waypointPub.publish(waypointlist);
         })
         .catch(error => console.error('Error:', error));
-
-
         };
     noAction = function() {
         console.log("최적 경로 안내 취소");

@@ -660,6 +660,20 @@
     ros.on('error', function(error) {
         console.log('Error connecting to rosbridge server: ', error);
     });
+
+    var waypointPub = new ROSLIB.Topic({
+        ros : ros,
+        name : '/waypoint_list_raw',
+        messageType : 'std_msgs/String'
+    });
+
+    function publishModeOn() {
+        var message = new ROSLIB.Message({
+            data: 'mode_on'
+        });
+        waypointPub.publish(message);
+        console.log('Published mode_on message');
+    }
 </script>
 <script>
     function goHome() {
