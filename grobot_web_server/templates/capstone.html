@@ -672,6 +672,10 @@
         name : '/waypoint_goal',
         messageType : 'std_msgs/String'
     });  
+
+    var goal_type1 = new ROSLIB.Message({
+        data : 'ok'
+    });
     
     function publishModeOn() {
         var message = new ROSLIB.Message({

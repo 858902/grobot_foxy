@@ -62,7 +62,9 @@ btn.onclick = function() {
                     var waypointlist = new ROSLIB.Message({
                 data: JSON.stringify(data.destinations)
             });
-            waypointPub.publish(waypointlist);
+            waypointPub.publish(waypointlist); // waypoint list 전달
+            navGoal.publish(goal_type1);  // ok 신호 
+
         })
         .catch(error => console.error('Error:', error));
         };
