@@ -72,7 +72,7 @@ public:
         std::string package_name = "grobot_navigation2";
 
         std::string package_path = ament_index_cpp::get_package_share_directory(package_name);
-        std::string path = package_path + "/param/waypoint_bunker.yaml";
+        std::string path = package_path + "/param/waypoint_warehouse.yaml";
         YAML::Node yaml_file = YAML::LoadFile(path);
 
         for(YAML::const_iterator it=yaml_file.begin(); it!=yaml_file.end(); ++it)
@@ -138,9 +138,9 @@ public:
         signal_received_ = false; // 변수 초기화 
         current_waypoint_index_++; // 다음 waypoint로 업데이트
 
-        std_msgs::msg::String waypoint_goal_msg;
-        waypoint_goal_msg.data = "Arrived at waypoint: " + key;
-        waypoint_goal_pub_->publish(waypoint_goal_msg);
+        // std_msgs::msg::String waypoint_goal_msg;
+        // waypoint_goal_msg.data = "Started at waypoint: " + key;
+        // waypoint_goal_pub_->publish(waypoint_goal_msg);
     }
 
     void send_goal(const std::vector<geometry_msgs::msg::PoseStamped>& waypoints) 
