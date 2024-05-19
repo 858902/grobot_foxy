@@ -44,9 +44,9 @@ public:
 
     // Action_Client_
     action_client_ = rclcpp_action::create_client<nav2_msgs::action::FollowWaypoints>(
-    this, "/FollowWaypoints"); //waypoint folllower action 
+    this, "/FollowWaypoints"); //waypoint folllower action  
 
-    waypoint_goal_pub_ = this->create_publisher<std_msgs::msg::String>("waypoint_goal", 10); // 도착 알림
+    waypoint_goal_pub_ = this->create_publisher<std_msgs::msg::String>("waypoint_goal", 10);
 
     
     // Set Initial Position 
@@ -163,7 +163,14 @@ public:
 
       // Send the goal
       auto send_goal_options = rclcpp_action::Client<nav2_msgs::action::FollowWaypoints>::SendGoalOptions();
+      send_goal_options.goal_response_callback =
+        std::bind(&WaypointFollowerNode::goal_response_callback, this, std::placeholders::_1);
+      send_goal_options.result_callback =
+        std::bind(&WaypointFollowerNode::result_callback, this, std::placeholders::_1);
       // rclcpp::Rate r(50);
+      
+
+
       
       for (const auto& waypoint : waypoints)
       {   
@@ -196,6 +203,42 @@ public:
       }
 
     }
+
+  void goal_response_callback(std::shared_future<rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowWaypoints>::SharedPtr> future)
+  {
+      auto goal_handle = future.get();
+      if (!goal_handle)
+      {
+          RCLCPP_ERROR(this->get_logger(), "Goal was rejected by server");
+      }
+      else
+      {
+          RCLCPP_INFO(this->get_logger(), "Goal accepted by server, waiting for result");
+      }
+  }
+
+  void result_callback(const rclcpp_action::ClientGoalHandle<nav2_msgs::action::FollowWaypoints>::WrappedResult &result)
+  {
+      std_msgs::msg::String waypoint_goal_msg;
+      switch (result.code)
+      {
+      case rclcpp_action::ResultCode::SUCCEEDED:
+          RCLCPP_INFO(this->get_logger(), "Goal was succeeded");
+
+          waypoint_goal_msg.data = "Arrived at waypoint: " + waypoint_keys_[current_waypoint_index_ - 1];
+          waypoint_goal_pub_->publish(waypoint_goal_msg);
+          break;
+      case rclcpp_action::ResultCode::ABORTED:
+          RCLCPP_ERROR(this->get_logger(), "Goal was aborted");
+          return;
+      case rclcpp_action::ResultCode::CANCELED:
+          RCLCPP_ERROR(this->get_logger(), "Goal was canceled");
+          return;
+      default:
+          RCLCPP_ERROR(this->get_logger(), "Unknown result code");
+          return;
+      }
+  }
 
   void signal_callback(const std_msgs::msg::String::SharedPtr msg)
   {
