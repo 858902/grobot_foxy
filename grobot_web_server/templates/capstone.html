@@ -673,10 +673,16 @@
         messageType : 'std_msgs/String'
     });  
 
+    var navStart = new ROSLIB.Topic({
+        ros : ros,
+        name : '/start_signal',
+        messageType : 'std_msgs/String'
+    });  
+    
     var goal_type1 = new ROSLIB.Message({
         data : 'ok'
     });
-    
+
     function publishModeOn() {
         var message = new ROSLIB.Message({
             data: 'mode_on'

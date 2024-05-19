@@ -71,7 +71,6 @@ def add_to_basket():
 
     # 변환된 리스트의 요소를 띄어쓰기로 구분하여 하나의 문자열로 합치기
     destination_list = ' '.join(converted_list)
-    destination_list = str(destination_list)
     print(destination_list)
     return jsonify({'message': '장바구니에 상품이 추가되었습니다!'})
 

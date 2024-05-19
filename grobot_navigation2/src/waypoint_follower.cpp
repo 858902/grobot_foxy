@@ -230,7 +230,8 @@ public:
       case rclcpp_action::ResultCode::SUCCEEDED:
           RCLCPP_INFO(this->get_logger(), "Goal was succeeded");
 
-          waypoint_goal_msg.data = "Arrived at waypoint: " + waypoint_keys_[current_waypoint_index_ - 1];
+          // waypoint_goal_msg.data = "Arrived at waypoint: " + waypoint_keys_[current_waypoint_index_ - 1];
+          waypoint_goal_msg.data = "success";
           waypoint_goal_pub_->publish(waypoint_goal_msg);
           break;
       case rclcpp_action::ResultCode::ABORTED:

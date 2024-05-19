@@ -91,7 +91,6 @@ window.onclick = function(event) {
     }
 }
 
-
 navGoal.subscribe(function(message) {
     console.log('수신된 메시지: ', message);
 
@@ -104,7 +103,7 @@ navGoal.subscribe(function(message) {
         // '예' 버튼 클릭 시 수행할 동작 변경
         yesAction = function() {
             console.log('다음 경유지 이동');
-            navGoal.publish(goal_type1);  
+            navStart.publish(goal_type1);  
             modal.style.display = "none";
         };
 
