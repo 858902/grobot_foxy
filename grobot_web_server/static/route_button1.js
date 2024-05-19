@@ -72,6 +72,14 @@ btn.onclick = function() {
     };
 }
 
+function loadStatus() {
+    // Local Storage에서 'currentStatus' 값을 가져옵니다. 값이 없다면 기본값으로 'ON'을 설정합니다.
+    var currentStatus = localStorage.getItem('currentStatus') || 'ON';
+    
+    // 가져온 값에 따라 화면에 표시될 텍스트를 설정합니다.
+    document.querySelector('.part3_bottom').textContent = currentStatus;
+}
+
 // auto 버튼 클릭 시 모달을 표시합니다.
 autoBtn.onclick = function() {
     var currentStatus = document.querySelector('.part3_bottom').textContent; // 해당 클래스를 가진 요소가 있다고 가정합니다.
@@ -263,5 +271,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'p' || event.key === 'P') { // 대소문자 P 모두 감지
+        console.log('P 키 눌림');
+        document.getElementById("modalText").innerHTML = "상품 위치에 도착하였습니다.<br>구매를 완료 하셨으면 <br>예 버튼을 눌러주세요 ";
+        modal.style.display = "block";
+        // '예' 버튼 클릭 시 수행할 동작 변경
+        yesAction = function() {
+            console.log('다음 경유지 이동');
+            modal.style.display = "none";
+        };
+        noAction = function() {
+            console.log("경로 안내 중지");
+            modal.style.display = "none";
+        };
+    };
+});
 
