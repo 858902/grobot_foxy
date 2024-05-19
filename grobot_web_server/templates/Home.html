@@ -578,7 +578,11 @@
         name : '/manual_mode',
         messageType : 'std_msgs/String'
       });
-
+    var modeSwitch = new ROSLIB.Topic({
+        ros : ros ,
+        name : '/mode_switch',
+        messageType : 'std_msgs/String'
+    });
     
     // 수동모드 offset 측정  
     var signalOffset = new ROSLIB.Topic({

@@ -28,7 +28,7 @@ cartBtn.onclick = function() {
     // '예' 버튼 클릭 시 수행할 동작 변경
     yesAction = function() {
         console.log('Cart combination started');
-        //signalOffset.publish(msg_offset1); // offset 측정 시작 
+        signalOffset.publish(msg_offset1); // offset 측정 시작 
         //modal.style.display = "none";
         newModal.style.display = "block"; // 새 모달 표시
     };
@@ -86,11 +86,7 @@ document.querySelector('.no-button').addEventListener('click', function() {
 });
 
 
-var micCheck2 = new ROSLIB.Topic({
-    ros: ros,
-    name: '/mic_check2',
-    messageType: 'std_msgs/String'
-});
+
 
 // 완료 버튼 객체를 얻습니다.
 var completeButton = document.getElementById("nextButton");
