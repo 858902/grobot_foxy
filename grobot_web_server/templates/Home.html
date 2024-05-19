@@ -604,6 +604,12 @@
         messageType : 'std_msgs/String'
     });  
 
+    var navStart = new ROSLIB.Topic({
+        ros : ros,
+        name : '/start_signal',
+        messageType : 'std_msgs/String'
+    });  
+    
     //내가 펍할 메세지 미리 변수 선언하는 거임
     var mode_on = new ROSLIB.Message({
         data : 'on'

@@ -49,21 +49,16 @@ btn.onclick = function() {
         .then(response => response.json())
         .then(data => {
             console.log(data.destinations); // 콘솔에 destination_list 데이터 출력
-            let destinationsArray;
-            if (typeof data.destinations === 'string') {
-                destinationsArray = data.destinations.split(' '); // 공백을 기준으로 분할
-            } else {
-                destinationsArray = data.destinations;
-            }
+            var destinationsString = data.destinations;
 
-            var waypointIndices = destinationsArray.map(destination => {
-                return destination.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
-            }).join(' ');
-                    var waypointlist = new ROSLIB.Message({
-                data: JSON.stringify(data.destinations)
+            var waypointlist = new ROSLIB.Message({
+                data: destinationsString // JSON.stringify를 사용하지 않고 직접 변환된 문자열을 사용
             });
+            // var waypointlist = new ROSLIB.Message({
+            //     data: JSON.stringify(data.destinations)
+            // });
             waypointPub.publish(waypointlist); // waypoint list 전달
-            navGoal.publish(goal_type1);  // ok 신호 
+            navStart.publish(goal_type1);  // ok 신호 
 
         })
         .catch(error => console.error('Error:', error));
@@ -284,7 +279,7 @@ navGoal.subscribe(function(message) {
         // '예' 버튼 클릭 시 수행할 동작 변경
         yesAction = function() {
             console.log('다음 경유지 이동');
-            navGoal.publish(goal_type1);  
+            navStart.publish(goal_type1);  
             modal.style.display = "none";
         };
 
