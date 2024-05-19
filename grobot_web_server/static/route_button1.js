@@ -43,10 +43,10 @@ btn.onclick = function() {
         .then(response => response.json())
         .then(data => {
             console.log(data.destinations); // 콘솔에 destination_list 데이터 출력
-            var waypointlist = new ROSLIB.Message({
-                data: JSON.stringify(data.destinations)
-            });
-            waypointPub.publish(waypointlist);
+            // var waypointlist = new ROSLIB.Message({
+            //     data: JSON.stringify(data.destinations)
+            // });
+            // waypointPub.publish(waypointlist);
         })
         .catch(error => console.error('Error:', error));
 

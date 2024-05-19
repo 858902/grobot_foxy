@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script src = "/static/roslib.js"></script>
+    
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
@@ -538,8 +538,8 @@
         window.history.back();
     }
 </script>
-<script src="{{ url_for('static', filename='route_button1.js') }}"></script>  
-<script src="{{ url_for('static', filename='cart_bind.js') }}"></script>
+ 
+
 
 <script>
     let slideIndex = 0;
@@ -557,8 +557,14 @@
         setTimeout(showSlides, 5000); // 5초 후에 다음 이미지로 변경
     }
 </script>
-<!-- <script src = "/static/RosLib.js"></script> -->
-<script>   
+
+<script src = "/static/RosLib.js"></script>
+
+<script> 
+    var ros = new ROSLIB.Ros({
+      url : 'ws://localhost:9090'
+    });
+
     ros.on('connection', function() {
         console.log('Connected to rosbridge server.');
     });
@@ -617,7 +623,10 @@
     ros.on('connection', function() {
         // 연결이 성공하면 메세지를 바로 publish
         publishModeOn();
-    });   
+    });  
+</script>
+
+<script src="{{ url_for('static', filename='cart_bind.js') }}"></script>
 </body>
 
 </html>
