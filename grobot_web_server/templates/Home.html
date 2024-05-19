@@ -598,10 +598,17 @@
         messageType : 'std_msgs/String'
     });  
     
+    var navGoal = new ROSLIB.Topic({
+        ros : ros,
+        name : '/waypoint_goal',
+        messageType : 'std_msgs/String'
+    });  
+
     //내가 펍할 메세지 미리 변수 선언하는 거임
     var mode_on = new ROSLIB.Message({
         data : 'on'
     });
+
     var mode_type1 = new ROSLIB.Message({
         data : 'manual'
     });
@@ -616,6 +623,10 @@
     
     var msg_offset2 = new ROSLIB.Message({
         data : 'end'
+    });
+
+    var goal_type1 = new ROSLIB.Message({
+        data : 'ok'
     });
 
     var micCheck2 = new ROSLIB.Topic({

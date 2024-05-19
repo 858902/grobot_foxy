@@ -271,20 +271,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'p' || event.key === 'P') { // 대소문자 P 모두 감지
-        console.log('P 키 눌림');
+navGoal.subscribe(function(message) {
+    console.log('수신된 메시지: ', message);
+    // 메시지가 특정 조건을 만족할 때 동작 수행
+    if (message.data === 'success') {
+        console.log('목적지 도착'); 
         document.getElementById("modalText").innerHTML = "상품 위치에 도착하였습니다.<br>구매를 완료 하셨으면 <br>예 버튼을 눌러주세요 ";
         modal.style.display = "block";
+
         // '예' 버튼 클릭 시 수행할 동작 변경
         yesAction = function() {
             console.log('다음 경유지 이동');
+            navGoal.publish(goal_type1);  
             modal.style.display = "none";
         };
+
         noAction = function() {
             console.log("경로 안내 중지");
             modal.style.display = "none";
         };
-    };
+    }
 });
 

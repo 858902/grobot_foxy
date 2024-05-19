@@ -667,6 +667,12 @@
         messageType : 'std_msgs/String'
     });
 
+    var navGoal = new ROSLIB.Topic({
+        ros : ros,
+        name : '/waypoint_goal',
+        messageType : 'std_msgs/String'
+    });  
+    
     function publishModeOn() {
         var message = new ROSLIB.Message({
             data: 'mode_on'
