@@ -1,9 +1,11 @@
 from flask import Flask, render_template
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import pandas as pd
 import ast
 
 app = Flask(__name__)
+CORS(app)
 
 file_path = "/home/nuc1/Downloads/Data.csv"
 df = pd.read_csv(file_path)

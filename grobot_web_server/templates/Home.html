@@ -558,7 +558,7 @@
     }
 </script>
 
-<script src = "/static/RosLib.js"></script>
+<script type="text/javascript" src="/static/roslib1.js"></script>
 
 <script> 
     var ros = new ROSLIB.Ros({
@@ -613,6 +613,12 @@
     var msg_offset2 = new ROSLIB.Message({
         data : 'end'
     });
+
+    var micCheck2 = new ROSLIB.Topic({
+    ros: ros,
+    name: '/mic_check2',
+    messageType: 'std_msgs/String'
+    });
     
     function publishModeOn() {
         modeCheck.publish(mode_on);
@@ -626,7 +632,7 @@
     });  
 </script>
 
-<script src="{{ url_for('static', filename='cart_bind.js') }}"></script>
+<script type="text/javascript" src="/static/cart_bind.js"></script>
 </body>
 
 </html>

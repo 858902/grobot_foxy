@@ -85,27 +85,6 @@ document.querySelector('.no-button').addEventListener('click', function() {
     modal.style.display = "none";
 });
 
-var ros = new ROSLIB.Ros({
-    url: 'ws://localhost:9090'
-});
-
-ros.on('connection', function() {
-    console.log('연결 완');
-});
-
-ros.on('error', function(error) {
-    console.log('ㅈ망함', error);
-});
-
-ros.on('close', function() {
-    console.log('닫는다');
-});
-
-var modeCheck = new ROSLIB.Topic({
-    ros: ros,
-    name: '/mode_check',
-    messageType: 'std_msgs/String'
-});
 
 var micCheck2 = new ROSLIB.Topic({
     ros: ros,
@@ -139,7 +118,7 @@ completeButton.addEventListener('click', function() {
     // newModal.style.display = "none";
 
     modeCheck.publish(mode_on);
-    signalOffset.publish(msg_offset2); // offset 측정 시작 
+    //signalOffset.publish(msg_offset2); // offset 측정 시작 
     micCheck2.subscribe(function(message) {
         console.log(`Receive message: ${message}`);
       });
