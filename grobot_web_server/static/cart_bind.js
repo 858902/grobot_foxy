@@ -28,7 +28,7 @@ cartBtn.onclick = function() {
     // '예' 버튼 클릭 시 수행할 동작 변경
     yesAction = function() {
         console.log('Cart combination started');
-        signalOffset.publish(msg_offset1); // offset 측정 시작 
+        // signalOffset.publish(msg_offset1); // offset 측정 시작 
         //modal.style.display = "none";
         newModal.style.display = "block"; // 새 모달 표시
     };
@@ -39,14 +39,17 @@ autoBtn.onclick = function() {
     var currentStatus = document.querySelector('.part3_bottom').textContent;
     if (currentStatus === "ON") {
         document.getElementById("modalText").innerHTML = "자율 주행 모드를 멈추시고, 수동 운전 모드로 전환하시겠습니까?";
+        signalOffset.publish(msg_offset1); // offset 측정 시작 
     } else {
         document.getElementById("modalText").innerHTML = "수동 운전 모드를 멈추시고, 자율 주행 모드로 전환하시겠습니까?";
     }
+
     modal.style.display = "block";
     // '예' 버튼 클릭 시 수행할 동작 변경
     yesAction = function() {
         if (currentStatus === "ON") 
             {
+            signalOffset.publish(msg_offset2); // offset 측정 끝
             console.log('Manual mode activated');
             modeSwitch.publish(mode_type1); // 수동 모드 on
             document.querySelector('.part3_bottom').textContent = 'OFF';
@@ -121,7 +124,7 @@ completeButton.addEventListener('click', function() {
     // newModal.style.display = "none";
 
     modeCheck.publish(mode_on);
-    //signalOffset.publish(msg_offset2); // offset 측정 시작 
+    // signalOffset.publish(msg_offset2); // offset 측정 끝
     micCheck2.subscribe(function(message) {
         console.log(`Receive message: ${message}`);
       });

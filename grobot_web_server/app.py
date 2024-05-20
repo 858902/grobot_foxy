@@ -3,13 +3,16 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 import ast
+import requests
+
+input_text = "I'm looking for TV and cable."
 
 app = Flask(__name__)
 CORS(app)
 
 file_path = "/home/nuc1/Downloads/Data.csv"
 df = pd.read_csv(file_path)
-
+sample_df = pd.DataFrame()
 basket_df = pd.DataFrame()
 destination_list = []
 
@@ -17,10 +20,19 @@ destination_list = []
 def home():
     global df
     global basket_df
+    global ID
+    global keyword
+    global sample_df
+    global joined_keyword
+    KeywordSearch(input_text) 
     # 랜덤하게 10개의 상품을 선택
-    sample_df = df.sample(10).reset_index(drop=True)
+    for i in ID:
+        sample_df = pd.concat([sample_df, df[df['ID'] == i]], ignore_index=True)
+    capitalized_keywords = [word.capitalize() for word in keyword]
+    joined_keyword = '&'.join(capitalized_keywords)
+    print(joined_keyword)
+    return render_template('capstone.html', products=sample_df.to_dict('records'), basket_items=basket_df.to_dict('records'), keyword = joined_keyword)
 
-    return render_template('capstone.html', products=sample_df.to_dict('records'), basket_items=basket_df.to_dict('records'))
 
 @app.route('/')  # 이제 new_page 함수가 시작 페이지가 됩니다.
 def new_page():
@@ -32,6 +44,7 @@ def new_page():
 def product_page(product_id):
     global df
     global basket_df
+    global joined_keyword
     
     product_info = df[df['ID'] == product_id].iloc[0].to_dict()
     recommend_df = pd.DataFrame()  
@@ -46,7 +59,7 @@ def product_page(product_id):
     print(recommend_df)
 
     # 찾은 상품 정보를 productpage.html로 전달합니다.
-    return render_template('productpage.html', product=product_info ,recommends=recommend_df.to_dict('records'))# 여기서 'productpage.html'은 templates 폴더 안에 있어야 합니다.
+    return render_template('productpage.html', product=product_info ,recommends=recommend_df.to_dict('records'), keyword = joined_keyword)# 여기서 'productpage.html'은 templates 폴더 안에 있어야 합니다.
     
 
 @app.route('/add-to-basket', methods=['POST'])
@@ -106,6 +119,17 @@ def get_location(product_id):
         return jsonify({'map_location': product_info[0]})
     else:
         return jsonify({'error': 'Product not found'}), 404
+
+def KeywordSearch(input_text):
+    global keyword
+    global ID
+    try:
+        response = requests.post("http://1.224.223.74:5000/infer", json={"text": input_text})
+        response_data = response.json()
+        keyword = response_data.get('keywords')
+        ID = response_data.get('ids')
+    except Exception as e:
+        print("Error during HTTP communication:", e)
 
 
 

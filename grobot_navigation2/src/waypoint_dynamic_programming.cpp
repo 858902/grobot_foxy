@@ -52,7 +52,7 @@ public:
     std::string s;
     waypoint_vec.clear(); 
     waypoint_indices.clear();
-
+ 
     while (iss >> s)
     {
         waypoint_vec.push_back(s);
@@ -156,7 +156,7 @@ private:
         //     {
         //         if (distanceMatrix[i][j] == inf) 
         //         {
-        //             cout << "inf ";
+        //             cout << "inf ";waypoint_list_raw
         //         } 
         //         else 
         //         {
