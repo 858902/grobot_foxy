@@ -343,12 +343,12 @@ void RosCommunicator::TimerCallback()
   // MoveMotor1_Distance(110,-0.1);
   if(start_signal_) 
   {
-    MoveMotor1_Distance(110, 0.15);
+    MoveMotor1_Distance(250, 0.15);
   }
 
   else if(finish_signal_)
   {
-    MoveMotor1_Distance(110, 0.0); 
+    MoveMotor1_Distance(250, 0.0); 
   }
 
   InfoMotors();
