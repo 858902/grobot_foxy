@@ -229,7 +229,7 @@ void MotorController(int motor_num, bool direction, int pwm)
     }
   }
 
-  else if (motor_num == 2)
+  else if (motor_num == 2) //head_motor
   {
     if (direction == true)
     {
@@ -253,8 +253,7 @@ void MoveMotor1_Distance(int pwm, double distance)
   double target_encoder = (encoder_resolution * 4 * distance) / wheel_round;
   int local_pwm = LimitPwm(pwm);
   bool direction = true;
-
-  if (distance < 0)
+  if (distance <= 0)
   {
     direction = false;
     target_encoder = -target_encoder;
@@ -316,9 +315,14 @@ void InfoMotors()
   printf("PWM1 : %10.0d    ||  PWM2 : %10.0d\n", current_pwm1, current_pwm2);
   printf("DIR1 :%11s    ||  DIR2 :%11s\n", current_direction1 ? "CW" : "CCW", current_direction2 ? "CW" : "CCW");
   printf("enc2  :%11.0d\n", speed_count_1);
+  printf("enc2  :%11.0d\n", speed_count2);
+  printf("start  :%d\n", start_signal_);
+  printf("finish  :%d\n", finish_signal_);
+
   
   printf("\n");
 }
+
 
 RosCommunicator::RosCommunicator()
     : Node("grobot_motor"), count_(0)
@@ -327,18 +331,19 @@ RosCommunicator::RosCommunicator()
       100ms, std::bind(&RosCommunicator::TimerCallback, this));
 
   subscription_cart = this->create_subscription<std_msgs::msg::String>(
-        "integrate_cart", 10, std::bind(&RosCommunicator::cart_callback, this, std::placeholders::_1));
+        "cart_chain", 10, std::bind(&RosCommunicator::cart_callback, this, std::placeholders::_1));
 }
+
 
 void RosCommunicator::TimerCallback()
 {  
-  // MotorController(1, true, 100);
-  // MotorController(2, true, 100);
+  //MotorController(1, false, 100);
+  // MotorController(2, false, 100);
   // MoveMotor1_Distance(110,0.1);
   // MoveMotor1_Distance(110,-0.1);
   if(start_signal_) 
   {
-    MoveMotor1_Distance(110, -0.1);
+    MoveMotor1_Distance(110, 0.15);
   }
 
   else if(finish_signal_)
@@ -365,11 +370,14 @@ void RosCommunicator::cart_callback(const std_msgs::msg::String::SharedPtr msg)
   }
 }
 
+
+
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
   Initialize();
   rclcpp::spin(std::make_shared<RosCommunicator>());
+
 
   rclcpp::shutdown();
   MotorController(1, true, 0);

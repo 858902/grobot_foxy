@@ -94,7 +94,7 @@ controller_server:
       debug_trajectory_details: True
       min_vel_x: 0.0
       min_vel_y: 0.0
-      max_vel_x: 0.4 #0.22 -> 0.4 -> 0.22
+      max_vel_x: 0.3 #0.22 -> 0.4 -> 0.22 -> 0.3
       max_vel_y: 0.0
       max_vel_theta: 0.15 #1.0 ->0.3
       min_speed_xy: 0.0
@@ -102,10 +102,10 @@ controller_server:
       min_speed_theta: 0.0
       acc_lim_x: 1.0 # 2.5 -> 2.0 -> 1.0
       acc_lim_y: 0.0
-      acc_lim_theta: 0.07 # 3.2 -> 0.5 ->0.25 (0519)
+      acc_lim_theta: 0.25 # 3.2 -> 0.5 ->0.25 (0519)
       decel_lim_x: -1.0 #2.5 -> -1.0 
       decel_lim_y: 0.0
-      decel_lim_theta: -0.07 # 3.2 -> 0.5 ->0.25(0519)
+      decel_lim_theta: -0.25 # 3.2 -> 0.5 ->0.25(0519) -> 0.25(0521)
       vx_samples: 20
       vy_samples: 0
       vtheta_samples: 40
@@ -220,13 +220,20 @@ global_costmap:
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        observation_sources: scan
+        observation_sources: scan camera
         scan:
           topic: /scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
           data_type: "LaserScan"
+        camera:
+          topic: /camera/depth/color/points
+          max_obstacle_height: 2.0
+          min_obstacle_height: -0.1
+          clearing: True
+          marking: True
+          data_type: "PointCloud2"
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True

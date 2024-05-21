@@ -573,11 +573,12 @@
     });
     
     // 카트 결합 여부 확인용 (시연때는 결합한 상태로 할거라 안쓸듯 )
-    var modeCheck = new ROSLIB.Topic({
+    var cartChain = new ROSLIB.Topic({
         ros : ros,
-        name : '/manual_mode',
+        name : '/cart_chain',
         messageType : 'std_msgs/String'
       });
+
     var modeSwitch = new ROSLIB.Topic({
         ros : ros ,
         name : '/mode_switch',
@@ -611,8 +612,12 @@
     });  
     
     //내가 펍할 메세지 미리 변수 선언하는 거임
-    var mode_on = new ROSLIB.Message({
-        data : 'on'
+    var chain_type1 = new ROSLIB.Message({
+        data : 'start'
+    });
+
+    var chain_type2 = new ROSLIB.Message({
+        data : 'finish'
     });
 
     var mode_type1 = new ROSLIB.Message({
@@ -642,8 +647,8 @@
     });
     
     function publishModeOn() {
-        modeCheck.publish(mode_on);
-        console.log('Published mode_on message');
+        cartChain.publish(chain_type1);
+        console.log('Published chain_type1 message');
     }
     
     // 연결 성공 시, 메세지를 publish하는 함수 호출

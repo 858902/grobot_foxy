@@ -6,7 +6,9 @@ import ast
 import requests
 
 input_text = "I'm looking for TV and cable."
-
+ID = []
+keyword = ''
+joined_keyword = ''
 app = Flask(__name__)
 CORS(app)
 
@@ -24,13 +26,17 @@ def home():
     global keyword
     global sample_df
     global joined_keyword
-    KeywordSearch(input_text) 
-    # 랜덤하게 10개의 상품을 선택
-    for i in ID:
-        sample_df = pd.concat([sample_df, df[df['ID'] == i]], ignore_index=True)
-    capitalized_keywords = [word.capitalize() for word in keyword]
-    joined_keyword = '&'.join(capitalized_keywords)
-    print(joined_keyword)
+    
+    if ID == [] :
+        sample_df = sample_df = df.sample(10).reset_index(drop=True)
+    else :
+        KeywordSearch(input_text) 
+        # 랜덤하게 10개의 상품을 선택
+        for i in ID:
+            sample_df = pd.concat([sample_df, df[df['ID'] == i]], ignore_index=True)
+        capitalized_keywords = [word.capitalize() for word in keyword]
+        joined_keyword = '&'.join(capitalized_keywords)
+        print(joined_keyword)
     return render_template('capstone.html', products=sample_df.to_dict('records'), basket_items=basket_df.to_dict('records'), keyword = joined_keyword)
 
 

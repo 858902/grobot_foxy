@@ -46,6 +46,14 @@ def generate_launch_description():
             get_package_share_directory('grobot_navigation2'),
             'param',
             param_file_name))
+    
+    grobot_admittance_dir = LaunchConfiguration(
+    'grobot_admittance_dir',
+    default=os.path.join(
+      get_package_share_directory('grobot_node'),
+      'launch'
+    )
+  )
 
     nav2_launch_file_dir = os.path.join(get_package_share_directory('nav2_bringup'), 'launch')
 
@@ -77,6 +85,11 @@ def generate_launch_description():
                 'use_sim_time': use_sim_time,
                 'params_file': param_dir}.items(),
         ),
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([grobot_admittance_dir, '/grobot_admittance.launch.py']),
+            launch_arguments={'use_sim_time': use_sim_time}.items(),
+            ),
+            
         
         Node(
             package='rviz2',
