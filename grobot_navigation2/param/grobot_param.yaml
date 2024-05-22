@@ -94,26 +94,28 @@ controller_server:
       debug_trajectory_details: True
       min_vel_x: 0.0
       min_vel_y: 0.0
-      max_vel_x: 0.3 #0.22 -> 0.4 -> 0.22 -> 0.3
+      max_vel_x: 0.4 #0.22 -> 0.4
       max_vel_y: 0.0
-      max_vel_theta: 0.15 #1.0 ->0.3
+      max_vel_theta: 0.2 #1.0 -> 0.15 -> 0.2 (0520)
       min_speed_xy: 0.0
       max_speed_xy: 0.4 #0.22 -> 0.4
       min_speed_theta: 0.0
       acc_lim_x: 1.0 # 2.5 -> 2.0 -> 1.0
       acc_lim_y: 0.0
-      acc_lim_theta: 0.25 # 3.2 -> 0.5 ->0.25 (0519)
+      acc_lim_theta: 0.05 # 3.2 -> 0.07 ->0.05(0520)
       decel_lim_x: -1.0 #2.5 -> -1.0 
       decel_lim_y: 0.0
-      decel_lim_theta: -0.25 # 3.2 -> 0.5 ->0.25(0519) -> 0.25(0521)
+      decel_lim_theta: -0.05 # 3.2 -> 0.07 -> 0.05(0520)
       vx_samples: 20
       vy_samples: 0
       vtheta_samples: 40
-      sim_time: 1.5
-      linear_granularity: 0.05
-      angular_granularity: 0.025
+      sim_time: 3.0 #1.5 -> 3.0 (0520)
+      linear_granularity: 0.025 #0.05 -> 0.025 (0520)
+      angular_granularity: 0.01 #0.025 -> 0.01 (0520)
+      time_granularity: 0.025 #(0520)
       transform_tolerance: 0.2
       xy_goal_tolerance: 0.2 # 0.05 -> 0.1 (0519)
+      yaw_goal_tolerance: 2.0  #(0520)
       # yaw_goal_tolerance: 0.1 #add 
       trans_stopped_velocity: 0.25
       short_circuit_trajectory_evaluation: True
@@ -149,12 +151,12 @@ local_costmap:
       # robot_radius: 0.1
       # footprint: "[[-1.3, -0.24], [-1.3, 0.24], [0.43, 0.3], [0.43, -0.3]]"
       footprint: "[[-1.3, -0.23], [-1.3, 0.23], [0.4, 0.3], [0.4, -0.3]]"
-      footprint_padding: 0.03 #0.02 -> 0.01 -> 0.03
+      footprint_padding: 0.1 #0.02 -> 0.01 -> 0.03 -> 0.1
       plugins: ["obstacle_layer", "voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        inflation_radius: 0.4 # 1.0 ->0.7 -> 0.3 ->0.4(0519)
-        cost_scaling_factor: 3.0
+        inflation_radius: 0.6 # 1.0 ->0.7 -> 0.3 ->0.4(0519)
+        cost_scaling_factor: 2.0 #3.0 -> 2.0 (0520)
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
@@ -166,7 +168,7 @@ local_costmap:
           marking: True
           # obstacle_range: 2.5  # 동적 장애물 감지 범위 조정
           # raytrace_range: 3.0  # 장애물 제거를 위한 레이트레이싱 범위
-          observation_persistence: 0.001  # 장애물이 감지된 후 제거되기까지의 시간
+          # observation_persistence: 0.001  # 장애물이 감지된 후 제거되기까지의 시간  
           data_type: "LaserScan"
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
@@ -220,20 +222,13 @@ global_costmap:
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
-        observation_sources: scan camera
+        observation_sources: scan
         scan:
           topic: /scan
           max_obstacle_height: 2.0
           clearing: True
           marking: True
           data_type: "LaserScan"
-        camera:
-          topic: /camera/depth/color/points
-          max_obstacle_height: 2.0
-          min_obstacle_height: -0.1
-          clearing: True
-          marking: True
-          data_type: "PointCloud2"
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -277,7 +272,7 @@ global_costmap:
 map_server:
   ros__parameters:
     use_sim_time: False
-    yaml_filename: "map_basement.yaml"
+    yaml_filename: "map0521.yaml"
 
 map_saver:
   ros__parameters:
@@ -350,7 +345,7 @@ recoveries_server:
     transform_timeout: 0.1
     use_sim_time: False
     simulate_ahead_time: 2.0
-    max_rotational_vel: 0.2 # 1.0 -> 0.4
+    max_rotational_vel: 0.4 # 1.0 -> 0.4
     min_rotational_vel: 0.1 # 0.4 -> 0.2
     rotational_acc_lim: 0.7 # 3.2 -> 1.2
 
