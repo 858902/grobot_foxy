@@ -90,17 +90,17 @@ public:
             waypoints_[id].pose.position.x = x;
             waypoints_[id].pose.position.y = y;
 
-            // tf2::Quaternion q;
+            tf2::Quaternion q;
 
-            // q.setRPY(0, 0, yaw);
-            // waypoints_[id].pose.orientation.x = q.x();
-            // waypoints_[id].pose.orientation.y = q.y();
-            // waypoints_[id].pose.orientation.z = q.z();
-            // waypoints_[id].pose.orientation.w = q.w();
-            waypoints_[id].pose.orientation.x = 0.0;
-            waypoints_[id].pose.orientation.y = 0.0;
-            waypoints_[id].pose.orientation.z = 0.0;
-            waypoints_[id].pose.orientation.w = 1.0;
+            q.setRPY(0, 0, yaw);
+            waypoints_[id].pose.orientation.x = q.x();
+            waypoints_[id].pose.orientation.y = q.y();
+            waypoints_[id].pose.orientation.z = q.z();
+            waypoints_[id].pose.orientation.w = q.w();
+            // waypoints_[id].pose.orientation.x = 0.0;
+            // waypoints_[id].pose.orientation.y = 0.0;
+            // waypoints_[id].pose.orientation.z = 0.0;
+            // waypoints_[id].pose.orientation.w = 1.0;
 
             // RCLCPP_INFO(this->get_logger(), "Waypoint loaded: %s, Position: (%f, %f), Orientation: %f", id.c_str(), x, y, yaw);
             RCLCPP_INFO(this->get_logger(), "Waypoint loaded: %s, Position: (%f, %f), Orientation: %f", id.c_str(), x, y);
