@@ -115,7 +115,7 @@ controller_server:
       time_granularity: 0.025 #(0520)
       transform_tolerance: 0.2
       xy_goal_tolerance: 0.2 # 0.05 -> 0.1 (0519)
-      yaw_goal_tolerance: 2.0  #(0520)
+      yaw_goal_tolerance: 3.14  #(0520)
       # yaw_goal_tolerance: 0.1 #add 
       trans_stopped_velocity: 0.25
       short_circuit_trajectory_evaluation: True
