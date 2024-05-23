@@ -62,6 +62,16 @@ def generate_launch_description():
         'rviz',
         'nav2_default_view.rviz')
     
+    waypoint_yaml_path = os.path.join(
+        get_package_share_directory('grobot_navigation2'),
+        'param',
+        'path_distance_basement.yaml')
+    
+    waypoint_basement_yaml_path = os.path.join(
+        get_package_share_directory('grobot_navigation2'),
+        'param',
+        'waypoint_basement.yaml')
+    
     return LaunchDescription([
         DeclareLaunchArgument(
             'map',
@@ -98,4 +108,26 @@ def generate_launch_description():
             arguments=['-d', rviz_config_dir],
             parameters=[{'use_sim_time': use_sim_time}],
             output='screen'),
+        
+        Node(
+            package='grobot_navigation2',
+            executable='waypoint_dynamic_programming',
+            name='waypoint_dynamic_programming',
+            output='screen',
+            parameters=[
+                {'use_sim_time': use_sim_time},
+                {'waypoint_yaml_path': waypoint_yaml_path},
+            ],
+        ),
+        
+        Node(
+            package='grobot_navigation2',
+            executable='waypoint_follower',
+            name='waypoint_follower_node',
+            output='screen',
+            parameters=[
+                {'use_sim_time': use_sim_time},
+                {'waypoint_basement_yaml_path': waypoint_basement_yaml_path},
+            ],
+        ),
     ])
