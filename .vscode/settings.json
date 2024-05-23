@@ -67,7 +67,8 @@
         "typeinfo": "cpp",
         "variant": "cpp",
         "bit": "cpp",
-        "core": "cpp"
+        "core": "cpp",
+        "*.ipp": "cpp"
     },
     "python.autoComplete.extraPaths": [
         "/home/nuc1/grobot_ws/build/grobot_teleop",

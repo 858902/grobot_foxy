@@ -14,6 +14,7 @@
 #include <limits>
 #include <map>
 #include <algorithm>
+#include <unordered_set> 
 
 using namespace std;
 
@@ -46,27 +47,54 @@ public:
   }
     
   //방문해야하는 waypoint list 받아오기
-  void list_callback(const std_msgs::msg::String::SharedPtr msg)
-  {
-    std::istringstream iss(msg->data);
-    std::string s;
-    waypoint_vec.clear(); 
-    waypoint_indices.clear();
- 
-    while (iss >> s)
+    void list_callback(const std_msgs::msg::String::SharedPtr msg)
     {
-        waypoint_vec.push_back(s);
-        int waypoint_idx = std::stoi(s);
-        waypoint_indices.push_back(waypoint_idx);
-    }
+        std::istringstream iss(msg->data);
+        std::string s;
+        waypoint_vec.clear(); 
+        waypoint_indices.clear();
+        std::unordered_set<int> unique_waypoints; // 중복 제거를 위한 set
 
-    for (const auto& waypoint : waypoint_vec) {
-        RCLCPP_INFO(this->get_logger(), "Waypoint: %s", waypoint.c_str());
-    }
+        while (iss >> s)
+        {
+            int waypoint_idx = std::stoi(s);
+            if (unique_waypoints.find(waypoint_idx) == unique_waypoints.end()) // 중복 체크
+            {
+                unique_waypoints.insert(waypoint_idx);
+                waypoint_vec.push_back(s);
+                waypoint_indices.push_back(waypoint_idx);
+            }
+        }
 
-    initialize_distance_matrix();
-    std::cout << "최소 거리: " << calculate_optimal_path(distanceMatrix, waypoint_indices,11) << std::endl;
-  } 
+        for (const auto& waypoint : waypoint_vec) {
+            RCLCPP_INFO(this->get_logger(), "Waypoint: %s", waypoint.c_str());
+        }
+
+        initialize_distance_matrix();
+        std::cout << "최소 거리: " << calculate_optimal_path(distanceMatrix, waypoint_indices, 7) << std::endl;
+     }
+//   void list_callback(const std_msgs::msg::String::SharedPtr msg)
+//   {
+//     std::istringstream iss(msg->data);
+//     std::string s;
+//     waypoint_vec.clear(); 
+//     waypoint_indices.clear();
+//     std::unordered_set<int> unique_waypoints; // 중복 제거를 위한 set
+
+//     while (iss >> s)
+//     {
+//         waypoint_vec.push_back(s);
+//         int waypoint_idx = std::stoi(s);
+//         waypoint_indices.push_back(waypoint_idx);
+//     }
+
+//     for (const auto& waypoint : waypoint_vec) {
+//         RCLCPP_INFO(this->get_logger(), "Waypoint: %s", waypoint.c_str());
+//     }
+
+//     initialize_distance_matrix();
+//     std::cout << "최소 거리: " << calculate_optimal_path(distanceMatrix, waypoint_indices,7) << std::endl;
+//   } 
 
 private:
 
@@ -79,8 +107,8 @@ private:
     std::vector<std::string> waypoint_vec; // 경유지를 저장할 벡터
     std::vector<std::string> optimal_waypoint_vec; // 경유지를 저장할 벡터
     std::vector<int> waypoint_indices; //매핑용
-
-    const int N = 11;
+    
+    const int N = 7; //waypoint size
     const double inf = numeric_limits<double>::infinity(); //무한대 정의 
     std::map<std::string, double> distance_map; // 경유지 간 거리를 저장할 맵
     vector<vector<double>> distanceMatrix;  
@@ -94,7 +122,9 @@ private:
         std::string package_name = "grobot_navigation2";
 
         std::string package_path = ament_index_cpp::get_package_share_directory(package_name);
-        std::string path = package_path + "/param/path_distance_warehouse.yaml";
+        // std::string path = package_path + "/param/path_distance_warehouse.yaml";
+        std::string path = package_path + "/param/path_distance_basement.yaml";
+
         YAML::Node yaml_file = YAML::LoadFile(path);
 
         for(YAML::const_iterator it=yaml_file.begin(); it!=yaml_file.end(); ++it)
@@ -151,20 +181,16 @@ private:
         }
         
         // // 행렬 출력용
-        // for (int i = 0; i < distanceMatrix.size(); ++i) {
-        //     for (int j = 0; j < distanceMatrix[i].size(); ++j) 
-        //     {
-        //         if (distanceMatrix[i][j] == inf) 
-        //         {
-        //             cout << "inf ";waypoint_list_raw
-        //         } 
-        //         else 
-        //         {
-        //             cout << distanceMatrix[i][j] << " ";
-        //         }
-        //     }
-        //     cout << "\n";
-        // }
+         for (int i = 0; i < distanceMatrix.size(); ++i) {
+            for (int j = 0; j < distanceMatrix[i].size(); ++j) {
+                if (distanceMatrix[i][j] == inf) {
+                    cout << "inf ";
+                } else {
+                    cout << distanceMatrix[i][j] << " ";
+                }
+            }
+            cout << "\n";
+        }
     }
 
     // TSP 문제 해결
@@ -244,7 +270,7 @@ private:
         msg.data = waypoints_str;
 
         waypoint_list_pub_->publish(msg);
-
+        optimal_waypoint_vec.clear();
         return result.cost;
     }
 };

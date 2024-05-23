@@ -85,10 +85,10 @@ def generate_launch_description():
                 'use_sim_time': use_sim_time,
                 'params_file': param_dir}.items(),
         ),
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([grobot_admittance_dir, '/grobot_admittance.launch.py']),
-            launch_arguments={'use_sim_time': use_sim_time}.items(),
-            ),
+        # IncludeLaunchDescription(
+        #     PythonLaunchDescriptionSource([grobot_admittance_dir, '/grobot_admittance.launch.py']),
+        #     launch_arguments={'use_sim_time': use_sim_time}.items(),
+        #     ),
             
         
         Node(

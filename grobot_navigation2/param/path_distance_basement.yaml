@@ -1,0 +1,28 @@
+#Path distance between A to B -> distance_AB  (meters)
+#Waypoint는 0~ 6까지 
+distance_01 : 3.61
+distance_02 : 6.32
+distance_03 : 10.05
+distance_04 : 7.07
+distance_05 : 5.10
+distance_06 : 1.41
+
+distance_12 : 3.00
+distance_13 : 7.07
+distance_14 : 3.61
+distance_15 : 5.00
+distance_16 : 2.24
+
+distance_23 : 4.12
+distance_24 : 3.16
+distance_25 : 7.62
+distance_26 : 5.10
+
+distance_34 : 6.40
+distance_35 : 11.70
+distance_36 : 9.00
+
+distance_45 : 6.00
+distance_46 : 5.66
+
+distance_56 : 4.47

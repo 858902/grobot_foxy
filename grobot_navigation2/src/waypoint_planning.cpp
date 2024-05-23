@@ -159,17 +159,12 @@ int main(int argc, char ** argv)
 
     // node->setInitialPose(); // 초기 위치 설정
     node->addGoal(0.0, 0.0, 0.0,  "0");
-    node->addGoal(8.0, 8.0, 0.0,  "1");
-    node->addGoal(8.0, 5.0, 0.0,  "2"); 
-    node->addGoal(8.0, 2.0, 0.0,  "3"); 
-    node->addGoal(8.0, -1.0, 0.0,  "4"); 
-    node->addGoal(-2.0, 8.0, 0.0,  "5"); 
-    node->addGoal(-2.0, 5.0, 0.0,  "6"); 
-    node->addGoal(-2.0, 2.0, 0.0,  "7"); 
-    node->addGoal(-2.0, -9.0, 0.0,  "8");
-    node->addGoal(4.0, -5.0, 0.0,  "9");
-    node->addGoal(8.0, -7.0, 0.0,  "10"); 
-
+    node->addGoal(3.0, 2.0, 0.0,  "1");
+    node->addGoal(6.0, 2.0, 0.0,  "2"); 
+    node->addGoal(10.0, 1.0, 0.0,  "3"); 
+    node->addGoal(5.0, 5.0, 0.0,  "4"); 
+    node->addGoal(-1.0, 5.0, 0.0,  "5"); 
+    node->addGoal(1.0, 1.0, 0.0,  "6"); 
 
     node->calculateFinalDistance(); // 마지막 웨이포인트에서 첫 번째 웨이포인트로의 거리 계산
 
