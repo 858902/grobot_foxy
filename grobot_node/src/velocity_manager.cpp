@@ -93,7 +93,7 @@ public:
 
         // admittance_velocity_ 가 0이 아니면 weight를 1로 설정
         // double weight = (isZero_(tau_external) && isZero(admittance_velocity_) || !mannual_mode_) ? 0.0 : 1.0;
-        double -++ = (mannual_mode_) ? 1.0 : 0.0;
+        double weight = (mannual_mode_) ? 1.0 : 0.0;
 
         
         combined_velocity.linear.x = (1 - weight) * navigation_velocity_.linear.x + weight * admittance_velocity_.linear.x;
