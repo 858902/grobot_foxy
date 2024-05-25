@@ -83,7 +83,9 @@ autoBtn.onclick = function() {
     if (currentStatus === "ON") {
         document.getElementById("modalText").innerHTML = "자율 주행 모드를 멈추시고, 수동 운전 모드로 전환하시겠습니까?";
         yesAction = function() {
+            signalOffset.publish(msg_offset2); // offset 측정 끝
             console.log('Manual mode activated');
+            modeSwitch.publish(mode_type1); // 수동 모드 on
             document.querySelector('.part3_bottom').textContent = 'OFF';
             localStorage.setItem('currentStatus', document.querySelector('.part3_bottom').textContent);
             modal.style.display = "none";
@@ -91,6 +93,7 @@ autoBtn.onclick = function() {
     } else {
         document.getElementById("modalText").innerHTML = "수동 운전 모드를 멈추시고, 자율 주행 모드로 전환하시겠습니까?";
         yesAction = function() {
+            modeSwitch.publish(mode_type2); // navigation
             console.log('Auto mode activated');
             document.querySelector('.part3_bottom').textContent = 'ON';
             localStorage.setItem('currentStatus', document.querySelector('.part3_bottom').textContent);
@@ -107,10 +110,12 @@ calcBtn.onclick = function() {
     document.getElementById("modalText").innerHTML = "계산대로 이동하시겠습니까?";
     modal.style.display = "block";
     yesAction = function() {
+        // 승민아 여기 비상탈출 예
         console.log("계산대로 이동");
         modal.style.display = "none";
     };
     noAction = function() {
+        // 승민아 여기 비상탈출 아니오
         console.log("이동 취소");
         modal.style.display = "none";
     };

@@ -80,7 +80,7 @@ def add_to_basket():
     basket_df = pd.concat([basket_df, product_info], ignore_index=True)
     print(basket_df)
     destination_list = basket_df['map_location'].unique()
-    conversion_dict = {'A': 1, 'B': 1, 'C': 2, 'D': 2, 'E': 3, 'F': 3, 'G': 4, 'H': 4, 'I': 5, 'J': 5}
+    conversion_dict = {'A': 1, 'B': 1, 'C': 1, 'D': 1, 'E': 2, 'F': 2, 'G': 2, 'H': 2, 'I': 2, 'J': 2}
 
     # 리스트의 각 요소를 숫자로 변환하고, 그 결과를 문자열로 변환하여 리스트에 저장
     converted_list = [str(conversion_dict[item]) for item in destination_list]

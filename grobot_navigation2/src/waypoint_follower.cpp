@@ -73,7 +73,7 @@ public:
 
         std::string package_path = ament_index_cpp::get_package_share_directory(package_name);
         // std::string path = package_path + "/param/waypoint_warehouse.yaml";
-        std::string path = package_path + "/param/waypoint_basement.yaml";
+        std::string path = package_path + "/param/waypoint_basement2.yaml";
 
         YAML::Node yaml_file = YAML::LoadFile(path);
 
@@ -141,6 +141,7 @@ public:
 
         std::vector<geometry_msgs::msg::PoseStamped> waypoints_to_send = {it->second};
         send_goal(waypoints_to_send);
+        RCLCPP_INFO(this->get_logger(), "goal 전달");
 
         signal_received_ = false; // 변수 초기화 
         current_waypoint_index_++; // 다음 waypoint로 업데이트
@@ -253,6 +254,8 @@ public:
       if(msg->data == "ok") 
       { 
           signal_received_ = true;
+          RCLCPP_INFO(this->get_logger(), "ok signal 받음 ");
+
           send_goal_to_current_waypoint();
       }
   }

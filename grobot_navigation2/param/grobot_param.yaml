@@ -93,7 +93,7 @@ controller_server:
     simple_goal_checker:
       plugin: "nav2_controller::SimpleGoalChecker"
       xy_goal_tolerance: 0.3
-      yaw_goal_tolerance: 3.14
+      yaw_goal_tolerance: 6.28
       stateful: True
 
     # DWB parameters
@@ -102,7 +102,7 @@ controller_server:
       debug_trajectory_details: True
       min_vel_x: 0.0
       min_vel_y: 0.0
-      max_vel_x: 0.4 #0.22 -> 0.4
+      max_vel_x: 0.35 #0.22 -> 0.4
       max_vel_y: 0.0
       max_vel_theta: 0.2 #1.0 -> 0.15 -> 0.2 (0520)
       min_speed_xy: 0.0
@@ -123,7 +123,7 @@ controller_server:
       time_granularity: 0.025 #(0520)
       transform_tolerance: 0.2
       xy_goal_tolerance: 0.2 # 0.05 -> 0.1 (0519)
-      yaw_goal_tolerance: 3.14  #(0520)
+      yaw_goal_tolerance: 6.28  #(0523)
       # yaw_goal_tolerance: 0.1 #add 
       trans_stopped_velocity: 0.25
       short_circuit_trajectory_evaluation: True
@@ -163,7 +163,7 @@ local_costmap:
       plugins: ["obstacle_layer", "voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        inflation_radius: 0.6 # 1.0 ->0.7 -> 0.3 ->0.4(0519)
+        inflation_radius: 0.6 # 1.0 ->0.7 -> 0.3 ->0.4(0519) -> 0.8
         cost_scaling_factor: 2.0 #3.0 -> 2.0 (0520)
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
@@ -174,7 +174,7 @@ local_costmap:
           max_obstacle_height: 2.0
           clearing: True
           marking: True
-          # obstacle_range: 2.5  # 동적 장애물 감지 범위 조정
+          obstacle_range: 2.5  # 동적 장애물 감지 범위 조정
           # raytrace_range: 3.0  # 장애물 제거를 위한 레이트레이싱 범위
           # observation_persistence: 0.001  # 장애물이 감지된 후 제거되기까지의 시간  
           data_type: "LaserScan"
@@ -187,8 +187,8 @@ local_costmap:
         z_voxels: 16
         max_obstacle_height: 2.0
         mark_threshold: 0
-        observation_sources: lidar_cloud
-        # observation_sources: lidar_cloud camera_cloud
+        # observation_sources: lidar_cloud
+        observation_sources: lidar_cloud camera_cloud
         lidar_cloud:
           topic: /pointcloud_lidar
           max_obstacle_height: 2.0
@@ -197,13 +197,13 @@ local_costmap:
           marking: True
           data_type: "PointCloud2"
 
-        # camera_cloud:
-        #   topic: /processed_cloud
-        #   max_obstacle_height: 2.0
-        #   min_obstacle_height: -0.1
-        #   clearing: True
-        #   marking: True
-        #   data_type: "PointCloud2"
+        camera_cloud:
+          topic: /processed_cloud
+          max_obstacle_height: 2.0
+          min_obstacle_height: -0.1
+          clearing: True
+          marking: True
+          data_type: "PointCloud2"
       static_layer:
         map_subscribe_transient_local: True
       always_send_full_costmap: True

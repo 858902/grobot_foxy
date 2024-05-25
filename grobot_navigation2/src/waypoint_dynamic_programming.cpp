@@ -71,7 +71,7 @@ public:
         }
 
         initialize_distance_matrix();
-        std::cout << "최소 거리: " << calculate_optimal_path(distanceMatrix, waypoint_indices, 7) << std::endl;
+        std::cout << "최소 거리: " << calculate_optimal_path(distanceMatrix, waypoint_indices, 4) << std::endl;
      }
 //   void list_callback(const std_msgs::msg::String::SharedPtr msg)
 //   {
@@ -108,7 +108,7 @@ private:
     std::vector<std::string> optimal_waypoint_vec; // 경유지를 저장할 벡터
     std::vector<int> waypoint_indices; //매핑용
     
-    const int N = 7; //waypoint size
+    const int N = 4; //waypoint size
     const double inf = numeric_limits<double>::infinity(); //무한대 정의 
     std::map<std::string, double> distance_map; // 경유지 간 거리를 저장할 맵
     vector<vector<double>> distanceMatrix;  
@@ -123,7 +123,7 @@ private:
 
         std::string package_path = ament_index_cpp::get_package_share_directory(package_name);
         // std::string path = package_path + "/param/path_distance_warehouse.yaml";
-        std::string path = package_path + "/param/path_distance_basement.yaml";
+        std::string path = package_path + "/param/path_distance_basement2.yaml";
 
         YAML::Node yaml_file = YAML::LoadFile(path);
 

@@ -38,7 +38,9 @@ autoBtn.onclick = function() {
     if (currentStatus === "ON") {
         document.getElementById("modalText").innerHTML = "자율 주행 모드를 멈추시고, 수동 운전 모드로 전환하시겠습니까?";
         yesAction = function() {
+            signalOffset.publish(msg_offset2); // offset 측정 끝
             console.log('Manual mode activated');
+            modeSwitch.publish(mode_type1); // 수동 모드 on
             document.querySelector('.part3_bottom').textContent = 'OFF';
             localStorage.setItem('currentStatus', document.querySelector('.part3_bottom').textContent);
             modal.style.display = "none";
