@@ -114,6 +114,7 @@ calcBtn.onclick = function() {
     yesAction = function() {
         
         // 승민아 여기 비상탈출 예
+        navStart.publish(goal_type1);  // ok 신호 
         console.log("계산대로 이동");
         modal.style.display = "none";
     };
