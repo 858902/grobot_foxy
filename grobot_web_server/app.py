@@ -166,7 +166,19 @@ def handle_response_text(data):
     received_texts.append(data['text'])
     # 클라이언트에게 확인 응답 보내기
     emit('response_text_ko', {'text': data['text']})
+    
+@socketio_app.on('arrival')
+def handle_arrival(data):
+    print('Arrival event received:', data)
+    # 여기서 추가 처리를 할 수 있습니다.
+    emit('arrival', data, broadcast=True)
 
+@socketio_app.on('navigation')
+def handle_arrival(data):
+    print('navi event received:', data)
+    # 여기서 추가 처리를 할 수 있습니다.
+    emit('navigation', data, broadcast=True)
+    
 @app.route('/get-latest-text')
 def get_latest_text():
     if received_texts:

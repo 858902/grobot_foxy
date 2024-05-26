@@ -43,6 +43,8 @@ btn.onclick = function() {
     document.getElementById("modalText").innerHTML = "최적 경로로 안내 받으시겠습니까?";
     modal.style.display = "block";
     yesAction = function() {
+        const socket = io();
+        socket.emit('navigation', { message: 'navigation' });
         console.log("최적 경로 안내 시작");
         modal.style.display = "none";
         fetch('/get-destinations')
@@ -110,6 +112,7 @@ calcBtn.onclick = function() {
     document.getElementById("modalText").innerHTML = "계산대로 이동하시겠습니까?";
     modal.style.display = "block";
     yesAction = function() {
+        
         // 승민아 여기 비상탈출 예
         console.log("계산대로 이동");
         modal.style.display = "none";
@@ -277,6 +280,8 @@ navGoal.subscribe(function(message) {
     console.log('수신된 메시지: ', message);
     // 메시지가 특정 조건을 만족할 때 동작 수행
     if (message.data === 'success') {
+        const socket = io();
+        socket.emit('arrival', { message: 'arrival' });
         console.log('목적지 도착'); 
         document.getElementById("modalText").innerHTML = "상품 위치에 도착하였습니다.<br>구매를 완료 하셨으면 <br>예 버튼을 눌러주세요 ";
         modal.style.display = "block";

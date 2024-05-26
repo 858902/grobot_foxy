@@ -707,6 +707,24 @@
         data : 'ok'
     });
 
+    var mode_type1 = new ROSLIB.Message({
+        data : 'manual'
+    });
+
+    var mode_type2 = new ROSLIB.Message({
+        data : 'auto'
+    });
+    
+    var msg_offset1 = new ROSLIB.Message({
+        data : 'start'
+    });
+
+    var msg_offset2 = new ROSLIB.Message({
+        data : 'end'
+    });
+
+   
+
     function publishModeOn() {
         var message = new ROSLIB.Message({
             data: 'chain_type1'
@@ -724,6 +742,8 @@
         window.history.back();
     }
 </script>
+
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 <script src="{{ url_for('static', filename='route_button1.js') }}"></script>
 <!-- 기존 HTML에 추가 -->
 
