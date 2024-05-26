@@ -258,7 +258,7 @@ private:
     double force_sensor[4] = {0.0, 0.0, 0.0, 0.0};
 
     // double scale_gain_ = 0.0025;
-    double scale_gain_ = 0.003;
+    double scale_gain_ = 0.004;
     double scale_gain_2 = 0.005; //0.005
     double scale_gain_yaw = 0.2;
 

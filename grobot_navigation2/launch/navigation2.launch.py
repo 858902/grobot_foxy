@@ -34,8 +34,8 @@ def generate_launch_description():
         default=os.path.join(
             get_package_share_directory('grobot_navigation2'),
             'map',
-            'map105_1.yaml'))
-
+            'map0521.yaml'))
+    #map105_1
     # param_file_name = 'burger.yaml'
     param_file_name = 'grobot_param.yaml'
     # param_file_name = 'grobot_cart_param.yaml'
