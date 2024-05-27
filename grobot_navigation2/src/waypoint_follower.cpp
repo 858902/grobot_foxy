@@ -72,8 +72,8 @@ public:
         std::string package_name = "grobot_navigation2";
 
         std::string package_path = ament_index_cpp::get_package_share_directory(package_name);
-        std::string path = package_path + "/param/waypoint_basement2.yaml";
-        // std::string path = package_path + "/param/waypoint_105.yaml";
+        // std::string path = package_path + "/param/waypoint_basement2.yaml";
+        std::string path = package_path + "/param/waypoint_105.yaml";
 
         YAML::Node yaml_file = YAML::LoadFile(path);
 
