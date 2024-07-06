@@ -1,0 +1,25 @@
+grobot_mcu_node:
+  ros__parameters:
+    port:
+      # name: "/dev/ttyMCU" # 원래 버전임
+      # name: "/dev/ttyUSB0"
+      name: "/dev/ttyMotor"
+      baudrate: 115200
+
+    wheel:
+      separation: 0.57
+      radius: 0.1
+
+    motor:
+      gear_ratio: 15.0
+      max_lin_vel_x: 0.6
+      max_rot_vel_z: 0.5
+      
+    sensor:
+      enc_pulse: 60000.0
+
+diff_drive_controller:
+  ros__parameters:
+    odometry:
+      frame_id: "odom"
+      child_frame_id: "base_footprint"

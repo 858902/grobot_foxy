@@ -1,0 +1,10 @@
+#Path distance between A to B -> distance_AB  (meters)
+#Waypoint는 0~ 3까지 
+distance_01 : 8.14
+distance_02 : 5.83
+distance_03 : 4.00
+
+distance_12 : 3.35
+distance_13 : 8.38
+
+distance_23 : 5.10

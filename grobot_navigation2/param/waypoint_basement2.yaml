@@ -1,0 +1,6 @@
+# Format: [x, y, yaw]
+waypoint_0: [0.0, 0.0, 0] #Start
+waypoint_1: [8.0, 1.5, 2.09]
+waypoint_2: [5.0, 3.0, 3.13]
+waypoint_3: [0.0, 2.0, 1.57] #Goal (3.0)
+

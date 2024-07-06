@@ -1,0 +1,6 @@
+mw_ahrs_ros2_driver:
+  ros__parameters:
+    linear_acceleration_stddev: 0.02
+    angular_velocity_stddev: 0.01
+    magnetic_field_stddev: 0.00000327486
+    orientation_stddev: 0.00125
